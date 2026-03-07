@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --keyboard-offset: 0px;
+    --background: 0 0% 98%;
+    --foreground: 220 20% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    --primary: 220 90% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 93%;
+    --secondary-foreground: 220 20% 20%;
+
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 150 60% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 220 90% 50%;
+
+    --radius: 0.5rem;
+
+    --success: 150 60% 42%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Trend Colors - Light */
+    --trend-improving: 142 71% 45%;
+    --trend-improving-foreground: 0 0% 100%;
+
+    --trend-stable: 221 83% 53%;
+    --trend-stable-foreground: 224 76% 48%;
+
+    --trend-stagnant: 32 95% 44%;
+    --trend-stagnant-foreground: 20 90% 48%;
+
+    --trend-deteriorating: 0 84% 60%;
+    --trend-deteriorating-foreground: 0 0% 100%;
+
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1400px;
+  }
+
+  .dark {
+    --background: 222 25% 8%;
+    --foreground: 210 20% 92%;
+
+    --card: 222 22% 11%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 222 22% 11%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 220 85% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 18% 16%;
+    --secondary-foreground: 210 20% 85%;
+
+    --muted: 222 18% 14%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 150 55% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 18% 18%;
+    --input: 222 18% 18%;
+    --ring: 220 85% 58%;
+
+    --success: 150 55% 48%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 80% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Trend Colors - Dark */
+    --trend-improving: 142 70% 50%;
+    --trend-improving-foreground: 144 80% 10%;
+
+    --trend-stable: 217 91% 60%;
+    --trend-stable-foreground: 210 100% 96%;
+
+    --trend-stagnant: 32 95% 60%;
+    --trend-stagnant-foreground: 32 100% 96%;
+
+    --trend-deteriorating: 0 84% 65%;
+    --trend-deteriorating-foreground: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased text-base;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    padding-bottom: calc(env(safe-area-inset-bottom) + var(--keyboard-offset, 0px));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* Mobile Touch Area Compliance */
+  button, [type='button'], [type='reset'], [type='submit'], [role='button'], [role='switch'], [role='checkbox'], [role='radio'], [role='tab'] {
+    position: relative;
+  }
+  button::after, [type='button']::after, [type='reset']::after, [type='submit']::after, [role='button']::after, [role='switch']::after, [role='checkbox']::after, [role='radio']::after, [role='tab']::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@layer utilities {
+  .text-h1 {
+    @apply text-3xl sm:text-4xl font-bold leading-tight tracking-tight;
+  }
+  .text-h2 {
+    @apply text-2xl sm:text-3xl font-semibold leading-tight tracking-tight;
+  }
+  .text-h3 {
+    @apply text-2xl font-semibold leading-snug;
+  }
+  .text-h4 {
+    @apply text-xl font-semibold leading-normal;
+  }
+  .text-body {
+    @apply text-base font-normal leading-normal;
+  }
+  .text-body-sm {
+    @apply text-sm font-normal leading-normal;
+  }
+  .text-caption {
+    @apply text-xs font-normal leading-tight;
+  }
+
+  /* Contextual Text Colors */
+  .text-on-primary { color: hsl(var(--primary-foreground)); }
+  .text-on-secondary { color: hsl(var(--secondary-foreground)); }
+  .text-on-accent { color: hsl(var(--accent-foreground)); }
+  .text-on-muted { color: hsl(var(--muted-foreground)); }
+  .text-on-destructive { color: hsl(var(--destructive-foreground)); }
+  .text-on-success { color: hsl(var(--success-foreground)); }
+  .text-on-warning { color: hsl(var(--warning-foreground)); }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Staggered fade-in for list children */
+  .stagger-children > * {
+    animation: fade-in 0.3s ease-out both;
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 240ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 280ms; }
+  .stagger-children > *:nth-child(n+9) { animation-delay: 320ms; }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Card Padding System */
+  .rounded-lg.border.bg-card > div {
+    @apply p-4 sm:p-6;
+  }
+}
