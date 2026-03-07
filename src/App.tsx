@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useTranslation } from 'react-i18next';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
@@ -32,7 +32,7 @@ const BackupPage = lazy(() => import("./pages/BackupPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const TemplateEdit = lazy(() => import("./pages/TemplateEdit"));
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     element: <AppLayout />,
     children: [
