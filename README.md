@@ -2,6 +2,8 @@
 
 A modern, offline-first workout tracking application built with React, Vite, and TypeScript. Designed for serious lifters, it offers detailed session tracking, volume analysis, progress monitoring, and seamless data backup.
 
+> **Vibe Coding Note**: Questa app è stata creata interamente in **Vibe Coding**, inizialmente tramite **Lovable**, lavorando poi sulla separazione delle responsabilità e l'ottimizzazione (per quanto possibile in videcoding) del codice usando **Google Gemini 3**, **Claude 4.5** e **Claude 4.6 Sonnet e Opus**, usando gli ambienti **Google Antigravity**, **Jules** e **Claude Code**.
+
 ## Key Features
 
 - **Active Session Tracking**: Log sets, reps, load, and RPE in real-time with an intuitive interface.
