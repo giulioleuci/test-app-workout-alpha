@@ -1,3 +1,13 @@
+/**
+ * Workout Tracker 2
+ * Copyright (C) 2026 Giulio
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
 import { lazy, Suspense, useEffect } from 'react';
 
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -7,6 +17,7 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import { Toaster as Sonner } from "@/components/ui/sonner";
+
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useOnboardingStatus } from '@/hooks/queries/onboardingQueries';
