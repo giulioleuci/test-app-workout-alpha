@@ -83,7 +83,7 @@ const ExerciseGroupCard = memo(function ExerciseGroupCard({
                             </SelectContent>
                         </Select>
 
-                        {group.groupType !== ExerciseGroupType.Standard && (
+                        {(group.groupType !== ExerciseGroupType.Standard || items.length === 0) && (
                             <Button
                                 variant="ghost"
                                 size="icon"

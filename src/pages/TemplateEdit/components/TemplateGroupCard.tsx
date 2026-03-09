@@ -73,7 +73,7 @@ export default function TemplateGroupCard({
               </SelectContent>
             </Select>
 
-            {group.groupType !== ExerciseGroupType.Standard && (
+            {(group.groupType !== ExerciseGroupType.Standard || items.length === 0) && (
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-full">
