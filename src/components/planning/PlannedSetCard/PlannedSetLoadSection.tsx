@@ -28,7 +28,8 @@ export default function PlannedSetLoadSection({
             value={ps.loadRange?.min ?? ''}
             onValueChange={(v) => {
               if (v > 0) {
-                onUpdate({ loadRange: { min: v, max: ps.loadRange?.max ?? null, unit: 'kg' } });
+                const newMax = ps.loadRange?.max != null && v > ps.loadRange.max ? v : ps.loadRange?.max ?? null;
+                onUpdate({ loadRange: { min: v, max: newMax, unit: 'kg' } });
               } else {
                 onUpdate({ loadRange: undefined });
               }
@@ -37,7 +38,16 @@ export default function PlannedSetLoadSection({
           />
           <Stepper
             value={ps.loadRange?.max ?? ''}
-            onValueChange={(v) => onUpdate({ loadRange: { ...ps.loadRange!, max: v || null } })}
+            onValueChange={(v) => {
+              if (v === 0 || !v) {
+                if (ps.loadRange) {
+                  onUpdate({ loadRange: { ...ps.loadRange, max: null } });
+                }
+              } else {
+                const newMin = ps.loadRange?.min != null && v < ps.loadRange.min ? v : ps.loadRange?.min ?? 0;
+                onUpdate({ loadRange: { min: newMin, max: v, unit: 'kg' } });
+              }
+            }}
             step={INPUT_STEPS.load} min={0} placeholder="—" label={t('common.max')}
           />
         </div>
@@ -52,7 +62,8 @@ export default function PlannedSetLoadSection({
               onValueChange={(v) => {
                 if (v >= 40) {
                   const currentMax = ps.percentage1RMRange ? Math.round(ps.percentage1RMRange.max * 100) : v;
-                  onUpdate({ percentage1RMRange: { min: v / 100, max: currentMax / 100, basedOnEstimated1RM: ps.percentage1RMRange?.basedOnEstimated1RM ?? true } });
+                  const newMax = v > currentMax ? v : currentMax;
+                  onUpdate({ percentage1RMRange: { min: v / 100, max: newMax / 100, basedOnEstimated1RM: ps.percentage1RMRange?.basedOnEstimated1RM ?? true } });
                 } else {
                   onUpdate({ percentage1RMRange: undefined });
                 }
@@ -61,7 +72,15 @@ export default function PlannedSetLoadSection({
             />
             <Stepper
               value={ps.percentage1RMRange ? Math.round(ps.percentage1RMRange.max * 100) : ''}
-              onValueChange={(v) => onUpdate({ percentage1RMRange: { ...ps.percentage1RMRange!, max: v / 100 } })}
+              onValueChange={(v) => {
+                if (v >= 40 && ps.percentage1RMRange) {
+                  const currentMin = Math.round(ps.percentage1RMRange.min * 100);
+                  const newMin = v < currentMin ? v : currentMin;
+                  onUpdate({ percentage1RMRange: { ...ps.percentage1RMRange, min: newMin / 100, max: v / 100 } });
+                } else if (!v || v < 40) {
+                  onUpdate({ percentage1RMRange: undefined });
+                }
+              }}
               step={INPUT_STEPS.count} min={40} max={100} placeholder="—" label={t('common.max')}
             />
           </div>

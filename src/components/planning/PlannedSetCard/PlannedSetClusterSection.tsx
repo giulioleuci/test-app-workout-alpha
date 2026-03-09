@@ -62,10 +62,22 @@ export default function PlannedSetClusterSection({
             minVal={clusterParams.rpeRange?.min ?? ''}
             maxVal={clusterParams.rpeRange?.max ?? ''}
             onMinChange={(v) => {
-              if (v >= 1) onUpdateClusterParams({ ...clusterParams, rpeRange: { min: v, max: clusterParams.rpeRange?.max ?? v } });
-              else onUpdateClusterParams({ ...clusterParams, rpeRange: undefined });
+              if (v >= 1) {
+                const currentMax = clusterParams.rpeRange?.max ?? v;
+                const newMax = v > currentMax ? v : currentMax;
+                onUpdateClusterParams({ ...clusterParams, rpeRange: { min: v, max: newMax } });
+              } else {
+                onUpdateClusterParams({ ...clusterParams, rpeRange: undefined });
+              }
             }}
-            onMaxChange={(v) => onUpdateClusterParams({ ...clusterParams, rpeRange: { ...clusterParams.rpeRange!, max: v } })}
+            onMaxChange={(v) => {
+              if (v >= 1 && clusterParams.rpeRange) {
+                const newMin = v < clusterParams.rpeRange.min ? v : clusterParams.rpeRange.min;
+                onUpdateClusterParams({ ...clusterParams, rpeRange: { ...clusterParams.rpeRange, min: newMin, max: v } });
+              } else if (!v) {
+                onUpdateClusterParams({ ...clusterParams, rpeRange: undefined });
+              }
+            }}
             step={INPUT_STEPS.rpe} min={1} max={10}
           />
         </>
