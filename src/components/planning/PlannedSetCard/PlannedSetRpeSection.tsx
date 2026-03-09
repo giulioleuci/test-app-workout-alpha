@@ -25,7 +25,9 @@ export default function PlannedSetRpeSection({
             value={ps.rpeRange?.min ?? ''}
             onValueChange={(v) => {
               if (v >= 1) {
-                onUpdate({ rpeRange: { min: v, max: ps.rpeRange?.max ?? v } });
+                const currentMax = ps.rpeRange?.max ?? v;
+                const newMax = v > currentMax ? v : currentMax;
+                onUpdate({ rpeRange: { min: v, max: newMax } });
               } else {
                 onUpdate({ rpeRange: undefined });
               }
@@ -34,7 +36,14 @@ export default function PlannedSetRpeSection({
           />
           <Stepper
             value={ps.rpeRange?.max ?? ''}
-            onValueChange={(v) => onUpdate({ rpeRange: { ...ps.rpeRange!, max: v } })}
+            onValueChange={(v) => {
+              if (v >= 1 && ps.rpeRange) {
+                const newMin = v < ps.rpeRange.min ? v : ps.rpeRange.min;
+                onUpdate({ rpeRange: { ...ps.rpeRange, min: newMin, max: v } });
+              } else if (!v) {
+                 onUpdate({ rpeRange: undefined });
+              }
+            }}
             step={INPUT_STEPS.rpe} min={1} max={10} placeholder="—" label="Max"
           />
         </div>
