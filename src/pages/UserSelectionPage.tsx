@@ -46,6 +46,10 @@ export default function UserSelectionPage({
           {t('users.selectUser')}
         </p>
 
+        <div className="mb-8 rounded-md bg-secondary/50 p-4 text-center text-sm text-muted-foreground">
+          {t('users.appOfflineInfo', 'Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.')}
+        </div>
+
         <div className="flex flex-col gap-3">
           {users.map((user, i) => (
             <motion.div key={user.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
