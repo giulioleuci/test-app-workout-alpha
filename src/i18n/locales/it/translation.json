@@ -872,6 +872,7 @@
   },
   "onboarding": {
     "welcome": "Benvenuto in Workout Tracker 2!",
+    "appOfflineInfo": "Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.",
     "step1Title": "Il tuo profilo",
     "step1Subtitle": "Inserisci i tuoi dati per personalizzare l'esperienza.",
     "nameRequired": "Il nome è obbligatorio",
@@ -906,6 +907,7 @@
   },
   "users": {
     "title": "Utenti",
+    "appOfflineInfo": "Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.",
     "selectUser": "Seleziona utente",
     "createUser": "Crea utente",
     "createUserDescription": "Crea un nuovo profilo utente",

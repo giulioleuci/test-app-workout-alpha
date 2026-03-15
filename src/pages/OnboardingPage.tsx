@@ -94,6 +94,10 @@ export default function OnboardingPage({
           </div>
         </CardHeader>
 
+        <div className="px-6 pb-2 text-center text-sm text-muted-foreground">
+          {t('onboarding.appOfflineInfo', 'Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.')}
+        </div>
+
         <CardContent>
           {step === 1 && (
             <div className="space-y-4">

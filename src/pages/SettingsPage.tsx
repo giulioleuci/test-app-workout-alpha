@@ -23,6 +23,7 @@ import { SystemMaintenanceService } from '@/services/systemMaintenanceService';
 
 import AppearanceSettingsSection from './Settings/components/AppearanceSettingsSection';
 import DangerZoneSection from './Settings/components/DangerZoneSection';
+import DataPersistenceSection from './Settings/components/DataPersistenceSection';
 import DeveloperToolsSection from './Settings/components/DeveloperToolsSection';
 import RegulationSettingsSection from './Settings/components/RegulationSettingsSection';
 
@@ -147,6 +148,9 @@ export default function SettingsPage() {
         onLoadFixtures={handleLoadFixtures}
         isLoadingFixtures={isLoadingFixtures}
       />
+
+      {/* Data Persistence Info */}
+      <DataPersistenceSection />
 
       <AlertDialog open={alertConfig.open} onOpenChange={(open) => setAlertConfig(prev => ({ ...prev, open }))}>
         <AlertDialogContent>
