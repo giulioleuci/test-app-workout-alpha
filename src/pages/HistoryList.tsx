@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
+import { HistoryCsvToolbar } from '@/components/csv/HistoryCsvToolbar';
 import HistorySessionCard from '@/components/history/HistorySessionCard';
 import ListPagination from '@/components/ListPagination';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +16,7 @@ export default function HistoryList() {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 5;
 
-  const { data, isLoading } = useHistoryList(page, PAGE_SIZE);
+  const { data, isLoading, refetch } = useHistoryList(page, PAGE_SIZE);
   const { data: userRegulation } = useUserRegulation();
   const { deleteSession: deleteSessionMutation } = useSessionMutations();
 
@@ -35,8 +36,11 @@ export default function HistoryList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between">
         <Badge variant="secondary">{totalCount} {t('history.sessionsCount')}</Badge>
+        <div className="flex items-center gap-2">
+          <HistoryCsvToolbar onImported={refetch} />
+        </div>
       </div>
 
       {totalCount === 0 ? (
