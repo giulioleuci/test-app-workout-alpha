@@ -571,9 +571,11 @@ export async function importWorkoutsCsv(
       for (const row of sRows) {
         const rowGroupType = row.group_type || 'standard';
 
+        const isSameExerciseAsPrevious = currentItemExercise === row.exercise.toLowerCase();
+
         const needsNewGroup =
           currentGroupId === null ||
-          (rowGroupType === 'standard' && currentGroupType !== null) ||
+          (rowGroupType === 'standard' && currentGroupType !== null && !isSameExerciseAsPrevious) ||
           (rowGroupType !== 'standard' && rowGroupType !== currentGroupType);
 
         if (needsNewGroup) {
