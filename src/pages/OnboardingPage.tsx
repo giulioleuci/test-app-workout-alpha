@@ -94,8 +94,14 @@ export default function OnboardingPage({
           </div>
         </CardHeader>
 
-        <div className="px-6 pb-2 text-center text-sm text-muted-foreground">
-          {t('onboarding.appOfflineInfo', 'Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.')}
+        <div className="px-6 pb-4 text-sm text-muted-foreground">
+          <p className="mb-2 font-medium text-foreground">{t('onboarding.featuresTitle', "Istruzioni per l'app:")}</p>
+          <ul className="list-disc pl-5 space-y-1 mb-4">
+            <li>{t('onboarding.feature1', 'Possibilità di aggiungere nuovi esercizi')}</li>
+            <li>{t('onboarding.feature2', 'Possibilità di creare nuovi piani di allenamento personalizzati')}</li>
+            <li>{t('onboarding.feature3', 'Gestione degli allenamenti giornalieri in base ai piani creati')}</li>
+          </ul>
+          <p className="text-center">{t('onboarding.appOfflineInfo', 'Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.')}</p>
         </div>
 
         <CardContent>
