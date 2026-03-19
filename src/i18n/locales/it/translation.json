@@ -872,6 +872,10 @@
   },
   "onboarding": {
     "welcome": "Benvenuto in Workout Tracker 2!",
+    "featuresTitle": "Istruzioni per l'app:",
+    "feature1": "Possibilità di aggiungere nuovi esercizi",
+    "feature2": "Possibilità di creare nuovi piani di allenamento personalizzati",
+    "feature3": "Gestione degli allenamenti giornalieri in base ai piani creati",
     "appOfflineInfo": "Questa app funziona completamente offline. Tutti i tuoi dati sono salvati esclusivamente sul tuo dispositivo.",
     "step1Title": "Il tuo profilo",
     "step1Subtitle": "Inserisci i tuoi dati per personalizzare l'esperienza.",
