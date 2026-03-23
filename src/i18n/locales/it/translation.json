@@ -908,23 +908,23 @@
       "description": "I tuoi dati restano sul tuo dispositivo. Niente cloud, niente tracciamento, massima privacy e velocità."
     },
     "plans": {
-      "title": "Piani di Allenamento",
+      "title": "Piani di allenamento",
       "description": "Crea routine complesse e lascia che l'app gestisca la rotazione delle sessioni automaticamente."
     },
     "exercises": {
-      "title": "Libreria Personalizzata",
+      "title": "Libreria personalizzata",
       "description": "Un vasto database di esercizi che puoi personalizzare o espandere a tuo piacimento."
     },
     "analytics": {
-      "title": "Analisi Avanzata",
+      "title": "Analisi avanzata",
       "description": "Monitora volumi, stime 1RM e trend di progresso con grafici dettagliati."
     },
     "suggestions": {
-      "title": "Suggerimenti Intelligenti",
+      "title": "Suggerimenti intelligenti",
       "description": "L'app ti suggerisce il carico da usare in base al tuo storico e all'intensità target."
     },
     "features": {
-      "title": "Funzioni Pro",
+      "title": "Funzioni pro",
       "description": "Tracciamento RPE, timer di riposo, calcolatore riscaldamento e monitoraggio avanzato della fatica."
     }
   },
