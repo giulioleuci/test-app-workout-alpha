@@ -2,7 +2,6 @@ import { createContext, useContext } from 'react';
 
 import type { CurrentTarget, LoadedGroup } from '@/domain/activeSessionTypes';
 import type { SessionSet } from '@/domain/entities';
-import type { LoadSuggestion } from '@/services/loadSuggestionEngine';
 import type { SetCountAdvisorResult } from '@/services/setCountAdvisor';
 
 
@@ -11,7 +10,6 @@ export interface SessionGroupContextType {
     viewedSetParams: { gi: number; ii: number; si: number } | null;
     simpleMode: boolean;
     activeSessionId: string | null;
-    loadSuggestions: LoadSuggestion[];
     setCountAdvice: SetCountAdvisorResult | null;
 
     onSwapItems?: (groupId: string, indexA: number, indexB: number) => void;

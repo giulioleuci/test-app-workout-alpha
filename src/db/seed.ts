@@ -20,13 +20,13 @@ import { roundToHalf } from '@/lib/math';
 
 // ===== Exercise Translation Dictionary =====
 
-interface ExerciseTranslation {
+export interface ExerciseTranslation {
   name: string;
   description?: string;
   keyPoints?: string;
 }
 
-const EXERCISE_DICTIONARY: Record<string, Record<'en' | 'it' | 'es' | 'fr' | 'zh', ExerciseTranslation>> = {
+export const EXERCISE_DICTIONARY: Record<string, Record<'en' | 'it' | 'es' | 'fr' | 'zh', ExerciseTranslation>> = {
   'panca_piana': {
     it: {
       name: 'Panca piana',
@@ -557,15 +557,15 @@ const DICTIONARY_KEYS = Object.keys(EXERCISE_DICTIONARY);
 
 // ===== Case Helpers =====
 
-function toTitleCase(str: string): string {
+export function toTitleCase(str: string): string {
   return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
 
-function toSentenceCase(str: string): string {
+export function toSentenceCase(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-function formatName(name: string, language: 'en' | 'it' | 'es' | 'fr' | 'zh'): string {
+export function formatName(name: string, language: 'en' | 'it' | 'es' | 'fr' | 'zh'): string {
   return language === 'en' ? toTitleCase(name) : toSentenceCase(name);
 }
 

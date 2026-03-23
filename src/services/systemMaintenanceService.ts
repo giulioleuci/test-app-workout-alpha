@@ -10,7 +10,7 @@ export class SystemMaintenanceService {
    * Clears selected categories of user data.
    * Uses a single transaction for atomicity.
    */
-  static async clearUserData(selectedCategories: Set<string>): Promise<void> {
+  static async clearUserData(selectedCategories: Set<string>, language: 'en' | 'it' | 'es' | 'fr' | 'zh' = 'en'): Promise<void> {
     await db.transaction('rw', [
       db.plannedWorkouts, db.plannedSessions, db.plannedExerciseGroups,
       db.plannedExerciseItems, db.plannedSets,
@@ -36,7 +36,7 @@ export class SystemMaintenanceService {
       }
       if (selectedCategories.has('exercises')) {
         await db.exercises.clear();
-        await seedExercises();
+        await seedExercises(language);
       }
       if (selectedCategories.has('bodyWeight')) {
         await db.bodyWeightRecords.clear();
@@ -61,7 +61,7 @@ export class SystemMaintenanceService {
     const { globalUserRepository, globalDb, databaseLifecycle } = await import('@/db/core');
     
     // 0. Unmount current user to close active database connections
-    await databaseLifecycle.unmountUser();
+    databaseLifecycle.unmountUser();
 
     // 1. Get all users to delete their specific databases
     const users = await globalUserRepository.getAll();
@@ -88,8 +88,8 @@ export class SystemMaintenanceService {
     localStorage.clear();
   }
 
-  static async loadFixtures(): Promise<void> {
-    await loadFixtures();
+  static async loadFixtures(language: 'en' | 'it' | 'es' | 'fr' | 'zh' = 'en'): Promise<void> {
+    await loadFixtures(language);
   }
 
   static async seedExercises(language: 'en' | 'it' | 'es' | 'fr' | 'zh' = 'en'): Promise<void> {

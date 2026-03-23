@@ -14,7 +14,6 @@ import { formatRestSummary } from '@/lib/formatting';
 import { cn } from '@/lib/utils';
 import type { LoadSuggestion } from '@/services/loadSuggestionEngine';
 
-import LoadSuggestionBadge from './LoadSuggestionBadge';
 import LoadSuggestionDialog from './LoadSuggestionDialog';
 import RPESelector from './RPESelector';
 import SetInputActions from './set-input/SetInputActions';
@@ -36,7 +35,6 @@ interface SetInputWidgetProps {
   totalSets: number;
   counterType: CounterType;
   expectedRPE?: number | null;
-  loadSuggestions?: LoadSuggestion[];
   completedSets?: CompletedSetInfo[];
   onComplete: () => void;
   onSkip: () => void;
@@ -51,7 +49,7 @@ interface SetInputWidgetProps {
 export default function SetInputWidget({
   value, onChange,
   sessionSet: _sessionSet, plannedSet, plannedExerciseItem, exerciseId, setNumber, totalSets,
-  counterType, expectedRPE, loadSuggestions, completedSets,
+  counterType, expectedRPE, completedSets,
   onComplete, onSkip, onSkipRemaining, onAddSet, onUncompleteSet, disabled, simpleMode, hideActions,
 }: SetInputWidgetProps) {
   const { t } = useTranslation();
@@ -108,18 +106,6 @@ export default function SetInputWidget({
             plannedSet={plannedSet}
             plannedExerciseItem={plannedExerciseItem}
           />
-
-          {/* Recommendations & Suggestions */}
-          {!disabled && (
-            <div className="flex flex-wrap items-center gap-2">
-              {loadSuggestions && loadSuggestions.length > 0 && (
-                <LoadSuggestionBadge
-                  suggestions={loadSuggestions}
-                  onApply={(suggestedLoad) => updateValue({ actualLoad: suggestedLoad })}
-                />
-              )}
-            </div>
-          )}
 
           {/* RPE slider */}
           {!simpleMode && (

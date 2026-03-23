@@ -36,7 +36,283 @@ import { roundToHalf } from '@/lib/math';
 import { calculateWeighted1RM } from '@/services/rpePercentageTable';
 
 import { db } from './database';
-import { seedExercises, seedFullBody2x, seedPPL3x, seedUpperLower4x, seedPowerlifting, seedCalisthenics } from './seed';
+import { seedExercises, seedFullBody2x, seedPPL3x, seedUpperLower4x, seedPowerlifting, seedCalisthenics, EXERCISE_DICTIONARY, formatName } from './seed';
+
+type Language = 'en' | 'it' | 'es' | 'fr' | 'zh';
+
+const FIXTURE_TRANSLATIONS: Record<string, Record<Language, string>> = {
+  // Workout Names
+  'workout.strength.name': {
+    en: 'Strength 5×5',
+    it: 'Forza 5×5',
+    es: 'Fuerza 5×5',
+    fr: 'Force 5×5',
+    zh: '力量 5×5',
+  },
+  'workout.strength.desc': {
+    en: 'Classic strength program',
+    it: 'Programma forza classico',
+    es: 'Programa de fuerza clásico',
+    fr: 'Programme de force classique',
+    zh: '经典力量训练计划',
+  },
+  'workout.hypertrophy.name': {
+    en: 'Advanced Hypertrophy',
+    it: 'Ipertrofia avanzata',
+    es: 'Hipertrofia avanzada',
+    fr: 'Hypertrophie avancée',
+    zh: '高级增肌训练',
+  },
+  'workout.hypertrophy.desc': {
+    en: 'Advanced hypertrophy techniques',
+    it: 'Tecniche avanzate di ipertrofia',
+    es: 'Técnicas avanzadas de hipertrofia',
+    fr: 'Techniques d\'hypertrophie avancées',
+    zh: '高级增肌技巧',
+  },
+  'workout.deload.name': {
+    en: 'Active Deload',
+    it: 'Scarico attivo',
+    es: 'Descarga activa',
+    fr: 'Déchargement actif',
+    zh: '主动减载',
+  },
+  'workout.deload.desc': {
+    en: 'Deload week',
+    it: 'Settimana di scarico',
+    es: 'Semana de descarga',
+    fr: 'Semaine de déchargement',
+    zh: '减载周',
+  },
+  // Session Names
+  'session.strengthA.name': {
+    en: 'Day A — Push',
+    it: 'Giorno A — Spinta',
+    es: 'Día A — Empuje',
+    fr: 'Jour A — Poussée',
+    zh: '第一天 — 推',
+  },
+  'session.strengthA.notes': {
+    en: 'Focus on heavy bench and squat. Arm superset at the end. Keep RPE under control.',
+    it: 'Focus su panca e squat pesanti. Superset braccia a chiusura. Mantenere RPE sotto controllo.',
+    es: 'Enfoque en press de banca y sentadillas pesadas. Superset de brazos al final. Mantener RPE bajo control.',
+    fr: 'Focus sur le développé couché et le squat lourds. Superset bras à la fin. Garder l\'RPE sous contrôle.',
+    zh: '重点是重型卧推和深蹲。最后进行手臂超级组。控制好 RPE。',
+  },
+  'session.strengthB.name': {
+    en: 'Day B — Pull',
+    it: 'Giorno B — Tirata',
+    es: 'Día B — Tracción',
+    fr: 'Jour B — Tirage',
+    zh: '第二天 — 拉',
+  },
+  'session.hypertrophyA.name': {
+    en: 'Upper body techniques',
+    it: 'Upper body tecniche',
+    es: 'Técnicas de tren superior',
+    fr: 'Techniques du haut du corps',
+    zh: '上肢技巧',
+  },
+  'session.deloadA.name': {
+    en: 'Full body deload',
+    it: 'Scarico full body',
+    es: 'Descarga de cuerpo completo',
+    fr: 'Déchargement complet du corps',
+    zh: '全身减载',
+  },
+  // Group Notes
+  'group.warmup.notes': {
+    en: 'Bench warmup',
+    it: 'Riscaldamento panca',
+    es: 'Calentamiento de press de banca',
+    fr: 'Échauffement développé couché',
+    zh: '卧推热身',
+  },
+  'group.arms.notes': {
+    en: 'Arm superset',
+    it: 'Superset braccia',
+    es: 'Superset de brazos',
+    fr: 'Superset bras',
+    zh: '手臂超级组',
+  },
+  'group.myo.notes': {
+    en: 'Myo-Reps style cluster',
+    it: 'Cluster stile Myo-Reps',
+    es: 'Cluster estilo Myo-Reps',
+    fr: 'Cluster style Myo-Reps',
+    zh: 'Myo-Reps 风格集群',
+  },
+  'group.drop.notes': {
+    en: 'Drop Set style cluster',
+    it: 'Cluster stile Drop Set',
+    es: 'Cluster estilo Drop Set',
+    fr: 'Cluster style Drop Set',
+    zh: '递减组风格集群',
+  },
+  'group.circuit.notes': {
+    en: 'Accessory circuit',
+    it: 'Circuito accessori',
+    es: 'Circuito de accesorios',
+    fr: 'Circuit d\'accessoires',
+    zh: '辅助训练循环',
+  },
+  // Item Notes
+  'item.feeling.great': {
+    en: 'Great feeling',
+    it: 'Ottimo feeling',
+    es: 'Gran sensación',
+    fr: 'Excellente sensation',
+    zh: '感觉很好',
+  },
+  'item.feeling.heavy': {
+    en: 'Feeling heavy',
+    it: 'Sensazioni di pesantezza',
+    es: 'Sensación de pesadez',
+    fr: 'Sensation de lourdeur',
+    zh: '感觉很重',
+  },
+  'item.panca.warmup': {
+    en: 'Progression: empty bar → 50% → 70% of working load',
+    it: 'Progressione: barra vuota → 50% → 70% del carico di lavoro',
+    es: 'Progresión: barra vacía → 50% → 70% de la carga de trabajo',
+    fr: 'Progression : barre vide → 50% → 70% de la charge de travail',
+    zh: '进度：空杆 → 50% → 工作负荷的 70%',
+  },
+  'item.panca.notes': {
+    en: 'Medium grip, scapulae retracted, stable thoracic arch',
+    it: 'Presa media, scapole retratte, arco toracico stabile',
+    es: 'Agarre medio, escápulas retraídas, arco torácico estable',
+    fr: 'Prise moyenne, omoplates rétractées, voûte thoracique stable',
+    zh: '中等握距，肩胛骨收缩，胸弓稳定',
+  },
+  'item.squat.notes': {
+    en: 'High bar, depth below parallel, knees in line',
+    it: 'High bar, profondità sotto il parallelo, ginocchia in linea',
+    es: 'Barra alta, profundidad por debajo de la paralela, rodillas alineadas',
+    fr: 'Barre haute, profondeur sous la parallèle, genoux alignés',
+    zh: '高杠，深度在平行线下，膝盖对齐',
+  },
+  'item.curl.notes': {
+    en: 'Shoulder width supinated grip, no cheating',
+    it: 'Presa supina larghezza spalle, no cheating',
+    es: 'Agarre supinado a la anchura de los hombros, sin trampas',
+    fr: 'Prise supinatrice à la largeur des épaules, pas de triche',
+    zh: '肩宽正握，不要作弊',
+  },
+  'item.french.notes': {
+    en: 'Elbows tight, controlled eccentric',
+    it: 'Gomiti stretti, eccentrica controllata',
+    es: 'Codos cerrados, excéntrica controlada',
+    fr: 'Coudes serrés, excentrique contrôlée',
+    zh: '肘部收紧，控制离心',
+  },
+  // Set Notes
+  'set.warmup.inc': {
+    en: 'Increase load progressively',
+    it: 'Incrementare carico progressivamente',
+    es: 'Aumentar carga progresivamente',
+    fr: 'Augmenter la charge progressivement',
+    zh: '逐步增加负荷',
+  },
+  'set.panca.ecc': {
+    en: '3s eccentric, pause at chest, explosive concentric',
+    it: 'Eccentrica 3s, pausa al petto, concentrica esplosiva',
+    es: 'Excéntrica 3s, pausa en el pecho, concéntrica explosiva',
+    fr: 'Excentrique 3s, pause à la poitrine, concentrique explosive',
+    zh: '3秒离心，胸部停顿，爆发性向心',
+  },
+  'set.squat.ecc': {
+    en: '3s controlled descent, 1s pause at bottom, explosive ascent',
+    it: 'Discesa controllata 3s, pausa 1s in buca, risalita esplosiva',
+    es: 'Descenso controlado 3s, pausa 1s abajo, ascenso explosivo',
+    fr: 'Descente contrôlée 3s, pause 1s en bas, remontée explosive',
+    zh: '3秒受控下行，底部停顿1秒，爆发性上行',
+  },
+  'set.squat.backoff': {
+    en: 'Technical deload — focus on movement quality',
+    it: 'Scarico tecnico — focus su qualità del movimento',
+    es: 'Descarga técnica — enfoque en la calidad del movimiento',
+    fr: 'Déchargement technique — focus sur la qualité du mouvement',
+    zh: '技术性减载 — 专注于动作质量',
+  },
+  'set.curl.peak': {
+    en: '1s peak contraction at top',
+    it: 'Contrazione di picco 1s in alto',
+    es: 'Contracción máxima de 1s arriba',
+    fr: 'Contraction maximale de 1s en haut',
+    zh: '顶部1秒峰值收缩',
+  },
+  'set.french.ecc': {
+    en: 'Slow eccentric, elbows still',
+    it: 'Eccentrica lenta, gomiti fermi',
+    es: 'Excéntrica lenta, codos quietos',
+    fr: 'Excentrique lente, coudes immobiles',
+    zh: '慢离心，肘部不动',
+  },
+  // History Notes
+  'history.deload': {
+    en: 'Deload week',
+    it: 'Settimana di scarico',
+    es: 'Semana de descarga',
+    fr: 'Semaine de déchargement',
+    zh: '减载周',
+  },
+  'history.excellent': {
+    en: 'Excellent workout, great energy',
+    it: 'Allenamento eccellente, grande energia',
+    es: 'Excelente entrenamiento, gran energía',
+    fr: 'Excellent entraînement, grande énergie',
+    zh: '优秀的锻炼，精力充沛',
+  },
+  'history.standard': {
+    en: 'Standard workout',
+    it: 'Allenamento standard',
+    es: 'Entrenamiento estándar',
+    fr: 'Entraînement standard',
+    zh: '标准锻炼',
+  },
+  // Templates
+  'template.upper.name': {
+    en: 'Upper body base',
+    it: 'Upper body base',
+    es: 'Base de tren superior',
+    fr: 'Base du haut du corps',
+    zh: '上肢基础',
+  },
+  'template.upper.desc': {
+    en: 'Base template for upper body session',
+    it: 'Template base per sessione upper body',
+    es: 'Plantilla base para sesión de tren superior',
+    fr: 'Modèle de base pour une séance du haut du corps',
+    zh: '上肢训练的基础模板',
+  },
+  'template.lower.name': {
+    en: 'Lower body base',
+    it: 'Lower body base',
+    es: 'Base de tren inferior',
+    fr: 'Base du bas du corps',
+    zh: '下肢基础',
+  },
+  'template.lower.desc': {
+    en: 'Base template for lower body session',
+    it: 'Template base per sessione lower body',
+    es: 'Plantilla base para sesión de tren inferior',
+    fr: 'Modèle de base pour une séance du bas du corps',
+    zh: '下肢训练的基础模板',
+  },
+  // Profile
+  'profile.name': {
+    en: 'Mark',
+    it: 'Marco',
+    es: 'Marco',
+    fr: 'Marc',
+    zh: '马克',
+  },
+};
+
+function t(key: string, lang: Language): string {
+  return FIXTURE_TRANSLATIONS[key]?.[lang] || FIXTURE_TRANSLATIONS[key]?.['en'] || key;
+}
 
 // ===== Lazy exercise ID lookup cache =====
 const _exCache: Record<string, string> = {};
@@ -74,6 +350,7 @@ function generateFixtureHistory(
   plannedItems: PlannedExerciseItem[],
   plannedSets: PlannedSet[],
   exerciseIds: Record<string, string>,
+  lang: Language,
   monthsBack = 2
 ) {
   const sessions: WorkoutSession[] = [];
@@ -178,7 +455,7 @@ function generateFixtureHistory(
             performanceStatus,
             hasRangeConstraint: false,
             completedAt: currentSessionTime.toDate(),
-            notes: readinessScore > 1.05 ? 'Ottimo feeling' : (readinessScore < 0.95 ? 'Sensazioni di pesantezza' : undefined),
+            notes: readinessScore > 1.05 ? t('item.feeling.great', lang) : (readinessScore < 0.95 ? t('item.feeling.heavy', lang) : undefined),
           });
 
           let currentBaseLoad = progression[pItem.exerciseId] || 20;
@@ -312,7 +589,7 @@ function generateFixtureHistory(
         totalReps: sessionTotalReps,
         totalLoad: sessionTotalLoad,
         totalDuration: currentSessionTime.diff(dayjs(sessionStart), 'second'),
-        notes: isDeload ? 'Settimana di scarico' : (readinessScore > 1.05 ? 'Allenamento eccellente, grande energia' : 'Allenamento standard'),
+        notes: isDeload ? t('history.deload', lang) : (readinessScore > 1.05 ? t('history.excellent', lang) : t('history.standard', lang)),
       });
 
       sessionIdx = (sessionIdx + 1) % workoutSessionsData.length;
@@ -323,7 +600,7 @@ function generateFixtureHistory(
   return { sessions, sGroups, sItems, sSets };
 }
 
-export async function loadFixtures() {
+export async function loadFixtures(lang: Language = 'en') {
   // Clear everything first
   await db.delete();
   await db.open();
@@ -332,59 +609,64 @@ export async function loadFixtures() {
   const d = (daysAgo: number) => now.subtract(daysAgo, 'day').toDate();
 
   // ===== EXERCISES — reuse seed data =====
-  await seedExercises();
+  await seedExercises(lang);
+
+  const getExName = (key: string) => {
+    const translation = EXERCISE_DICTIONARY[key][lang];
+    return formatName(translation.name, lang);
+  };
 
   // Resolve exercise IDs by name (from seeded data)
   const EX = {
-    pancaPiana: await exId('Bench Press'),
-    squat: await exId('Squat'),
-    stacco: await exId('Deadlift'),
-    militaryPress: await exId('Military Press'),
-    trazioni: await exId('Pull-ups'),
-    curlBil: await exId('Barbell Curl'),
-    frenchPress: await exId('French Press'),
-    legPress: await exId('Leg Press'),
-    plank: await exId('Plank'),
-    alzateLaterali: await exId('Lateral Raises'),
+    pancaPiana: await exId(getExName('panca_piana')),
+    squat: await exId(getExName('squat')),
+    stacco: await exId(getExName('stacco_da_terra')),
+    militaryPress: await exId(getExName('military_press')),
+    trazioni: await exId(getExName('trazioni_alla_sbarra')),
+    curlBil: await exId(getExName('curl_bilanciere')),
+    frenchPress: await exId(getExName('french_press')),
+    legPress: await exId(getExName('leg_press')),
+    plank: await exId(getExName('plank')),
+    alzateLaterali: await exId(getExName('alzate_laterali')),
   };
 
   // ===== SEED WORKOUT PLANS (reuse from seed) =====
-  await seedFullBody2x(PlannedWorkoutStatus.Inactive);
-  await seedPPL3x(PlannedWorkoutStatus.Inactive);
-  await seedUpperLower4x(PlannedWorkoutStatus.Inactive);
-  await seedPowerlifting(PlannedWorkoutStatus.Inactive);
-  await seedCalisthenics(PlannedWorkoutStatus.Inactive);
+  await seedFullBody2x(PlannedWorkoutStatus.Inactive, {}, lang);
+  await seedPPL3x(PlannedWorkoutStatus.Inactive, lang);
+  await seedUpperLower4x(PlannedWorkoutStatus.Inactive, lang);
+  await seedPowerlifting(PlannedWorkoutStatus.Inactive, lang);
+  await seedCalisthenics(PlannedWorkoutStatus.Inactive, lang);
 
   // ===== FIXTURE-SPECIFIC PLANNED WORKOUTS (advanced group types) =====
   const plannedWorkouts: PlannedWorkout[] = [
-    { id: PW.strength, name: 'Forza 5×5', description: 'Programma forza classico', objectiveType: ObjectiveType.GeneralStrength, workType: WorkType.Intensification, status: PlannedWorkoutStatus.Active, createdAt: d(28), updatedAt: d(1) },
-    { id: PW.hypertrophy, name: 'Ipertrofia avanzata', description: 'Tecniche avanzate di ipertrofia', objectiveType: ObjectiveType.Hypertrophy, workType: WorkType.Accumulation, status: PlannedWorkoutStatus.Inactive, createdAt: d(20), updatedAt: d(2) },
-    { id: PW.deload, name: 'Scarico attivo', description: 'Settimana di scarico', objectiveType: ObjectiveType.WorkCapacity, workType: WorkType.Deload, status: PlannedWorkoutStatus.Inactive, createdAt: d(5), updatedAt: d(5) },
+    { id: PW.strength, name: t('workout.strength.name', lang), description: t('workout.strength.desc', lang), objectiveType: ObjectiveType.GeneralStrength, workType: WorkType.Intensification, status: PlannedWorkoutStatus.Active, createdAt: d(28), updatedAt: d(1) },
+    { id: PW.hypertrophy, name: t('workout.hypertrophy.name', lang), description: t('workout.hypertrophy.desc', lang), objectiveType: ObjectiveType.Hypertrophy, workType: WorkType.Accumulation, status: PlannedWorkoutStatus.Inactive, createdAt: d(20), updatedAt: d(2) },
+    { id: PW.deload, name: t('workout.deload.name', lang), description: t('workout.deload.desc', lang), objectiveType: ObjectiveType.WorkCapacity, workType: WorkType.Deload, status: PlannedWorkoutStatus.Inactive, createdAt: d(5), updatedAt: d(5) },
   ];
 
   // ===== PLANNED SESSIONS =====
   const plannedSessions: PlannedSession[] = [
-    { id: PS.strengthA, plannedWorkoutId: PW.strength, name: 'Giorno A — Spinta', dayNumber: 1, focusMuscleGroups: [MuscleGroup.Chest, MuscleGroup.Shoulders, MuscleGroup.Arms, MuscleGroup.Legs], status: PlannedSessionStatus.Active, orderIndex: generateRank(0), notes: 'Focus su panca e squat pesanti. Superset braccia a chiusura. Mantenere RPE sotto controllo.', createdAt: d(28), updatedAt: d(1) },
-    { id: PS.strengthB, plannedWorkoutId: PW.strength, name: 'Giorno B — Tirata', dayNumber: 2, focusMuscleGroups: [MuscleGroup.Back, MuscleGroup.Shoulders, MuscleGroup.Arms, MuscleGroup.Legs], status: PlannedSessionStatus.Pending, orderIndex: generateRank(1), createdAt: d(28), updatedAt: d(1) },
-    { id: PS.hypertrophyA, plannedWorkoutId: PW.hypertrophy, name: 'Upper body tecniche', dayNumber: 1, focusMuscleGroups: [MuscleGroup.Chest, MuscleGroup.Shoulders, MuscleGroup.Arms], status: PlannedSessionStatus.Active, orderIndex: generateRank(0), createdAt: d(20), updatedAt: d(2) },
-    { id: PS.deloadA, plannedWorkoutId: PW.deload, name: 'Scarico full body', dayNumber: 1, focusMuscleGroups: [MuscleGroup.Legs, MuscleGroup.Core], status: PlannedSessionStatus.Pending, orderIndex: generateRank(0), createdAt: d(5), updatedAt: d(5) },
+    { id: PS.strengthA, plannedWorkoutId: PW.strength, name: t('session.strengthA.name', lang), dayNumber: 1, focusMuscleGroups: [MuscleGroup.Chest, MuscleGroup.Shoulders, MuscleGroup.Arms, MuscleGroup.Legs], status: PlannedSessionStatus.Active, orderIndex: generateRank(0), notes: t('session.strengthA.notes', lang), createdAt: d(28), updatedAt: d(1) },
+    { id: PS.strengthB, plannedWorkoutId: PW.strength, name: t('session.strengthB.name', lang), dayNumber: 2, focusMuscleGroups: [MuscleGroup.Back, MuscleGroup.Shoulders, MuscleGroup.Arms, MuscleGroup.Legs], status: PlannedSessionStatus.Pending, orderIndex: generateRank(1), createdAt: d(28), updatedAt: d(1) },
+    { id: PS.hypertrophyA, plannedWorkoutId: PW.hypertrophy, name: t('session.hypertrophyA.name', lang), dayNumber: 1, focusMuscleGroups: [MuscleGroup.Chest, MuscleGroup.Shoulders, MuscleGroup.Arms], status: PlannedSessionStatus.Active, orderIndex: generateRank(0), createdAt: d(20), updatedAt: d(2) },
+    { id: PS.deloadA, plannedWorkoutId: PW.deload, name: t('session.deloadA.name', lang), dayNumber: 1, focusMuscleGroups: [MuscleGroup.Legs, MuscleGroup.Core], status: PlannedSessionStatus.Pending, orderIndex: generateRank(0), createdAt: d(5), updatedAt: d(5) },
   ];
 
   // ===== PLANNED EXERCISE GROUPS — ALL VARIANTS =====
   const plannedExerciseGroups: PlannedExerciseGroup[] = [
     // Strength A: warmup + 2 standard + superset
-    { id: PEG.warmup1, plannedSessionId: PS.strengthA, groupType: ExerciseGroupType.Warmup, restBetweenRoundsSeconds: 60, orderIndex: generateRank(0), notes: 'Riscaldamento panca' },
+    { id: PEG.warmup1, plannedSessionId: PS.strengthA, groupType: ExerciseGroupType.Warmup, restBetweenRoundsSeconds: 60, orderIndex: generateRank(0), notes: t('group.warmup.notes', lang) },
     { id: PEG.standard1_panca, plannedSessionId: PS.strengthA, groupType: ExerciseGroupType.Standard, orderIndex: generateRank(1) },
     { id: PEG.standard1_squat, plannedSessionId: PS.strengthA, groupType: ExerciseGroupType.Standard, orderIndex: generateRank(2) },
-    { id: PEG.superset1, plannedSessionId: PS.strengthA, groupType: ExerciseGroupType.Superset, restBetweenRoundsSeconds: 30, orderIndex: generateRank(3), notes: 'Superset braccia' },
+    { id: PEG.superset1, plannedSessionId: PS.strengthA, groupType: ExerciseGroupType.Superset, restBetweenRoundsSeconds: 30, orderIndex: generateRank(3), notes: t('group.arms.notes', lang) },
     // Strength B: 2 standard + cluster
     { id: PEG.standard2_stacco, plannedSessionId: PS.strengthB, groupType: ExerciseGroupType.Standard, orderIndex: generateRank(0) },
     { id: PEG.standard2_trazioni, plannedSessionId: PS.strengthB, groupType: ExerciseGroupType.Standard, orderIndex: generateRank(1) },
     { id: PEG.cluster1, plannedSessionId: PS.strengthB, groupType: ExerciseGroupType.Cluster, restBetweenRoundsSeconds: 120, orderIndex: generateRank(2) },
     // Hypertrophy A: cluster-myo + cluster-drop + circuit
-    { id: PEG.clusterMyo, plannedSessionId: PS.hypertrophyA, groupType: ExerciseGroupType.Cluster, restBetweenRoundsSeconds: 120, orderIndex: generateRank(0), notes: 'Cluster stile Myo-Reps' },
-    { id: PEG.clusterDrop, plannedSessionId: PS.hypertrophyA, groupType: ExerciseGroupType.Cluster, restBetweenRoundsSeconds: 120, orderIndex: generateRank(1), notes: 'Cluster stile Drop Set' },
-    { id: PEG.circuit1, plannedSessionId: PS.hypertrophyA, groupType: ExerciseGroupType.Circuit, restBetweenRoundsSeconds: 15, orderIndex: generateRank(2), notes: 'Circuito accessori' },
+    { id: PEG.clusterMyo, plannedSessionId: PS.hypertrophyA, groupType: ExerciseGroupType.Cluster, restBetweenRoundsSeconds: 120, orderIndex: generateRank(0), notes: t('group.myo.notes', lang) },
+    { id: PEG.clusterDrop, plannedSessionId: PS.hypertrophyA, groupType: ExerciseGroupType.Cluster, restBetweenRoundsSeconds: 120, orderIndex: generateRank(1), notes: t('group.drop.notes', lang) },
+    { id: PEG.circuit1, plannedSessionId: PS.hypertrophyA, groupType: ExerciseGroupType.Circuit, restBetweenRoundsSeconds: 15, orderIndex: generateRank(2), notes: t('group.circuit.notes', lang) },
     // Deload A: emom + amrap
     { id: PEG.emom1, plannedSessionId: PS.deloadA, groupType: ExerciseGroupType.Emom, orderIndex: generateRank(0) },
     { id: PEG.amrap1, plannedSessionId: PS.deloadA, groupType: ExerciseGroupType.Amrap, orderIndex: generateRank(1) },
@@ -393,14 +675,14 @@ export async function loadFixtures() {
   // ===== PLANNED EXERCISE ITEMS =====
   const plannedExerciseItems: PlannedExerciseItem[] = [
     // Warmup: panca leggera
-    { id: peiId('w_panca'), plannedExerciseGroupId: PEG.warmup1, exerciseId: EX.pancaPiana, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: 'Progressione: barra vuota → 50% → 70% del carico di lavoro' },
+    { id: peiId('w_panca'), plannedExerciseGroupId: PEG.warmup1, exerciseId: EX.pancaPiana, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: t('item.panca.warmup', lang) },
     // Standard panca
-    { id: peiId('s1_panca'), plannedExerciseGroupId: PEG.standard1_panca, exerciseId: EX.pancaPiana, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: 'Presa media, scapole retratte, arco toracico stabile', targetXRM: 5, warmupSets: [{ percentOfWorkSet: 0.5, restSeconds: 60, counter: 5 }] },
+    { id: peiId('s1_panca'), plannedExerciseGroupId: PEG.standard1_panca, exerciseId: EX.pancaPiana, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: t('item.panca.notes', lang), targetXRM: 5, warmupSets: [{ percentOfWorkSet: 0.5, restSeconds: 60, counter: 5 }] },
     // Standard squat
-    { id: peiId('s1_squat'), plannedExerciseGroupId: PEG.standard1_squat, exerciseId: EX.squat, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: 'High bar, profondità sotto il parallelo, ginocchia in linea' },
+    { id: peiId('s1_squat'), plannedExerciseGroupId: PEG.standard1_squat, exerciseId: EX.squat, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: t('item.squat.notes', lang) },
     // Superset: curl + french press
-    { id: peiId('ss_curl'), plannedExerciseGroupId: PEG.superset1, exerciseId: EX.curlBil, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: 'Presa supina larghezza spalle, no cheating' },
-    { id: peiId('ss_french'), plannedExerciseGroupId: PEG.superset1, exerciseId: EX.frenchPress, counterType: CounterType.Reps, orderIndex: generateRank(1), notes: 'Gomiti stretti, eccentrica controllata' },
+    { id: peiId('ss_curl'), plannedExerciseGroupId: PEG.superset1, exerciseId: EX.curlBil, counterType: CounterType.Reps, orderIndex: generateRank(0), notes: t('item.curl.notes', lang) },
+    { id: peiId('ss_french'), plannedExerciseGroupId: PEG.superset1, exerciseId: EX.frenchPress, counterType: CounterType.Reps, orderIndex: generateRank(1), notes: t('item.french.notes', lang) },
     // Standard stacco
     { id: peiId('s2_stacco'), plannedExerciseGroupId: PEG.standard2_stacco, exerciseId: EX.stacco, counterType: CounterType.Reps, orderIndex: generateRank(0) },
     // Standard trazioni
@@ -433,19 +715,19 @@ export async function loadFixtures() {
   // ===== PLANNED SETS — ALL SetType VARIANTS =====
   const plannedSets: PlannedSet[] = [
     // Warmup sets
-    { id: pstId('w_panca_s1'), plannedExerciseItemId: peiId('w_panca'), setCountRange: { min: 2, max: 3 }, countRange: { min: 8, max: 12, toFailure: ToFailureIndicator.None }, loadRange: { min: 20, max: 40, unit: 'kg' }, rpeRange: { min: 4, max: 5 }, restSecondsRange: { min: 60, max: 90, isFixed: false }, setType: SetType.Warmup, tempo: '2010', orderIndex: generateRank(0), notes: 'Incrementare carico progressivamente' },
+    { id: pstId('w_panca_s1'), plannedExerciseItemId: peiId('w_panca'), setCountRange: { min: 2, max: 3 }, countRange: { min: 8, max: 12, toFailure: ToFailureIndicator.None }, loadRange: { min: 20, max: 40, unit: 'kg' }, rpeRange: { min: 4, max: 5 }, restSecondsRange: { min: 60, max: 90, isFixed: false }, setType: SetType.Warmup, tempo: '2010', orderIndex: generateRank(0), notes: t('set.warmup.inc', lang) },
     // Working — panca (with fatigue profile + %1RM)
-    { id: pstId('s1_panca_s1'), plannedExerciseItemId: peiId('s1_panca'), setCountRange: { min: 3, max: 5, stopCriteria: 'rpeCeiling' }, countRange: { min: 4, max: 6, toFailure: ToFailureIndicator.None }, loadRange: { min: 80, max: 90, unit: 'kg' }, percentage1RMRange: { min: 0.78, max: 0.85, basedOnEstimated1RM: true }, rpeRange: { min: 7, max: 8.5 }, restSecondsRange: { min: 150, max: 240, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 0.5 }, setType: SetType.Working, tempo: '3010', orderIndex: generateRank(0), notes: 'Eccentrica 3s, pausa al petto, concentrica esplosiva' },
+    { id: pstId('s1_panca_s1'), plannedExerciseItemId: peiId('s1_panca'), setCountRange: { min: 3, max: 5, stopCriteria: 'rpeCeiling' }, countRange: { min: 4, max: 6, toFailure: ToFailureIndicator.None }, loadRange: { min: 80, max: 90, unit: 'kg' }, percentage1RMRange: { min: 0.78, max: 0.85, basedOnEstimated1RM: true }, rpeRange: { min: 7, max: 8.5 }, restSecondsRange: { min: 150, max: 240, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 0.5 }, setType: SetType.Working, tempo: '3010', orderIndex: generateRank(0), notes: t('set.panca.ecc', lang) },
     // Working — squat (with all params)
-    { id: pstId('s1_squat_s1'), plannedExerciseItemId: peiId('s1_squat'), setCountRange: { min: 4, max: 6, stopCriteria: 'rpeCeiling' }, countRange: { min: 4, max: 6, toFailure: ToFailureIndicator.None }, loadRange: { min: 100, max: 120, unit: 'kg' }, percentage1RMRange: { min: 0.72, max: 0.85, basedOnEstimated1RM: true }, rpeRange: { min: 7, max: 9 }, restSecondsRange: { min: 180, max: 300, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 0.5 }, setType: SetType.Working, tempo: '3110', orderIndex: generateRank(0), notes: 'Discesa controllata 3s, pausa 1s in buca, risalita esplosiva' },
+    { id: pstId('s1_squat_s1'), plannedExerciseItemId: peiId('s1_squat'), setCountRange: { min: 4, max: 6, stopCriteria: 'rpeCeiling' }, countRange: { min: 4, max: 6, toFailure: ToFailureIndicator.None }, loadRange: { min: 100, max: 120, unit: 'kg' }, percentage1RMRange: { min: 0.72, max: 0.85, basedOnEstimated1RM: true }, rpeRange: { min: 7, max: 9 }, restSecondsRange: { min: 180, max: 300, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 0.5 }, setType: SetType.Working, tempo: '3110', orderIndex: generateRank(0), notes: t('set.squat.ecc', lang) },
     // Backoff — squat
-    { id: pstId('s1_squat_bo'), plannedExerciseItemId: peiId('s1_squat'), setCountRange: { min: 1, max: 2 }, countRange: { min: 8, max: 10, toFailure: ToFailureIndicator.None }, loadRange: { min: 80, max: 90, unit: 'kg' }, percentage1RMRange: { min: 0.57, max: 0.64, basedOnEstimated1RM: true }, rpeRange: { min: 6, max: 7 }, restSecondsRange: { min: 120, max: 180, isFixed: false }, setType: SetType.Backoff, tempo: '2010', orderIndex: generateRank(1), notes: 'Scarico tecnico — focus su qualità del movimento' },
+    { id: pstId('s1_squat_bo'), plannedExerciseItemId: peiId('s1_squat'), setCountRange: { min: 1, max: 2 }, countRange: { min: 8, max: 10, toFailure: ToFailureIndicator.None }, loadRange: { min: 80, max: 90, unit: 'kg' }, percentage1RMRange: { min: 0.57, max: 0.64, basedOnEstimated1RM: true }, rpeRange: { min: 6, max: 7 }, restSecondsRange: { min: 120, max: 180, isFixed: false }, setType: SetType.Backoff, tempo: '2010', orderIndex: generateRank(1), notes: t('set.squat.backoff', lang) },
     // Superset — curl + french (with fatigue + tempo)
-    { id: pstId('ss_curl_s1'), plannedExerciseItemId: peiId('ss_curl'), setCountRange: { min: 3, max: 4 }, countRange: { min: 10, max: 12, toFailure: ToFailureIndicator.None }, loadRange: { min: 25, max: 30, unit: 'kg' }, rpeRange: { min: 7, max: 8.5 }, restSecondsRange: { min: 0, max: 15, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 1.0 }, setType: SetType.Working, tempo: '2011', orderIndex: generateRank(0), notes: 'Contrazione di picco 1s in alto' },
-    { id: pstId('ss_french_s1'), plannedExerciseItemId: peiId('ss_french'), setCountRange: { min: 3, max: 4 }, countRange: { min: 10, max: 12, toFailure: ToFailureIndicator.None }, loadRange: { min: 20, max: 25, unit: 'kg' }, rpeRange: { min: 7, max: 8.5 }, restSecondsRange: { min: 90, max: 120, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 1.0 }, setType: SetType.Working, tempo: '3010', orderIndex: generateRank(0), notes: 'Eccentrica lenta, gomiti fermi' },
+    { id: pstId('ss_curl_s1'), plannedExerciseItemId: peiId('ss_curl'), setCountRange: { min: 3, max: 4 }, countRange: { min: 10, max: 12, toFailure: ToFailureIndicator.None }, loadRange: { min: 25, max: 30, unit: 'kg' }, rpeRange: { min: 7, max: 8.5 }, restSecondsRange: { min: 0, max: 15, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 1.0 }, setType: SetType.Working, tempo: '2011', orderIndex: generateRank(0), notes: t('set.curl.peak', lang) },
+    { id: pstId('ss_french_s1'), plannedExerciseItemId: peiId('ss_french'), setCountRange: { min: 3, max: 4 }, countRange: { min: 10, max: 12, toFailure: ToFailureIndicator.None }, loadRange: { min: 20, max: 25, unit: 'kg' }, rpeRange: { min: 7, max: 8.5 }, restSecondsRange: { min: 90, max: 120, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 1.0 }, setType: SetType.Working, tempo: '3010', orderIndex: generateRank(0), notes: t('set.french.ecc', lang) },
     // Standard2 — stacco + trazioni
     { id: pstId('s2_stacco_s1'), plannedExerciseItemId: peiId('s2_stacco'), setCountRange: { min: 3, max: 5 }, countRange: { min: 3, max: 5, toFailure: ToFailureIndicator.None }, loadRange: { min: 140, max: 160, unit: 'kg' }, rpeRange: { min: 7.5, max: 9 }, restSecondsRange: { min: 180, max: 300, isFixed: false }, fatigueProgressionProfile: { expectedRPEIncrementPerSet: 0.5, tolerance: 1.0 }, setType: SetType.Working, orderIndex: generateRank(0) },
-    { id: pstId('s2_trazioni_s1'), plannedExerciseItemId: peiId('s2_trazioni'), setCountRange: { min: 4, max: 4 }, countRange: { min: 6, max: 10, toFailure: ToFailureIndicator.TechnicalFailure }, rpeRange: { min: 8, max: 9.5 }, setType: SetType.Working, orderIndex: generateRank(0), notes: 'A corpo libero o zavorrare' },
+    { id: pstId('s2_trazioni_s1'), plannedExerciseItemId: peiId('s2_trazioni'), setCountRange: { min: 4, max: 4 }, countRange: { min: 6, max: 10, toFailure: ToFailureIndicator.TechnicalFailure }, rpeRange: { min: 8, max: 9.5 }, setType: SetType.Working, orderIndex: generateRank(0), notes: lang === 'it' ? 'A corpo libero o zavorrare' : 'Bodyweight or weighted' },
     // Cluster — squat (unchanged)
     { id: pstId('cl_squat_s1'), plannedExerciseItemId: peiId('cl_squat'), setCountRange: { min: 3, max: 3 }, countRange: { min: 2, max: 2, toFailure: ToFailureIndicator.None }, loadRange: { min: 120, max: 130, unit: 'kg' }, rpeRange: { min: 8, max: 9.5 }, setType: SetType.ClusterMiniSet, orderIndex: generateRank(0) },
     // Cluster Myo-style — panca
@@ -472,6 +754,7 @@ export async function loadFixtures() {
     plannedExerciseItems,
     plannedSets,
     EX,
+    lang,
     2 // 2 months back
   );
 
@@ -493,7 +776,7 @@ export async function loadFixtures() {
   const militaryEst = calc1RM(50, 6);
 
   const oneRepMaxRecords: OneRepMaxRecord[] = [
-    { id: nanoid(), exerciseId: EX.pancaPiana, value: 105, unit: 'kg', method: 'direct', testedLoad: 105, testedReps: 1, recordedAt: d(14), notes: 'Test in palestra' },
+    { id: nanoid(), exerciseId: EX.pancaPiana, value: 105, unit: 'kg', method: 'direct', testedLoad: 105, testedReps: 1, recordedAt: d(14), notes: lang === 'it' ? 'Test in palestra' : 'Gym test' },
     { id: nanoid(), exerciseId: EX.pancaPiana, value: pancaEst.average, unit: 'kg', method: 'indirect', testedLoad: 82.5, testedReps: 5, estimateBrzycki: pancaEst.brzycki, estimateEpley: pancaEst.epley, estimateLander: pancaEst.lander, recordedAt: d(3) },
     { id: nanoid(), exerciseId: EX.squat, value: 140, unit: 'kg', method: 'direct', testedLoad: 140, testedReps: 1, recordedAt: d(21) },
     { id: nanoid(), exerciseId: EX.stacco, value: 180, unit: 'kg', method: 'direct', testedLoad: 180, testedReps: 1, recordedAt: d(21) },
@@ -509,7 +792,7 @@ export async function loadFixtures() {
   // ===== SESSION TEMPLATES =====
   const sessionTemplates: SessionTemplate[] = [
     {
-      id: nanoid(), name: 'Upper body base', description: 'Template base per sessione upper body',
+      id: nanoid(), name: t('template.upper.name', lang), description: t('template.upper.desc', lang),
       content: {
         focusMuscleGroups: [MuscleGroup.Chest, MuscleGroup.Back, MuscleGroup.Shoulders, MuscleGroup.Arms],
         groups: [
@@ -550,7 +833,7 @@ export async function loadFixtures() {
       createdAt: d(10), updatedAt: d(10),
     },
     {
-      id: nanoid(), name: 'Lower body base', description: 'Template base per sessione lower body',
+      id: nanoid(), name: t('template.lower.name', lang), description: t('template.lower.desc', lang),
       content: {
         focusMuscleGroups: [MuscleGroup.Legs, MuscleGroup.Core],
         groups: [
@@ -604,7 +887,7 @@ export async function loadFixtures() {
   // ===== USER PROFILE =====
   const userProfile: UserProfile = {
     id: 'default',
-    name: 'Marco',
+    name: t('profile.name', lang),
     gender: 'male',
     createdAt: d(60),
     updatedAt: d(1),
@@ -624,3 +907,4 @@ export async function loadFixtures() {
 
   console.log('Fixtures loaded successfully');
 }
+

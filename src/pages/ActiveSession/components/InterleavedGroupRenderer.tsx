@@ -27,7 +27,7 @@ export default function InterleavedGroupRenderer(props: Pick<ExerciseGroupRender
     const { lg, gi } = props;
 
     const {
-        current, viewedSetParams, simpleMode, loadSuggestions,
+        current, viewedSetParams, simpleMode,
         onCompleteSet, onCompleteScreen, onSkipSet, onSkipRemainingSets,
         onSkipRound, onSkipRemainingRounds, onUncompleteSet, onAddRound,
         setViewedSetParams
@@ -229,7 +229,6 @@ export default function InterleavedGroupRenderer(props: Pick<ExerciseGroupRender
                                                             totalSets={liItem.sets.length}
                                                             counterType={liItem.exercise?.counterType ?? 'reps'}
                                                             expectedRPE={displaySet.expectedRPE}
-                                                            loadSuggestions={loadSuggestions}
                                                             completedSets={liItem.sets.filter(s => s.isCompleted).map((s, idx) => ({
                                                                 id: s.id, index: idx, count: s.actualCount, load: s.actualLoad, rpe: s.actualRPE, isSkipped: s.isSkipped, relativeIntensity: s.relativeIntensity,
                                                             }))}
@@ -309,7 +308,6 @@ export default function InterleavedGroupRenderer(props: Pick<ExerciseGroupRender
                                                                         totalSets={liItem.sets.length}
                                                                         counterType={liItem.exercise?.counterType ?? CounterType.Reps}
                                                                         expectedRPE={set.expectedRPE}
-                                                                        loadSuggestions={loadSuggestions}
                                                                         completedSets={liItem.sets.filter(s => s.isCompleted).map((s, idx) => ({
                                                                             id: s.id, index: idx, count: s.actualCount, load: s.actualLoad, rpe: s.actualRPE, isSkipped: s.isSkipped, relativeIntensity: s.relativeIntensity,
                                                                         }))}

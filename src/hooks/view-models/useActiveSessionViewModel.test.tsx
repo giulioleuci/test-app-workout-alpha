@@ -9,7 +9,6 @@ import { useSessionLoader } from '@/hooks/activeSession/useSessionLoader';
 import { useSessionHandlers } from '@/hooks/activeSession/useSessionHandlers';
 import { SessionNavigator } from '@/services/sessionNavigator';
 import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
-import { useLoadSuggestions } from '@/hooks/queries/sessionQueries';
 
 // Mocks
 vi.mock('react-router-dom', () => ({
@@ -36,10 +35,6 @@ vi.mock('@/services/sessionNavigator', () => ({
 
 vi.mock('@/hooks/queries/dashboardQueries', () => ({
   useUserRegulation: vi.fn(),
-}));
-
-vi.mock('@/hooks/queries/sessionQueries', () => ({
-  useLoadSuggestions: vi.fn(),
 }));
 
 vi.mock('@/services/systemService', () => ({
@@ -84,7 +79,6 @@ describe('useActiveSessionViewModel', () => {
     });
     vi.mocked(useSessionHandlers).mockReturnValue(mockHandlers as any);
     vi.mocked(useUserRegulation).mockReturnValue({ data: {} } as any);
-    vi.mocked(useLoadSuggestions).mockReturnValue({ data: [] } as any);
     vi.mocked(SessionNavigator.findNextTarget).mockReturnValue(null); // All done by default
   });
 

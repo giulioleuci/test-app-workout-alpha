@@ -7,11 +7,12 @@ import { queryClient } from '@/lib/queryClient';
 import { systemService } from '@/services/systemService';
 import { userService } from '@/services/userService';
 import { useActiveSessionStore } from '@/stores/activeSessionStore';
+import { OnboardingFlow } from './auth/OnboardingFlow';
 
 const UserSelectionPage = lazy(() => import('@/pages/UserSelectionPage'));
 
 export function UserGate({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<'loading' | 'select' | 'mounted'>('loading');
+  const [state, setState] = useState<'loading' | 'select' | 'mounted' | 'onboarding'>('loading');
   const [canGoBack, setCanGoBack] = useState(false);
   const [users, setUsers] = useState<GlobalUser[]>([]);
   const [pinTarget, setPinTarget] = useState<GlobalUser | null>(null);
@@ -31,6 +32,11 @@ export function UserGate({ children }: { children: React.ReactNode }) {
       await syncLanguage();
       const lastUserId = await systemService.getLastActiveUserId();
       const userList = await loadUsers();
+
+      if (userList.length === 0) {
+        setState('onboarding');
+        return;
+      }
 
       if (lastUserId) {
         const lastUser = userList.find(u => u.id === lastUserId);
@@ -75,7 +81,11 @@ export function UserGate({ children }: { children: React.ReactNode }) {
     setUsers(userList);
     setPinTarget(null);
     setCanGoBack(mounted);
-    setState('select');
+    if (userList.length === 0) {
+      setState('onboarding');
+    } else {
+      setState('select');
+    }
   }, [loadUsers, state]);
 
   const handleGoBack = useCallback(async () => {
@@ -99,6 +109,12 @@ export function UserGate({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">...</div>
       </div>
+    );
+  }
+
+  if (state === 'onboarding') {
+    return (
+      <OnboardingFlow onComplete={() => setState('select')} />
     );
   }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Loader2, Dumbbell, ArrowRight, ArrowLeft, ShieldCheck, CloudOff } from 'lucide-react';
+import { Loader2, Dumbbell, ArrowRight, ArrowLeft, ShieldCheck, CloudOff, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -10,6 +10,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogDescription
+} from '@/components/ui/dialog';
 import { useOnboardingMutations } from '@/hooks/mutations/onboardingMutations';
 import { INPUT_STEPS } from '@/domain/enums';
 
@@ -79,16 +87,76 @@ export default function OnboardingPage({ onComplete }: Props) {
     }
   };
 
+  const AppInfoModal = () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+          <Info className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Dumbbell className="h-6 w-6 text-primary" />
+          </div>
+          <DialogTitle className="text-center text-h4 font-black">
+            {t('onboarding.welcome')}
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Workout Tracker 2
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-6 pt-4">
+          <div className="rounded-xl border-2 border-primary/20 bg-muted/30 p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold tracking-tight text-foreground">
+                {t('onboarding.privacyTitle')}
+              </h3>
+            </div>
+            <p className="text-body-sm text-muted-foreground leading-relaxed">
+              {t('onboarding.appOfflineInfo')}
+            </p>
+            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-primary/70 uppercase tracking-wider">
+              <CloudOff className="h-3.5 w-3.5" />
+              <span>{t('users.noServersBadge')}</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 px-1">
+            <p className="text-xs font-bold text-foreground uppercase tracking-widest">
+              {t('onboarding.featuresTitle')}
+            </p>
+            <ul className="flex flex-col gap-2">
+              {[1, 2, 3].map((i) => (
+                <li key={i} className="flex items-start gap-3 text-body-sm text-muted-foreground">
+                  <div className="h-2 w-2 rounded-full bg-primary/40 mt-1.5 shrink-0" />
+                  <span>{t(`onboarding.feature${i}`)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md overflow-hidden border-none shadow-2xl sm:border">
-        <CardHeader className="space-y-2 text-center pb-4 bg-muted/20 border-b">
+        <CardHeader className="space-y-2 text-center pb-4 bg-muted/20 border-b relative">
           <div className="flex justify-between items-start">
              <div className="flex gap-1.5 mt-1">
               <div className={`h-1.5 w-6 rounded-full ${step === 1 ? 'bg-primary' : 'bg-muted'}`} />
               <div className={`h-1.5 w-6 rounded-full ${step === 2 ? 'bg-primary' : 'bg-muted'}`} />
             </div>
-            <LanguageSwitcher showLabel={false} className="scale-90 origin-right" />
+            <div className="flex items-center gap-1">
+              <AppInfoModal />
+              <LanguageSwitcher showLabel={false} className="scale-90 origin-right" />
+            </div>
           </div>
           
           <div className="mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
@@ -254,42 +322,8 @@ export default function OnboardingPage({ onComplete }: Props) {
             </div>
           )}
         </CardContent>
-
-        {/* INFORMATION FOOTER */}
-        <div className="px-6 py-6 bg-muted/30 border-t space-y-6">
-          <div className="rounded-xl border-2 border-primary/20 bg-background p-4 transition-all shadow-sm">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <h3 className="text-base font-bold tracking-tight text-foreground">
-                {t('onboarding.privacyTitle')}
-              </h3>
-            </div>
-            <p className="text-body-sm text-muted-foreground leading-relaxed">
-              {t('onboarding.appOfflineInfo')}
-            </p>
-            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-primary/70 uppercase tracking-wider">
-              <CloudOff className="h-3.5 w-3.5" />
-              <span>{t('users.noServersBadge')}</span>
-            </div>
-          </div>
-
-          <div className="space-y-3 px-1">
-            <p className="text-xs font-bold text-foreground uppercase tracking-widest">
-              {t('onboarding.featuresTitle')}
-            </p>
-            <ul className="flex flex-col gap-2">
-              {[1, 2, 3].map((i) => (
-                <li key={i} className="flex items-start gap-2 text-body-sm text-muted-foreground">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary/40 mt-1.5 shrink-0" />
-                  <span>{t(`onboarding.feature${i}`)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
       </Card>
     </div>
   );
 }
+

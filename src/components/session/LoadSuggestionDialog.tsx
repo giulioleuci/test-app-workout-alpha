@@ -127,13 +127,13 @@ export default function LoadSuggestionDialog({
       if (plannedSet?.rpeRange?.min && plannedSet?.countRange?.min) {
         const targetReps = plannedSet.countRange.min;
         const targetRPE = plannedSet.rpeRange.min;
-        const load = suggestLoad(p1RM.value, targetReps, targetRPE);
-        if (load) {
+        const loadResult = suggestLoad(p1RM.value, targetReps, targetRPE);
+        if (loadResult) {
           items.push({
             id: 'plannedRPE',
             type: 'plannedRPE',
             label: `RPE ${targetRPE}`,
-            load: Math.round(load * 2) / 2,
+            load: Math.round(loadResult.media * 2) / 2,
             description: `${t('loadSuggestion.methodPlannedRPE')} (${targetReps} ${t('enums.counterType.reps')}, ${methodLabel})`,
             priority: 4
           });
@@ -142,13 +142,13 @@ export default function LoadSuggestionDialog({
 
       if (plannedExerciseItem?.targetXRM) {
         const x = plannedExerciseItem.targetXRM;
-        const load = suggestLoad(p1RM.value, x, 10);
-        if (load) {
+        const loadResult = suggestLoad(p1RM.value, x, 10);
+        if (loadResult) {
           items.push({
             id: 'xrm',
             type: 'xrm',
             label: `${x}RM`,
-            load: Math.round(load * 2) / 2,
+            load: Math.round(loadResult.media * 2) / 2,
             description: `${x} reps max (${methodLabel})`,
             priority: 5
           });

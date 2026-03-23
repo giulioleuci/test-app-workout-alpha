@@ -902,6 +902,34 @@
     "back": "返回",
     "loading": "准备中..."
   },
+  "presentation": {
+    "title": "发现 Workout Tracker 2",
+    "offline": {
+      "title": "100% 离线",
+      "description": "您的数据保留在您的设备上。没有云端，没有追踪，极致的隐私和速度。"
+    },
+    "plans": {
+      "title": "训练计划",
+      "description": "创建复杂的训练流程，让应用自动管理课程轮转。"
+    },
+    "exercises": {
+      "title": "自定义动作库",
+      "description": "一个广泛的动作数据库，您可以根据需要进行自定义或扩展。"
+    },
+    "analytics": {
+      "title": "高级分析",
+      "description": "通过详细的图表追踪容量、1RM 估算和进度趋势。"
+    },
+    "suggestions": {
+      "title": "智能建议",
+      "description": "应用根据您的历史记录和目标强度建议使用的负荷。"
+    },
+    "features": {
+      "title": "专业功能",
+      "description": "RPE 追踪、休息计时器、热身计算器和高级疲劳监测。"
+    }
+  },
+
   "notFound": {
     "title": "404",
     "message": "页面未找到",

@@ -28,7 +28,7 @@ import DeveloperToolsSection from './Settings/components/DeveloperToolsSection';
 import RegulationSettingsSection from './Settings/components/RegulationSettingsSection';
 
 export default function SettingsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: profile, isLoading } = useUserRegulation();
@@ -73,6 +73,7 @@ export default function SettingsPage() {
   };
 
   const handleLoadFixtures = () => {
+    const currentLanguage = i18n.resolvedLanguage as 'en' | 'it' | 'es' | 'fr' | 'zh';
     setAlertConfig({
       open: true,
       title: t('settings.loadFixtures'),
@@ -80,7 +81,7 @@ export default function SettingsPage() {
       onConfirm: async () => {
         setIsLoadingFixtures(true);
         try {
-          await SystemMaintenanceService.loadFixtures();
+          await SystemMaintenanceService.loadFixtures(currentLanguage);
           toast({ title: t('settings.loadFixtures'), description: t('settings.fixturesSuccess') });
           await queryClient.invalidateQueries();
         } catch (e) {
@@ -94,10 +95,12 @@ export default function SettingsPage() {
   };
 
   const handleDeleteSelected = (selectedCategories: Set<string>) => {
+    const currentLanguage = i18n.resolvedLanguage as 'en' | 'it' | 'es' | 'fr' | 'zh';
     if (selectedCategories.size === 0) {
       toast({ title: t('settings.nothingSelected'), variant: 'destructive' });
       return;
     }
+
     setAlertConfig({
       open: true,
       title: t('settings.deleteDataTitle'),
@@ -105,7 +108,7 @@ export default function SettingsPage() {
       onConfirm: async () => {
         setIsDeleting(true);
         try {
-          await SystemMaintenanceService.clearUserData(selectedCategories);
+          await SystemMaintenanceService.clearUserData(selectedCategories, currentLanguage);
           toast({ title: t('settings.deleteDataTitle'), description: t('settings.fixturesSuccess') });
           await queryClient.invalidateQueries();
         } catch (e) {

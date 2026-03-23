@@ -36,7 +36,6 @@ export default function ActiveSession() {
     viewedSetParams: state.viewedSetParams,
     simpleMode: state.simpleMode,
     activeSessionId: state.activeSessionId,
-    loadSuggestions: state.loadSuggestions,
     setCountAdvice: state.setCountAdvice,
     onSwapItems: actions.onSwapItems,
     onViewPrevSet: actions.onViewPrevSet,

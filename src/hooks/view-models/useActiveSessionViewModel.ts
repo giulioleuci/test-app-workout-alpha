@@ -9,7 +9,6 @@ import { useSessionHandlers } from '@/hooks/activeSession/useSessionHandlers';
 import { useSessionLoader } from '@/hooks/activeSession/useSessionLoader';
 import { isGroupCompleted, isItemCompleted, rendersAsGroupUnit } from '@/hooks/activeSession/utils';
 import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
-import { useLoadSuggestions } from '@/hooks/queries/sessionQueries';
 import { SessionNavigator } from '@/services/sessionNavigator';
 import { adviseOnSetCount } from '@/services/setCountAdvisor';
 import { nativeDeviceService } from '@/services/nativeDeviceService';
@@ -51,25 +50,6 @@ export function useActiveSessionViewModel() {
 
   const current = SessionNavigator.findNextTarget(loadedGroups);
   const allDone = current === null;
-
-  const suggestionContext = useMemo(() => {
-    if (!current) return { exerciseId: '', previousSetsInSession: [], preferredMethod: 'lastSession' as const, fatigueSensitivity: 'medium' as const, simpleMode: false, exerciseOccurrenceIndex: 0, best1RM: null, lastSessionPerformance: null };
-    const ps = current.set.plannedSetId ? current.item.plannedSets[current.set.plannedSetId] : undefined;
-    const completed = current.item.sets.filter(s => s.isCompleted);
-    return {
-      exerciseId: current.item.item.exerciseId,
-      plannedSet: ps,
-      previousSetsInSession: completed,
-      preferredMethod: userRegulation?.preferredSuggestionMethod ?? 'lastSession',
-      fatigueSensitivity: userRegulation?.fatigueSensitivity ?? 'medium',
-      simpleMode,
-      exerciseOccurrenceIndex: current.item.occurrenceIndex,
-      best1RM: null,
-      lastSessionPerformance: null,
-    };
-  }, [current, userRegulation, simpleMode]);
-
-  const { data: loadSuggestions = [] } = useLoadSuggestions(suggestionContext);
 
   const setCountAdvice = useMemo(() => {
     if (!current || !current.item) return null;
@@ -203,7 +183,6 @@ export function useActiveSessionViewModel() {
       quickAddOpen,
       alertConfig: handlers.alertConfig,
       unresolvedSetsState: handlers.unresolvedSetsState,
-      loadSuggestions,
       setCountAdvice,
       activeUnits,
       completedUnits,

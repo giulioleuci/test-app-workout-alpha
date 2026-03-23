@@ -901,6 +901,34 @@
     "back": "Indietro",
     "loading": "Preparazione in corso..."
   },
+  "presentation": {
+    "title": "Scopri Workout Tracker 2",
+    "offline": {
+      "title": "100% Offline",
+      "description": "I tuoi dati restano sul tuo dispositivo. Niente cloud, niente tracciamento, massima privacy e velocità."
+    },
+    "plans": {
+      "title": "Piani di Allenamento",
+      "description": "Crea routine complesse e lascia che l'app gestisca la rotazione delle sessioni automaticamente."
+    },
+    "exercises": {
+      "title": "Libreria Personalizzata",
+      "description": "Un vasto database di esercizi che puoi personalizzare o espandere a tuo piacimento."
+    },
+    "analytics": {
+      "title": "Analisi Avanzata",
+      "description": "Monitora volumi, stime 1RM e trend di progresso con grafici dettagliati."
+    },
+    "suggestions": {
+      "title": "Suggerimenti Intelligenti",
+      "description": "L'app ti suggerisce il carico da usare in base al tuo storico e all'intensità target."
+    },
+    "features": {
+      "title": "Funzioni Pro",
+      "description": "Tracciamento RPE, timer di riposo, calcolatore riscaldamento e monitoraggio avanzato della fatica."
+    }
+  },
+
   "notFound": {
     "title": "404",
     "message": "Pagina non trovata",

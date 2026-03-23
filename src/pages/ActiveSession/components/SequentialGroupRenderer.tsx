@@ -25,7 +25,7 @@ export default function SequentialGroupRenderer(props: Pick<ExerciseGroupRendere
     const { lg, gi, liItems, itemIndices } = props;
 
     const {
-        current, viewedSetParams, simpleMode, loadSuggestions, setCountAdvice,
+        current, viewedSetParams, simpleMode, setCountAdvice,
         onCompleteSet, onSkipSet, onSkipRemainingSets, onUncompleteSet, onUncompleteLastSet, onAddSet,
         setViewedSetParams
     } = useSessionGroupContext();
@@ -186,7 +186,6 @@ export default function SequentialGroupRenderer(props: Pick<ExerciseGroupRendere
                                                         totalSets={allSets.length}
                                                         counterType={li.exercise?.counterType ?? CounterType.Reps}
                                                         expectedRPE={set.expectedRPE}
-                                                        loadSuggestions={loadSuggestions}
                                                         completedSets={allSets.filter((s) => s.set.isCompleted).map((s, idx: number) => ({
                                                             id: s.set.id,
                                                             index: idx,

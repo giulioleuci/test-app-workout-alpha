@@ -901,6 +901,34 @@
     "back": "Back",
     "loading": "Preparing..."
   },
+  "presentation": {
+    "title": "Discover Workout Tracker 2",
+    "offline": {
+      "title": "100% Offline",
+      "description": "Your data stays on your device. No cloud, no tracking, maximum privacy and speed."
+    },
+    "plans": {
+      "title": "Training Plans",
+      "description": "Create complex routines and let the app manage session rotation automatically."
+    },
+    "exercises": {
+      "title": "Custom Library",
+      "description": "An extensive database of exercises that you can customize or expand as you wish."
+    },
+    "analytics": {
+      "title": "Advanced Analytics",
+      "description": "Track volumes, 1RM estimates, and progress trends with detailed charts."
+    },
+    "suggestions": {
+      "title": "Smart Suggestions",
+      "description": "The app suggests the load to use based on your history and target intensity."
+    },
+    "features": {
+      "title": "Pro Features",
+      "description": "RPE tracking, rest timers, warmup calculator, and advanced fatigue monitoring."
+    }
+  },
+
   "notFound": {
     "title": "404",
     "message": "Page not found",

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { motion } from 'framer-motion';
-import { Plus, ArrowLeft, Dumbbell, ShieldCheck, CloudOff } from 'lucide-react';
+import { Plus, ArrowLeft, Dumbbell, ShieldCheck, CloudOff, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { CreateUserDialog } from '@/components/auth/CreateUserDialog';
@@ -9,6 +9,14 @@ import { PinEntryDialog } from '@/components/auth/PinEntryDialog';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogDescription
+} from '@/components/ui/dialog';
 import type { GlobalUser } from '@/domain/global-entities';
 
 interface Props {
@@ -27,9 +35,67 @@ export default function UserSelectionPage({
   const { t } = useTranslation();
   const [createOpen, setCreateOpen] = useState(false);
 
+  const AppInfoModal = () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+          <Info className="h-5 w-5 text-muted-foreground" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Dumbbell className="h-6 w-6 text-primary" />
+          </div>
+          <DialogTitle className="text-center text-h4 font-black">
+            {t('onboarding.welcome')}
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Workout Tracker 2
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-6 pt-4">
+          <div className="rounded-xl border-2 border-primary/20 bg-muted/30 p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold tracking-tight text-foreground">
+                {t('users.privacyTitle')}
+              </h3>
+            </div>
+            <p className="text-body-sm text-muted-foreground leading-relaxed">
+              {t('users.appOfflineInfo')}
+            </p>
+            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-primary/70 uppercase tracking-wider">
+              <CloudOff className="h-3.5 w-3.5" />
+              <span>{t('users.noServersBadge')}</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 px-1">
+            <p className="text-xs font-bold text-foreground uppercase tracking-widest">
+              {t('onboarding.featuresTitle')}
+            </p>
+            <ul className="flex flex-col gap-2">
+              {[1, 2, 3].map((i) => (
+                <li key={i} className="flex items-start gap-3 text-body-sm text-muted-foreground">
+                  <div className="h-2 w-2 rounded-full bg-primary/40 mt-1.5 shrink-0" />
+                  <span>{t(`onboarding.feature${i}`)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-6">
-      <div className="absolute right-6 top-6">
+      <div className="absolute right-6 top-6 flex items-center gap-2">
+        <AppInfoModal />
         <LanguageSwitcher showLabel={false} />
       </div>
 
@@ -81,54 +147,22 @@ export default function UserSelectionPage({
               ))}
 
               {users.length === 0 && (
-                <div className="rounded-xl border-2 border-dashed p-10 text-center">
-                  <p className="text-body-sm font-medium text-muted-foreground">
+                <div className="rounded-xl border-2 border-dashed p-10 text-center bg-muted/10">
+                  <p className="text-body-sm font-bold text-muted-foreground mb-4">
                     {t('users.noUsers')}
+                  </p>
+                  <p className="text-xs text-muted-foreground/70 leading-relaxed">
+                    {t('onboarding.step1Subtitle')}
                   </p>
                 </div>
               )}
             </div>
 
-            <Button className="w-full h-12 text-base font-bold shadow-lg" onClick={() => setCreateOpen(true)}>
-              <Plus className="mr-2 h-5 w-5" />
+            <Button className="w-full h-14 text-lg font-black shadow-lg" onClick={() => setCreateOpen(true)}>
+              <Plus className="mr-2 h-6 w-6" />
               {t('users.createUser')}
             </Button>
           </CardContent>
-
-          {/* INFORMATION FOOTER */}
-          <div className="px-6 py-6 bg-muted/30 border-t space-y-6">
-            <div className="rounded-xl border-2 border-primary/20 bg-background p-4 transition-all shadow-sm">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <h3 className="text-base font-bold tracking-tight text-foreground">
-                  {t('users.privacyTitle')}
-                </h3>
-              </div>
-              <p className="text-body-sm text-muted-foreground leading-relaxed">
-                {t('users.appOfflineInfo')}
-              </p>
-              <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-primary/70 uppercase tracking-wider">
-                <CloudOff className="h-3.5 w-3.5" />
-                <span>{t('users.noServersBadge')}</span>
-              </div>
-            </div>
-
-            <div className="space-y-3 px-1">
-              <p className="text-xs font-bold text-foreground uppercase tracking-widest">
-                {t('onboarding.featuresTitle')}
-              </p>
-              <ul className="flex flex-col gap-2">
-                {[1, 2, 3].map((i) => (
-                  <li key={i} className="flex items-start gap-2 text-body-sm text-muted-foreground">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary/40 mt-1.5 shrink-0" />
-                    <span>{t(`onboarding.feature${i}`)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </Card>
       </motion.div>
 
@@ -140,3 +174,4 @@ export default function UserSelectionPage({
     </div>
   );
 }
+
