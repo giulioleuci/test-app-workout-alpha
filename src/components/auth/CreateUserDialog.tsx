@@ -54,8 +54,8 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <div className="absolute right-12 top-6">
-          <LanguageSwitcher showLabel={false} />
+        <div className="absolute right-4 top-12 z-50">
+          <LanguageSwitcher showLabel={false} iconOnly={true} />
         </div>
         <DialogHeader>
           <DialogTitle>{t('users.createUser')}</DialogTitle>
