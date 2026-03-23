@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useOnboardingMutations } from '@/hooks/mutations/onboardingMutations';
-import { INPUT_STEPS } from '@/lib/formatting';
+import { INPUT_STEPS } from '@/domain/enums';
 
 interface Props {
   onComplete: () => void;
