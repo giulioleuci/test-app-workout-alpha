@@ -15,6 +15,7 @@ A modern, offline-first workout tracking application built with React, Vite, and
 - **Offline First**: Built on IndexedDB (via Dexie.js), ensuring full functionality without an internet connection.
 - **Data Backup & Restore**: Securely export your data to a file and restore it whenever needed.
 - **Mobile Optimized**: Fully responsive design with PWA capabilities and Capacitor support for mobile platforms.
+- **Internationalization**: Full support for English (primary), Italian, French, Spanish, and Chinese.
 
 ## Tech Stack
 

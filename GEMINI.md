@@ -1,54 +1,63 @@
-# Workout Tracker 2 Project Context
+# Workout Tracker 2 - Project Context
 
 This document provides essential context and instructions for working on the Workout Tracker 2 project with Gemini CLI.
 
 ## Project Overview
 
-The Workout Tracker 2 is a modern, offline-first web and mobile application designed for serious lifters. It focuses on detailed session tracking, volume analysis, and progress monitoring.
+Workout Tracker 2 is a modern, offline-first web and mobile application designed for serious lifters. It focuses on detailed session tracking, volume analysis, progress monitoring, and seamless data management.
 
 ### Core Tech Stack
 - **Frontend**: React 18, TypeScript, Vite
-- **Styling**: Tailwind CSS, Shadcn UI, Radix UI primitives, Lucide icons
-- **State Management**: Zustand (global state), Tanstack Query (server/async state)
+- **Styling**: Tailwind CSS, Shadcn UI (Radix UI primitives), Lucide Icons
+- **State Management**: Zustand (transient UI & active session state), Tanstack Query (server/async state)
 - **Database**: Dexie.js (IndexedDB wrapper) for persistent offline storage
-- **Mobile Integration**: Capacitor (Android/iOS support)
+- **Mobile Integration**: Capacitor (Android support)
 - **Forms & Validation**: React Hook Form, Zod
-- **Testing**: Vitest (Unit/Integration), Playwright (Visual/Smoke)
+- **Testing**: Vitest (Unit/Integration), Playwright (E2E/Visual)
+- **i18n**: i18next (React-i18next)
 
 ### Architecture
-The project follows a modular structure:
-- `src/design-system/`: Centralized source of truth for design tokens (colors, spacing, typography, etc.).
-- `src/components/`: UI components, categorized by feature (analytics, dashboard, exercises, layout, planning, session).
-- `src/components/ui/`: Base UI library (Shadcn UI).
-- `src/db/`: Database schema (Dexie), fixtures, and seeding logic.
-- `src/domain/`: Domain entities, enums, and value objects (the core "business" model).
-- `src/services/`: Business logic and data processing (analytics, compliance, performance, etc.).
-- `src/stores/`: Zustand stores for application state (e.g., `activeSessionStore`).
+The project follows a modular and domain-centric structure:
+- `src/domain/`: Core business logic, including `entities.ts`, `enums.ts`, and `value-objects.ts`.
+- `src/db/`: Database schema (Dexie), migrations (currently v14), and lifecycle management.
+- `src/services/`: Pure business logic and data processing (e.g., analytics, 1RM calculations).
+- `src/stores/`: Zustand stores for application-wide state (e.g., `activeSessionStore.ts`).
+- `src/hooks/`: Custom React hooks, divided into `queries/`, `mutations/`, and feature-specific hooks.
+- `src/components/`: UI components categorized by feature (analytics, dashboard, exercises, layout, planning, session).
+- `src/components/ui/`: Base UI library components (Shadcn UI).
 - `src/pages/`: Page-level components and routing.
-- `src/hooks/`: Reusable React hooks.
-- `src/lib/`: Shared utilities and formatting helpers.
+- `src/design-system/`: Centralized source of truth for design tokens (colors, spacing, typography, etc.).
+- `src/lib/`: Shared utilities, formatting helpers, and core library wrappers (dayjs, lexorank).
+
+### Architecture & Patterns
+The application adheres to several key architectural patterns to ensure scalability, reliability, and offline performance:
+
+1.  **Offline-First & Local-First Architecture**: The primary source of truth is the local IndexedDB (via Dexie.js). All data operations are performed locally first, ensuring the app remains fully functional without an internet connection.
+2.  **Domain-Driven Design (DDD) Principles**:
+    *   **Entities & Value Objects**: Core logic is encapsulated in domain entities and value objects (e.g., `PlannedWorkout`, `SessionSet`, `RPERange`).
+    *   **Service Layer**: Business-critical calculations (analytics, volume tracking, 1RM estimation) are isolated in the `src/services` layer, making them pure, testable, and independent of UI logic.
+3.  **Reactive & Flux-like State Management**:
+    *   **Zustand (Global Store)**: Used for ephemeral or highly reactive UI state, such as the `activeSessionStore` which manages the real-time logging of a workout.
+    *   **Tanstack Query (Server/Async State)**: Orchestrates the synchronization between the React UI and the asynchronous Dexie.js database. It handles caching, optimistic updates, and invalidation logic.
+4.  **Separation of Concerns (SoC)**:
+    *   **Hooks for Logic**: Complex UI-related logic and data fetching are abstracted into custom hooks, keeping components focused on rendering.
+    *   **View Models**: Where necessary, hooks act as view models, transforming domain data into UI-ready formats.
+5.  **Historical Tracking (SCD Type 2)**: The database maintains historical versions of exercises (`ExerciseVersion`) to ensure that past workout history remains accurate even if exercise metadata (name, muscles) changes over time.
+6.  **LexoRank for Ordering**: All user-sortable lists (sessions, exercise groups, sets) use LexoRank (string-based ordering) to allow for efficient reordering without bulk updates to the database.
 
 ## Design System & UI
 
-The project employs a centralized, token-based Design System to ensure visual consistency, accessibility, and themeability.
+The project uses a centralized, token-based Design System to ensure visual consistency and themeability.
 
 ### Core Principles
-- **Single Source of Truth**: All design decisions (colors, spacing, typography, z-index, breakpoints) are defined as tokens in `src/design-system/tokens/`.
+- **Tokens as Truth**: All design decisions (colors, spacing, typography, etc.) are defined as tokens in `src/design-system/tokens/`.
 - **Theme-First**: All components must support Light/Dark modes and the active Color Palette.
-- **Semantic Mapping**: Avoid hardcoded values. Use semantic utility classes (e.g., `.text-h1`, `.text-on-primary`) or token references.
+- **Semantic Classes**: Prefer semantic classes (e.g., `text-h1`, `text-body`) or utility classes over hardcoded values.
 
-### UI Component Library
-- **Shadcn UI**: Built on **Radix UI** primitives. Located in `src/components/ui/`.
-- **Tailwind CSS**: Used for all layout and component styling.
-- **Lucide Icons**: Standard icon set.
-
-### Styling Conventions
-- **Spacing**: Use standard Tailwind spacing or the `spacing` token object for inline styles.
-- **Typography**: Use semantic classes defined in `index.css`:
-  - `text-h1` to `text-h4` for headings.
-  - `text-body` and `text-body-sm` for content.
-  - `text-caption` for metadata (10px).
-- **Colors**: Reference HSL variables (e.g., `text-primary`, `bg-card`) which are dynamically updated by the palette system.
+### UI Library
+- **Shadcn UI**: Built on Radix UI primitives. Located in `src/components/ui/`.
+- **Tailwind CSS**: Primary styling method.
+- **Lucide Icons**: Standard icon set for the application.
 
 ## Building and Running
 
@@ -63,7 +72,7 @@ npm run lint
 
 ### Building
 ```bash
-# Create a production-ready build
+# Create a production build
 npm run build
 
 # Build for development mode
@@ -77,6 +86,9 @@ npm test
 
 # Run tests in watch mode
 npm run test:watch
+
+# Run E2E tests (Playwright)
+npm run test:e2e
 ```
 
 ### Mobile Development
@@ -84,7 +96,7 @@ npm run test:watch
 # Sync web assets to native platforms
 npx cap sync
 
-# Open native projects
+# Open native projects (requires Android Studio / Xcode)
 npx cap open android
 npx cap open ios
 ```
@@ -92,24 +104,20 @@ npx cap open ios
 ## Development Conventions
 
 ### Data Persistence
-- Use **Dexie.js** for all persistent data. Avoid `localStorage` for workout data.
-- Database versions and upgrades are managed in `src/db/database.ts`.
-
-### Styling & UI
-- Use **Tailwind CSS** for layout and custom styling.
-- Prefer **Shadcn UI** components located in `src/components/ui/`.
-- Ensure a mobile-first, responsive design.
+- **Offline First**: All workout data is stored locally in IndexedDB using Dexie.js.
+- **Schema Management**: Database versions and upgrades are managed in `src/db/database.ts`. Ensure new migrations are added sequentially.
+- **LexoRank**: The project uses LexoRank for efficient ordering of sessions, groups, and sets.
 
 ### State Management
-- Use **Zustand** for transient UI state and the active session state.
-- Use **Tanstack Query** (React Query) if interacting with external APIs or managing complex data fetching/caching logic.
-
-### Testing
-- Write Vitest tests for all new services and complex logic in `src/test/`.
-- Use `fake-indexeddb` for database-related tests.
-- Visual regressions and smoke tests are located in `tests/visual/` using Playwright.
+- Use **Zustand** for complex UI state that requires cross-component synchronization (e.g., active session logging).
+- Use **Tanstack Query** for data fetching and synchronization with IndexedDB.
 
 ### Code Style
-- Follow the established ESLint and TypeScript configurations.
-- Use functional components and React hooks.
-- Define domain models in `src/domain/` to ensure type safety across the application.
+- Follow functional component patterns with React hooks.
+- Strict TypeScript usage for all domain models and service logic.
+- Use `dayjs` for all date manipulations.
+
+### Testing
+- Write Vitest tests for all new services and complex domain logic.
+- Use `fake-indexeddb` for database-related tests.
+- Visual regressions and smoke tests are handled via Playwright.
