@@ -6,6 +6,47 @@ This document provides essential context and instructions for working on the Wor
 
 Workout Tracker 2 is a modern, offline-first web and mobile application designed for serious lifters. It focuses on detailed session tracking, volume analysis, progress monitoring, and seamless data management.
 
+## Detailed Feature Set
+
+### 1. Training & Active Session Logging
+- **Real-time Logging**: Intuitive interface for tracking sets, reps, load, and RPE during a workout.
+- **Smart Load Suggestions**: Dynamic load recommendations based on historical performance and calculated intensity.
+- **Warmup Calculator**: Automatic generation of warmup sets tailored to your target working weight.
+- **Rest Timer**: Integrated, configurable timers for managing recovery periods between sets.
+- **Exercise Substitution**: Seamlessly replace exercises during an active session while maintaining progress.
+- **Performance & Compliance Feedback**: Real-time badges indicating how your current performance compares to your plan and past sessions.
+- **Cluster Set Support**: Specialized tracking for cluster sets and rest-pause training.
+- **In-Session History**: Quick-access view of your past performance for the specific exercise you're performing.
+- **Fatigue Monitoring**: Real-time indicators showing potential fatigue accumulation during a session.
+
+### 2. Workout Planning & Template Management
+- **Template Creator**: Build and organize reusable workout routines (templates) to streamline your training.
+- **Volume Analysis**: Deep-dive analysis of planned session volume, categorized by muscle group and movement pattern.
+- **Muscle Overlap Matrix**: Visualize how exercises in a session interact and overlap in terms of muscle activation.
+- **Warmup Strategy Configuration**: Define custom warmup progressions for different exercises or muscle groups.
+- **LexoRank Sorting**: Drag-and-drop reordering of exercises and sets using efficient LexoRank logic.
+
+### 3. Advanced Analytics & Progress Tracking
+- **Volume & Load Visualization**: Track total volume, average load, and tonnage over time with interactive charts.
+- **Performance Trend Indicators**: Sophisticated indicators showing if you are progressing, plateauing, or overreaching.
+- **Intensity & RPE Analysis**: Breakdown of training intensity distribution and perceived exertion trends.
+- **Theoretical Performance Matrix**: Project your estimated 1RM across different repetition ranges based on your current data.
+- **Strength-to-Weight Correlation**: Analyze your strength progress relative to your body weight trends.
+- **Compliance Tracking**: Statistical analysis of how closely you adhere to your planned volume and intensity targets.
+
+### 4. Exercise Library & Management
+- **Extensive Exercise Database**: A comprehensive, searchable library of exercises with detailed metadata (muscles, movement patterns).
+- **Historical Versioning (SCD Type 2)**: Maintains accuracy of past workout history by versioning exercises; if you rename or update an exercise, old records stay intact.
+- **Custom Exercises**: Full support for adding and managing user-defined exercises.
+
+### 5. Core Platform Features
+- **Offline-First (IndexedDB)**: Built with Dexie.js for full functionality without internet, ensuring your data is always accessible.
+- **Dashboard & Calendar**: A centralized training calendar and dashboard for an overview of your training consistency.
+- **Backup & Portability**: Secure file-based export/import for data backup and cross-device migration.
+- **Multi-User Profiles**: Support for multiple local user profiles with independent training data and profile management.
+- **Internationalization (i18n)**: Fully localized in English, Italian, French, Spanish, and Chinese.
+- **Cross-Platform Support**: Responsive web app, PWA, and native Android/iOS builds via Capacitor.
+
 ### Core Tech Stack
 - **Frontend**: React 18, TypeScript, Vite
 - **Styling**: Tailwind CSS, Shadcn UI (Radix UI primitives), Lucide Icons
