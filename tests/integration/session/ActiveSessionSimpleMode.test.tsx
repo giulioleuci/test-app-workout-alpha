@@ -212,15 +212,15 @@ describe('ActiveSession Simple Mode', () => {
       expect(el).toBeInTheDocument();
     }, { timeout: 3000 });
 
-    // Wait for the suggestion badge to render (React Query async)
-    let suggestionBtn: HTMLElement;
+    // Wait for the suggestion button to render (React Query async)
+    let suggestionBtns: HTMLElement[];
     await waitFor(() => {
-      suggestionBtn = screen.getByText(/Load suggestion/i);
-      expect(suggestionBtn).toBeInTheDocument();
+      suggestionBtns = screen.getAllByTitle(/Load suggestion/i);
+      expect(suggestionBtns.length).toBeGreaterThan(0);
     }, { timeout: 3000 });
 
     // Open the suggestion dialog
-    fireEvent.click(suggestionBtn!);
+    fireEvent.click(suggestionBtns[0]);
 
     await waitFor(() => {
       // Should show "Last Session: 100 kg × 5 rep" (translated labels)

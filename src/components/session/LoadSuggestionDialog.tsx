@@ -85,11 +85,13 @@ export default function LoadSuggestionDialog({
         type: 'lastSession',
         label: t('activeSession.last'),
         load: lastSetPerf.actualLoad,
-        description: t('loadSuggestion.reasonLastSession', { 
-          load: lastSetPerf.actualLoad, 
-          reps: lastSetPerf.actualCount, 
-          rpe: lastSetPerf.actualRPE 
-        }),
+        description: profile?.simpleMode
+          ? t('loadSuggestion.reasonLastSessionSimple', { load: lastSetPerf.actualLoad, reps: lastSetPerf.actualCount })
+          : t('loadSuggestion.reasonLastSession', {
+              load: lastSetPerf.actualLoad,
+              reps: lastSetPerf.actualCount,
+              rpe: lastSetPerf.actualRPE
+            }),
         priority: 1
       });
     }
@@ -100,11 +102,13 @@ export default function LoadSuggestionDialog({
         type: 'lastSession',
         label: t('loadSuggestion.methodLastSession'),
         load: lastGeneralPerf.load,
-        description: t('loadSuggestion.reasonLastSession', { 
-          load: lastGeneralPerf.load, 
-          reps: lastGeneralPerf.reps, 
-          rpe: lastGeneralPerf.rpe 
-        }),
+        description: profile?.simpleMode
+          ? t('loadSuggestion.reasonLastSessionSimple', { load: lastGeneralPerf.load, reps: lastGeneralPerf.reps })
+          : t('loadSuggestion.reasonLastSession', {
+              load: lastGeneralPerf.load,
+              reps: lastGeneralPerf.reps,
+              rpe: lastGeneralPerf.rpe
+            }),
         priority: 2
       });
     }
@@ -196,11 +200,11 @@ export default function LoadSuggestionDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {variant === 'icon' ? (
-          <Button variant="ghost" size="icon" className="h-4 w-4 text-primary hover:text-primary/80">
+          <Button variant="ghost" size="icon" className="h-4 w-4 text-primary hover:text-primary/80" title={t('loadSuggestion.title')}>
             <Sparkles className="h-3 w-3" />
           </Button>
         ) : (
-          <Button variant="ghost" size="sm" className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground" title={t('loadSuggestion.title')}>
             <Sparkles className="h-3.5 w-3.5" />
             <span className="text-body-sm">{t('loadSuggestion.title')}</span>
           </Button>
