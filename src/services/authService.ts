@@ -1,3 +1,4 @@
+// FEATURE HIDDEN: PIN logic is retained but hidden from UI
 export async function hashPin(pin: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(pin);
@@ -6,6 +7,7 @@ export async function hashPin(pin: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// FEATURE HIDDEN: PIN logic is retained but hidden from UI
 export async function verifyPin(pin: string, storedHash: string): Promise<boolean> {
   const hash = await hashPin(pin);
   return hash === storedHash;

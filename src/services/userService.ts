@@ -14,6 +14,7 @@ export const userService = {
     return globalUserRepository.getById(id);
   },
 
+  // FEATURE HIDDEN: PIN logic is retained but hidden from UI
   createUser: async (name: string, pinHash: string | null = null, avatarColor?: string): Promise<GlobalUser> => {
     const count = await globalUserRepository.count();
     const user: GlobalUser = {

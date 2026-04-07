@@ -215,6 +215,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                     )} />
 
                     <div className="flex gap-4">
+                      {/* FEATURE HIDDEN: PIN creation is currently hidden from UI but logic is retained.
                       <FormField control={form.control} name="pin" render={({ field }) => (
                         <FormItem className="flex-1">
                           <FormLabel className="text-[10px] font-black uppercase tracking-widest">{t('users.pin')}</FormLabel>
@@ -231,6 +232,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                           <FormMessage />
                         </FormItem>
                       )} />
+                      */}
 
                       <FormField control={form.control} name="avatarColor" render={({ field }) => (
                         <FormItem className="flex-1">
