@@ -73,4 +73,17 @@ describe('ExerciseRepository', () => {
     const found = await ExerciseRepository.getById(ex.id);
     expect(found).toBeUndefined();
   });
+
+  it('rejects add() when name is empty string', async () => {
+    const ex = { ...createExercise('Test'), name: '' };
+    await expect(ExerciseRepository.add(ex)).rejects.toThrow('Repository validation failed');
+  });
+
+  it('rejects update() when name is set to empty string', async () => {
+    const ex = createExercise('Squat');
+    await ExerciseRepository.add(ex);
+    await expect(
+      ExerciseRepository.update(ex.id, { name: '' })
+    ).rejects.toThrow('Repository validation failed');
+  });
 });

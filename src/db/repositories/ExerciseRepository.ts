@@ -1,27 +1,27 @@
 /**
  * Repository for Exercise-related operations.
- * Owns table: exercises
+ * Owns tables: exercises, exerciseVersions
+ * All write operations validate via ExerciseSchema / ExerciseVersionSchema.
  */
 import { nanoid } from 'nanoid';
 
 import type { Exercise, ExerciseVersion } from '@/domain/entities';
+import { ExerciseSchema, ExerciseVersionSchema } from '@/domain/schemas';
 
 import { db } from '../database';
-
+import { BaseRepository } from './BaseRepository';
 import type { ExerciseFilters } from './types';
 
-export class ExerciseRepository {
+export class ExerciseRepository extends BaseRepository {
   static async getById(id: string): Promise<Exercise | undefined> {
-    const exercise = await db.exercises.get(id);
-    if (!exercise) return undefined;
-    return exercise;
+    return db.exercises.get(id);
   }
 
   static async getLatestVersion(exerciseId: string): Promise<ExerciseVersion | undefined> {
     const versions = await db.exerciseVersions
       .where('exerciseId').equals(exerciseId)
       .sortBy('versionTimestamp');
-    return versions[versions.length - 1]; // Latest version
+    return versions[versions.length - 1];
   }
 
   static async getVersion(versionId: string): Promise<ExerciseVersion | undefined> {
@@ -42,6 +42,7 @@ export class ExerciseRepository {
   }
 
   static async add(exercise: Exercise): Promise<string> {
+    this.validateData(ExerciseSchema, exercise);
     const now = new Date();
     await db.transaction('rw', [db.exercises, db.exerciseVersions], async () => {
       await db.exercises.add(exercise);
@@ -57,6 +58,7 @@ export class ExerciseRepository {
         counterType: exercise.counterType,
         versionTimestamp: now,
       };
+      this.validateData(ExerciseVersionSchema, version);
       await db.exerciseVersions.add(version);
     });
     return exercise.id;
@@ -71,13 +73,11 @@ export class ExerciseRepository {
   }
 
   static async update(id: string, changes: Partial<Exercise>): Promise<number> {
+    this.validateData(ExerciseSchema.partial(), changes);
     return await db.transaction('rw', [db.exercises, db.exerciseVersions], async () => {
       const current = await db.exercises.get(id);
       if (!current) return 0;
-
       const latestVersion = await this.getLatestVersion(id);
-
-      // Check if structural properties changed between changes and the latest version
       const needsNewVersion = latestVersion && (
         (changes.name !== undefined && changes.name !== latestVersion.name) ||
         (changes.type !== undefined && changes.type !== latestVersion.type) ||
@@ -87,7 +87,6 @@ export class ExerciseRepository {
         (changes.secondaryMuscles !== undefined && JSON.stringify(changes.secondaryMuscles) !== JSON.stringify(latestVersion.secondaryMuscles)) ||
         (changes.equipment !== undefined && JSON.stringify(changes.equipment) !== JSON.stringify(latestVersion.equipment))
       );
-
       if (needsNewVersion) {
         const newVersion: ExerciseVersion = {
           id: nanoid(),
@@ -101,11 +100,9 @@ export class ExerciseRepository {
           counterType: changes.counterType ?? current.counterType,
           versionTimestamp: new Date(),
         };
+        this.validateData(ExerciseVersionSchema, newVersion);
         await db.exerciseVersions.add(newVersion);
       }
-
-      // If we are passing through structural changes via `update` directly to the `Exercise` container,
-      // it means we keep the container in sync with the latest version. This works well for the UI.
       return await db.exercises.update(id, changes);
     });
   }
@@ -121,7 +118,6 @@ export class ExerciseRepository {
     const sessionItemsCount = await db.sessionExerciseItems.where('exerciseId').equals(id).count();
     const plannedItemsCount = await db.plannedExerciseItems.where('exerciseId').equals(id).count();
     const oneRepMaxCount = await db.oneRepMaxRecords.where('exerciseId').equals(id).count();
-
     let templatesCount = 0;
     const templates = await db.sessionTemplates.toArray();
     for (const template of templates) {
@@ -129,7 +125,6 @@ export class ExerciseRepository {
         templatesCount++;
       }
     }
-
     return sessionItemsCount + plannedItemsCount + oneRepMaxCount + templatesCount;
   }
 
@@ -164,38 +159,23 @@ export class ExerciseRepository {
   static async getExercisesByCriteria(filters: ExerciseFilters): Promise<Exercise[]> {
     const excludeArchived = filters.isArchived !== true;
     const searchLower = filters.search?.toLowerCase();
-
     const matchesFilters = (e: Exercise): boolean => {
       if (excludeArchived && e.isArchived) return false;
       if (filters.equipment?.length) {
         const eqArray = Array.isArray(e.equipment) ? e.equipment : [e.equipment];
         if (!filters.equipment.some(eq => eqArray.includes(eq))) return false;
       }
-      if (filters.movementPattern?.length) {
-        if (!filters.movementPattern.includes(e.movementPattern)) return false;
-      }
-      if (searchLower) {
-        if (!e.name.toLowerCase().includes(searchLower)) return false;
-      }
+      if (filters.movementPattern?.length && !filters.movementPattern.includes(e.movementPattern)) return false;
+      if (searchLower && !e.name.toLowerCase().includes(searchLower)) return false;
       return true;
     };
-
-    // Use primaryMuscles multi-value index if muscleGroups filter is provided
     if (filters.muscleGroups?.length) {
       const results = await db.exercises
-        .where('primaryMuscles')
-        .anyOf(filters.muscleGroups)
-        .filter(matchesFilters)
-        .toArray();
-      // Deduplicate (an exercise may match multiple muscles)
+        .where('primaryMuscles').anyOf(filters.muscleGroups)
+        .filter(matchesFilters).toArray();
       const seen = new Set<string>();
-      return results.filter(e => {
-        if (seen.has(e.id)) return false;
-        seen.add(e.id);
-        return true;
-      });
+      return results.filter(e => { if (seen.has(e.id)) return false; seen.add(e.id); return true; });
     }
-
     return db.exercises.filter(matchesFilters).toArray();
   }
 }
