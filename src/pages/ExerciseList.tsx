@@ -14,7 +14,7 @@ import { ListPageSkeleton } from '@/components/ui/page-skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Exercise } from '@/domain/entities';
 import { Equipment, Muscle, MovementPattern } from '@/domain/enums';
-import { useExerciseList } from '@/hooks/queries/workoutQueries';
+import { useExerciseList } from '@/hooks/queries/exerciseQueries';
 import { useExerciseFilters, type SortKey } from '@/hooks/useExerciseFilters';
 
 export default function ExerciseList() {

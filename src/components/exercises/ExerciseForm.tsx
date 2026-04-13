@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import type { Exercise } from '@/domain/entities';
 import { Muscle, Equipment, MovementPattern, CounterType, ExerciseType } from '@/domain/enums';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
+import { useExerciseMutations } from '@/hooks/mutations/exerciseMutations';
 import { addVariant, removeVariant } from '@/services/exerciseVariantService';
 
 import VariantsSection from './components/VariantsSection';
@@ -45,7 +45,7 @@ export type ExerciseFormValues = z.infer<typeof exerciseSchema>;
 
 export function ExerciseForm({ exercise, allExercises, onSaved }: Props) {
   const { t } = useTranslation();
-  const mutations = useWorkoutMutations();
+  const mutations = useExerciseMutations();
   const [variantIds, setVariantIds] = useState<string[]>(exercise?.variantIds ?? []);
 
   const availableForVariants = useMemo(() => {
