@@ -15,8 +15,14 @@ import type {
     HydratedPlannedSession, HydratedPlannedGroup, HydratedPlannedItem, HydratedPlannedWorkout
 } from './types';
 
+import {
+    PlannedWorkoutSchema, PlannedSessionSchema, PlannedExerciseGroupSchema,
+    PlannedExerciseItemSchema, PlannedSetSchema,
+} from '@/domain/schemas';
+import { BaseRepository } from './BaseRepository';
 
-export class WorkoutPlanRepository {
+
+export class WorkoutPlanRepository extends BaseRepository {
     // --- Workout CRUD ---
 
     static async getWorkout(id: string): Promise<PlannedWorkout | undefined> {
@@ -43,10 +49,12 @@ export class WorkoutPlanRepository {
     }
 
     static async addWorkout(workout: PlannedWorkout): Promise<string> {
+        this.validateData(PlannedWorkoutSchema, workout);
         return db.plannedWorkouts.add(workout);
     }
 
     static async updateWorkout(id: string, changes: Partial<PlannedWorkout>): Promise<number> {
+        this.validateData(PlannedWorkoutSchema.partial(), changes);
         return db.plannedWorkouts.update(id, changes);
     }
 
@@ -98,6 +106,7 @@ export class WorkoutPlanRepository {
     }
 
     static async addSession(session: PlannedSession): Promise<string> {
+        this.validateData(PlannedSessionSchema, session);
         return db.plannedSessions.add(session);
     }
 
@@ -232,6 +241,7 @@ export class WorkoutPlanRepository {
     }
 
     static async addGroup(group: PlannedExerciseGroup): Promise<string> {
+        this.validateData(PlannedExerciseGroupSchema, group);
         return db.plannedExerciseGroups.add(group);
     }
 
@@ -244,6 +254,7 @@ export class WorkoutPlanRepository {
     }
 
     static async addItem(item: PlannedExerciseItem): Promise<string> {
+        this.validateData(PlannedExerciseItemSchema, item);
         return db.plannedExerciseItems.add(item);
     }
 
@@ -254,6 +265,7 @@ export class WorkoutPlanRepository {
     }
 
     static async addSet(set: PlannedSet): Promise<string> {
+        this.validateData(PlannedSetSchema, set);
         return db.plannedSets.add(set);
     }
 

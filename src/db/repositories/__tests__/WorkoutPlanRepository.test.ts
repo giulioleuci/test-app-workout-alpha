@@ -88,4 +88,20 @@ describe('WorkoutPlanRepository', () => {
     expect(await WorkoutPlanRepository.getItem(item.id)).toBeUndefined();
     expect(await WorkoutPlanRepository.getSet(set.id)).toBeUndefined();
   });
+
+  it('rejects addWorkout() when name is empty', async () => {
+    const workout = { ...createWorkout(), name: '' };
+    await expect(WorkoutPlanRepository.addWorkout(workout)).rejects.toThrow('Repository validation failed');
+  });
+
+  it('rejects addSession() when name is empty', async () => {
+    const workout = createWorkout();
+    await WorkoutPlanRepository.addWorkout(workout);
+    const session: PlannedSession = {
+      id: nanoid(), plannedWorkoutId: workout.id, name: '',
+      dayNumber: 1, focusMuscleGroups: [], status: PlannedSessionStatus.Pending,
+      orderIndex: generateTestRank(0), createdAt: new Date(), updatedAt: new Date(),
+    };
+    await expect(WorkoutPlanRepository.addSession(session)).rejects.toThrow('Repository validation failed');
+  });
 });
