@@ -1,3 +1,4 @@
+export * from './BaseRepository';
 export * from './types';
 export * from './ExerciseRepository';
 export * from './UserProfileRepository';
