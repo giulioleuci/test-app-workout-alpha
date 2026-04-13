@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 
 import { getGroupedHistory } from '@/services/exerciseHistoryService';
-import { getHistoryPage, getHistoryDetail, getFilteredHistory, type HistoryFilters } from '@/services/historyService';
+import { type HistoryFilters } from '@/services/historyService';
 import { getHydratedLoadSuggestions, type LoadSuggestionContext } from '@/services/loadSuggestionEngine';
 import { analyzeExercisePerformance } from '@/services/performanceAnalyzer';
 import { loadActiveSessionData } from '@/services/sessionLoaderService';
@@ -13,7 +13,7 @@ export const sessionKeys = {
   active: (id: string | null) => [...sessionKeys.all, 'active', id] as const,
   suggestions: (exerciseId: string, context: LoadSuggestionContext) => [...sessionKeys.all, 'suggestions', exerciseId, context] as const,
   performanceTrend: (exerciseId: string, sessionId: string) => [...sessionKeys.all, 'performance', exerciseId, sessionId] as const,
-  history: () => [...sessionKeys.all, 'history'] as const,
+  historyPage: (page: number, pageSize: number) => [...sessionKeys.all, 'history', page, pageSize] as const,
   detail: (id: string) => [...sessionKeys.all, 'detail', id] as const,
   filteredHistory: (filters: HistoryFilters) => [...sessionKeys.all, 'filteredHistory', filters] as const,
 };
@@ -50,26 +50,3 @@ export function usePerformanceTrend(exerciseId?: string, activeSessionId?: strin
   return { data, isLoading: data === undefined && !!exerciseId && !!activeSessionId };
 }
 
-export function useHistoryDetail(sessionId?: string) {
-  const data = useLiveQuery(
-    () => sessionId ? getHistoryDetail(sessionId) : Promise.resolve(null),
-    [sessionId]
-  );
-  return { data, isLoading: data === undefined && !!sessionId };
-}
-
-export function useHistoryList(page: number, pageSize: number) {
-  const data = useLiveQuery(
-    () => getHistoryPage(page, pageSize),
-    [page, pageSize]
-  );
-  return { data, isLoading: data === undefined };
-}
-
-export function useFilteredHistory(filters: HistoryFilters) {
-  const data = useLiveQuery(
-    () => getFilteredHistory(filters),
-    [JSON.stringify(filters)]
-  );
-  return { data, isLoading: data === undefined };
-}
