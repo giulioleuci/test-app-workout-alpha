@@ -12,6 +12,7 @@ export const workoutKeys = {
   all: ['workouts'] as const,
   list: () => [...workoutKeys.all, 'list'] as const,
   detail: (id: string) => [...workoutKeys.all, 'detail', id] as const,
+  session: (id: string) => [...workoutKeys.all, 'session', id] as const,
   insights: (id: string) => [...workoutKeys.all, 'insights', id] as const,
 };
 
