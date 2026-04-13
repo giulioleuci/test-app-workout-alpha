@@ -103,4 +103,15 @@ describe('SessionRepository', () => {
     const active = await SessionRepository.findActiveSession();
     expect(active?.id).toBe(s2.id);
   });
+
+  it('rejects createSession() when id is empty', async () => {
+    const session = { ...createSession(), id: '' };
+    await expect(SessionRepository.createSession(session)).rejects.toThrow('Repository validation failed');
+  });
+
+  it('rejects updateSet() when forcedReps is negative', async () => {
+    await expect(
+      SessionRepository.updateSet('any-id', { forcedReps: -1 })
+    ).rejects.toThrow('Repository validation failed');
+  });
 });

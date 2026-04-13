@@ -7,6 +7,11 @@ import {
 } from '@/domain/entities';
 import { CounterType, ExerciseType, MovementPattern } from '@/domain/enums';
 import { generateSequentialRanks } from '@/lib/lexorank';
+import {
+  WorkoutSessionSchema, SessionExerciseGroupSchema,
+  SessionExerciseItemSchema, SessionSetSchema,
+} from '@/domain/schemas';
+import { BaseRepository } from './BaseRepository';
 
 import { db } from '../database';
 import { ExerciseRepository } from './ExerciseRepository';
@@ -16,7 +21,7 @@ import type {
     HydratedSession, HydratedSessionGroup, HydratedSessionItem
 } from './types';
 
-export class SessionRepository {
+export class SessionRepository extends BaseRepository {
     // --- Transaction Support ---
 
     static async transaction<T>(callback: () => Promise<T>): Promise<T> {
@@ -30,6 +35,7 @@ export class SessionRepository {
     // --- Session Lifecycle ---
 
     static async createSession(session: WorkoutSession): Promise<string> {
+        this.validateData(WorkoutSessionSchema, session);
         return db.workoutSessions.add(session);
     }
 
@@ -83,6 +89,7 @@ export class SessionRepository {
     }
 
     static async updateSession(id: string, changes: Partial<WorkoutSession>): Promise<number> {
+        this.validateData(WorkoutSessionSchema.partial(), changes);
         return db.workoutSessions.update(id, changes);
     }
 
@@ -242,10 +249,12 @@ export class SessionRepository {
     }
 
     static async addGroup(group: SessionExerciseGroup): Promise<string> {
+        this.validateData(SessionExerciseGroupSchema, group);
         return db.sessionExerciseGroups.add(group);
     }
 
     static async updateGroup(id: string, changes: Partial<SessionExerciseGroup>): Promise<number> {
+        this.validateData(SessionExerciseGroupSchema.partial(), changes);
         return db.sessionExerciseGroups.update(id, changes);
     }
 
@@ -287,10 +296,12 @@ export class SessionRepository {
     }
 
     static async addItem(item: SessionExerciseItem): Promise<string> {
+        this.validateData(SessionExerciseItemSchema, item);
         return db.sessionExerciseItems.add(item);
     }
 
     static async updateItem(id: string, changes: Partial<SessionExerciseItem>): Promise<number> {
+        this.validateData(SessionExerciseItemSchema.partial(), changes);
         return db.sessionExerciseItems.update(id, changes);
     }
 
@@ -370,10 +381,12 @@ export class SessionRepository {
     }
 
     static async addSets(sets: SessionSet[]): Promise<string> {
+        sets.forEach(set => this.validateData(SessionSetSchema, set));
         return db.sessionSets.bulkAdd(sets);
     }
 
     static async updateSet(id: string, changes: Partial<SessionSet>): Promise<number> {
+        this.validateData(SessionSetSchema.partial(), changes);
         return db.sessionSets.update(id, changes);
     }
 
