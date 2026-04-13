@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import type { PlannedSession, SessionTemplate } from '@/domain/entities';
 import { PlannedSessionStatus, ObjectiveType, WorkType } from '@/domain/enums';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
-import { useWorkoutDetail, useSessionTemplates } from '@/hooks/queries/workoutQueries';
+import { useWorkoutPlanMutations } from '@/hooks/mutations/workoutPlanMutations';
+import { useWorkoutDetail, useSessionTemplates } from '@/hooks/queries/workoutPlanQueries';
 import { useDialogManager } from '@/hooks/useDialogManager';
 import { useSessionActivation } from '@/hooks/useSessionActivation';
 import { useToast } from '@/hooks/useToast';
@@ -41,7 +41,7 @@ export default function WorkoutDetail() {
 
   const { data, isLoading } = useWorkoutDetail(id);
   const { data: templatesData } = useSessionTemplates();
-  const mutations = useWorkoutMutations();
+  const mutations = useWorkoutPlanMutations();
 
   const {
     handleStartSession,

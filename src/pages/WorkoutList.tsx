@@ -17,8 +17,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PlannedWorkout } from '@/domain/entities';
 import { PlannedWorkoutStatus } from '@/domain/enums';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
-import { useWorkoutList, useSessionTemplates } from '@/hooks/queries/workoutQueries';
+import { useWorkoutPlanMutations } from '@/hooks/mutations/workoutPlanMutations';
+import { useWorkoutList, useSessionTemplates } from '@/hooks/queries/workoutPlanQueries';
 import { useSessionActivation } from '@/hooks/useSessionActivation';
 import { useToast } from '@/hooks/useToast';
 import dayjs from '@/lib/dayjs';
@@ -32,7 +32,7 @@ export default function WorkoutList() {
 
   const { data: workoutData, isLoading: workoutsLoading } = useWorkoutList();
   const { data: templates, isLoading: templatesLoading } = useSessionTemplates();
-  const mutations = useWorkoutMutations();
+  const mutations = useWorkoutPlanMutations();
 
   const {
     handleStartSession,
