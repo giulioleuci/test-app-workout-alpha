@@ -8,30 +8,30 @@ import {
 
 // ===== Shared Value Object Schemas =====
 
-export const NumericRangeSchema = z.object({
+const NumericRangeSchema = z.object({
   min: z.number(),
   max: z.number().nullable(),
   isFixed: z.boolean(),
 });
 
-export const RPERangeSchema = z.object({
+const RPERangeSchema = z.object({
   min: z.number().min(4).max(10),
   max: z.number().min(4).max(10),
 });
 
-export const LoadRangeSchema = z.object({
+const LoadRangeSchema = z.object({
   min: z.number().nonnegative(),
   max: z.number().nonnegative().nullable(),
   unit: z.enum(['kg', 'lbs']),
 });
 
-export const CountRangeSchema = z.object({
+const CountRangeSchema = z.object({
   min: z.number().int().nonnegative(),
   max: z.number().int().nonnegative().nullable(),
   toFailure: z.nativeEnum(ToFailureIndicator),
 });
 
-export const SetCountRangeSchema = z.object({
+const SetCountRangeSchema = z.object({
   min: z.number().int().positive(),
   max: z.number().int().positive().optional(),
   stopCriteria: z.enum(['maxSets', 'rpeCeiling', 'velocityLoss', 'technicalBreakdown']).optional(),
