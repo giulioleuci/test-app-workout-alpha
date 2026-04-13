@@ -4,9 +4,11 @@
  */
 import type { SessionTemplate } from '@/domain/entities';
 
+import { SessionTemplateSchema } from '@/domain/schemas';
 import { db } from '../database';
+import { BaseRepository } from './BaseRepository';
 
-export class TemplateRepository {
+export class TemplateRepository extends BaseRepository {
     static async getAll(): Promise<SessionTemplate[]> {
         return db.sessionTemplates.toArray();
     }
@@ -16,10 +18,12 @@ export class TemplateRepository {
     }
 
     static async add(template: SessionTemplate): Promise<string> {
+        this.validateData(SessionTemplateSchema, template);
         return db.sessionTemplates.add(template);
     }
 
     static async update(id: string, changes: Partial<SessionTemplate>): Promise<number> {
+        this.validateData(SessionTemplateSchema.partial(), changes);
         return db.sessionTemplates.update(id, changes);
     }
 

@@ -4,9 +4,11 @@
  */
 import type { OneRepMaxRecord } from '@/domain/entities';
 
+import { OneRepMaxRecordSchema } from '@/domain/schemas';
 import { db } from '../database';
+import { BaseRepository } from './BaseRepository';
 
-export class OneRepMaxRepository {
+export class OneRepMaxRepository extends BaseRepository {
     static async getLatestForExercise(exerciseId: string): Promise<OneRepMaxRecord | undefined> {
         return db.oneRepMaxRecords
             .where('[exerciseId+recordedAt]')
@@ -43,10 +45,12 @@ export class OneRepMaxRepository {
     }
 
     static async add(record: OneRepMaxRecord): Promise<string> {
+        this.validateData(OneRepMaxRecordSchema, record);
         return db.oneRepMaxRecords.add(record);
     }
 
     static async put(record: OneRepMaxRecord): Promise<string> {
+        this.validateData(OneRepMaxRecordSchema, record);
         return db.oneRepMaxRecords.put(record);
     }
 
