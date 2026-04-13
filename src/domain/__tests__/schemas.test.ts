@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ExerciseSchema, PlannedWorkoutSchema, PlannedSessionSchema,
+  ExerciseSchema, ExerciseVersionSchema, PlannedWorkoutSchema, PlannedSessionSchema,
   PlannedExerciseGroupSchema, PlannedExerciseItemSchema, PlannedSetSchema,
   WorkoutSessionSchema, SessionExerciseGroupSchema, SessionExerciseItemSchema,
   SessionSetSchema, OneRepMaxRecordSchema, SessionTemplateSchema,
@@ -177,5 +177,48 @@ describe('SessionTemplateSchema', () => {
       createdAt: new Date(), updatedAt: new Date(),
     });
     expect(result.name).toBe('Push Template');
+  });
+});
+
+describe('ExerciseVersionSchema', () => {
+  it('parses a valid exercise version', () => {
+    const result = ExerciseVersionSchema.parse({
+      id: 'v1', exerciseId: 'ex1', name: 'Bench Press',
+      type: ExerciseType.Compound,
+      primaryMuscles: [Muscle.Chest], secondaryMuscles: [],
+      equipment: [Equipment.Barbell], movementPattern: MovementPattern.HorizontalPush,
+      counterType: CounterType.Reps, versionTimestamp: new Date(),
+    });
+    expect(result.name).toBe('Bench Press');
+  });
+
+  it('throws on empty name', () => {
+    expect(() => ExerciseVersionSchema.parse({
+      id: 'v1', exerciseId: 'ex1', name: '',
+      type: ExerciseType.Compound,
+      primaryMuscles: [], secondaryMuscles: [],
+      equipment: [], movementPattern: MovementPattern.HorizontalPush,
+      counterType: CounterType.Reps, versionTimestamp: new Date(),
+    })).toThrow();
+  });
+});
+
+describe('SessionSetSchema — RPE range', () => {
+  it('throws on actualRPE above 10', () => {
+    expect(() => SessionSetSchema.parse({
+      id: 'set1', sessionExerciseItemId: 'si1', setType: SetType.Working,
+      orderIndex: '0|a', actualLoad: 80, actualCount: 5, actualRPE: 15,
+      actualToFailure: ToFailureIndicator.None, expectedRPE: 8,
+      isCompleted: true, isSkipped: false, partials: false, forcedReps: 0,
+    })).toThrow();
+  });
+
+  it('throws on expectedRPE below 0', () => {
+    expect(() => SessionSetSchema.parse({
+      id: 'set1', sessionExerciseItemId: 'si1', setType: SetType.Working,
+      orderIndex: '0|a', actualLoad: 80, actualCount: 5, actualRPE: 8,
+      actualToFailure: ToFailureIndicator.None, expectedRPE: -1,
+      isCompleted: true, isSkipped: false, partials: false, forcedReps: 0,
+    })).toThrow();
   });
 });

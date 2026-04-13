@@ -15,8 +15,8 @@ const NumericRangeSchema = z.object({
 });
 
 const RPERangeSchema = z.object({
-  min: z.number().min(4).max(10),
-  max: z.number().min(4).max(10),
+  min: z.number().min(6).max(10),
+  max: z.number().min(6).max(10),
 });
 
 const LoadRangeSchema = z.object({
@@ -209,9 +209,9 @@ export const SessionSetSchema = z.object({
   orderIndex: z.string().min(1),
   actualLoad: z.number().nullable(),
   actualCount: z.number().int().nullable(),
-  actualRPE: z.number().nullable(),
+  actualRPE: z.number().min(0).max(10).nullable(),
   actualToFailure: z.nativeEnum(ToFailureIndicator),
-  expectedRPE: z.number().nullable(),
+  expectedRPE: z.number().min(0).max(10).nullable(),
   completedAt: z.date().optional(),
   isCompleted: z.boolean(),
   isSkipped: z.boolean(),
@@ -263,6 +263,7 @@ const TemplateSetSchema = z.object({
   percentage1RMRange: Percentage1RMRangeSchema.optional(),
   rpeRange: RPERangeSchema.optional(),
   restSecondsRange: NumericRangeSchema.optional(),
+  fatigueProgressionProfile: FatigueProgressionProfileSchema.optional(),
   setType: z.nativeEnum(SetType),
   tempo: z.string().optional(),
   notes: z.string().optional(),
