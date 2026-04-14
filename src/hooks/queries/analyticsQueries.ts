@@ -1,4 +1,5 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+// src/hooks/queries/analyticsQueries.ts
+import { useQuery } from '@tanstack/react-query';
 
 import { fetchAnalyticsData, getMuscleVolumeDistribution } from '@/services/analyticsService';
 import { getExercisesByIds } from '@/services/exerciseService';
@@ -6,6 +7,7 @@ import { getAllWorkouts, getWorkoutSessions, getWorkoutSessionGroups, getWorkout
 
 export const analyticsKeys = {
   all: ['analytics'] as const,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filters: (filters: any) => [...analyticsKeys.all, 'data', filters] as const,
   workouts: () => [...analyticsKeys.all, 'workouts'] as const,
   sessions: (workoutId?: string) => [...analyticsKeys.all, 'sessions', { workoutId }] as const,
@@ -15,51 +17,49 @@ export const analyticsKeys = {
 };
 
 export function useAnalyticsData(filters: {
-  fromDate: Date;
-  toDate: Date;
-  workoutId?: string;
-  sessionId?: string;
-  plannedGroupId?: string;
-  plannedExerciseItemId?: string;
+  fromDate: Date; toDate: Date; workoutId?: string; sessionId?: string;
+  plannedGroupId?: string; plannedExerciseItemId?: string;
 }) {
-  const data = useLiveQuery(
-    () => fetchAnalyticsData(
-      filters.fromDate,
-      filters.toDate,
-      filters.workoutId,
-      filters.sessionId,
-      filters.plannedGroupId,
-      filters.plannedExerciseItemId
+  return useQuery({
+    queryKey: analyticsKeys.filters(filters),
+    queryFn: () => fetchAnalyticsData(
+      filters.fromDate, filters.toDate, filters.workoutId,
+      filters.sessionId, filters.plannedGroupId, filters.plannedExerciseItemId
     ),
-    [JSON.stringify(filters)]
-  );
-  return { data, isLoading: data === undefined };
+    staleTime: Infinity,
+  });
 }
 
 export function useAnalyticsWorkouts() {
-  const data = useLiveQuery(getAllWorkouts);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: analyticsKeys.workouts(),
+    queryFn: getAllWorkouts,
+    staleTime: Infinity,
+  });
 }
 
 export function useAnalyticsSessions(workoutId?: string) {
-  const data = useLiveQuery(
-    () => workoutId ? getWorkoutSessions(workoutId) : Promise.resolve([]),
-    [workoutId]
-  );
-  return { data, isLoading: data === undefined && !!workoutId };
+  return useQuery({
+    queryKey: analyticsKeys.sessions(workoutId),
+    queryFn: () => workoutId ? getWorkoutSessions(workoutId) : Promise.resolve([]),
+    enabled: !!workoutId,
+    staleTime: Infinity,
+  });
 }
 
 export function useAnalyticsGroups(sessionId?: string) {
-  const data = useLiveQuery(
-    () => sessionId ? getWorkoutSessionGroups(sessionId) : Promise.resolve([]),
-    [sessionId]
-  );
-  return { data, isLoading: data === undefined && !!sessionId };
+  return useQuery({
+    queryKey: analyticsKeys.groups(sessionId),
+    queryFn: () => sessionId ? getWorkoutSessionGroups(sessionId) : Promise.resolve([]),
+    enabled: !!sessionId,
+    staleTime: Infinity,
+  });
 }
 
 export function useAnalyticsItems(groupId?: string) {
-  const data = useLiveQuery(
-    async () => {
+  return useQuery({
+    queryKey: analyticsKeys.items(groupId),
+    queryFn: async () => {
       if (!groupId) return [];
       const items = await getWorkoutGroupItems(groupId);
       const exIds = items.map(i => i.exerciseId);
@@ -67,15 +67,15 @@ export function useAnalyticsItems(groupId?: string) {
       const exMap = new Map(exercises.filter(Boolean).map(e => [e.id, e]));
       return items.map(i => ({ ...i, exercise: exMap.get(i.exerciseId) }));
     },
-    [groupId]
-  );
-  return { data, isLoading: data === undefined && !!groupId };
+    enabled: !!groupId,
+    staleTime: Infinity,
+  });
 }
 
 export function useMuscleVolumeDistribution(from: Date, to: Date, workoutId?: string) {
-  const data = useLiveQuery(
-    () => getMuscleVolumeDistribution(from, to, workoutId),
-    [from.toISOString(), to.toISOString(), workoutId]
-  );
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: analyticsKeys.muscleVolume(from, to, workoutId),
+    queryFn: () => getMuscleVolumeDistribution(from, to, workoutId),
+    staleTime: Infinity,
+  });
 }
