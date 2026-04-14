@@ -9,19 +9,19 @@ import { upsertRecord, deleteRecord } from '@/services/oneRepMaxService';
 export function useOneRepMaxMutations() {
   const queryClient = useQueryClient();
 
+  const invalidateOneRepMax = () => {
+    queryClient.invalidateQueries({ queryKey: oneRepMaxKeys.all });
+    queryClient.invalidateQueries({ queryKey: exerciseKeys.all });
+  };
+
   const saveRecordMutation = useMutation({
     mutationFn: (record: OneRepMaxRecord) => upsertRecord(record),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: oneRepMaxKeys.all });
-      queryClient.invalidateQueries({ queryKey: exerciseKeys.all });
-    },
+    onSuccess: invalidateOneRepMax,
   });
 
   const deleteRecordMutation = useMutation({
     mutationFn: (id: string) => deleteRecord(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: oneRepMaxKeys.all });
-    },
+    onSuccess: invalidateOneRepMax,
   });
 
   return {
