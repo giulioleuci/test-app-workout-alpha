@@ -1,24 +1,15 @@
 // src/hooks/mutations/sessionMutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import type { WorkoutSession, SessionSet, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet } from '@/domain/entities';
-import { analyticsKeys } from '@/hooks/queries/analyticsQueries';
-import { dashboardKeys } from '@/hooks/queries/dashboardQueries';
-import { sessionKeys } from '@/hooks/queries/sessionHistoryQueries';
-import { workoutKeys } from '@/hooks/queries/workoutQueries';
+import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import {
   deleteHistorySession, updateHistorySessionMeta, updateSessionSet, deleteSessionSet, addSessionSet,
 } from '@/services/historyService';
 import { updateSessionStructure } from '@/services/workoutService';
 
 export function useSessionMutations() {
-  const queryClient = useQueryClient();
-
-  const invalidateHistory = () => {
-    queryClient.invalidateQueries({ queryKey: sessionKeys.all });
-    queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-    queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
-  };
+  const { invalidateSessionContext, invalidateWorkoutContext } = useInvalidation();
 
   const saveSessionMutation = useMutation({
     mutationFn: async ({
@@ -35,34 +26,34 @@ export function useSessionMutations() {
         { removedGroupIds, removedItemIds, removedSetIds }
       );
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: workoutKeys.all }),
+    onSuccess: invalidateWorkoutContext,
   });
 
   const deleteSessionMutation = useMutation({
     mutationFn: (id: string) => deleteHistorySession(id),
-    onSuccess: invalidateHistory,
+    onSuccess: invalidateSessionContext,
   });
 
   const updateSessionMetaMutation = useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<WorkoutSession> }) =>
       updateHistorySessionMeta(id, updates),
-    onSuccess: invalidateHistory,
+    onSuccess: invalidateSessionContext,
   });
 
   const updateSessionSetMutation = useMutation({
     mutationFn: ({ id, updates }: { id: string; sessionId: string; updates: Partial<SessionSet> }) =>
       updateSessionSet(id, updates),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: sessionKeys.all }),
+    onSuccess: invalidateSessionContext,
   });
 
   const deleteSessionSetMutation = useMutation({
     mutationFn: ({ id }: { id: string; sessionId: string }) => deleteSessionSet(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: sessionKeys.all }),
+    onSuccess: invalidateSessionContext,
   });
 
   const addSessionSetMutation = useMutation({
     mutationFn: ({ set }: { sessionId: string; set: SessionSet }) => addSessionSet(set),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: sessionKeys.all }),
+    onSuccess: invalidateSessionContext,
   });
 
   return {
