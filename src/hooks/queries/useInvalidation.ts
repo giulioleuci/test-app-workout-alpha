@@ -45,6 +45,8 @@ export function useInvalidation() {
   /**
    * Call after profile, body weight, or regulation changes.
    * Refreshes: dashboard display and strength-to-weight analytics.
+   * Note: weightRecordKeys must be invalidated separately — dashboardKeys.weightRecords()
+   * is a named alias, not a sub-key under the ['dashboard'] prefix.
    */
   const invalidateUserContext = () =>
     Promise.all([
