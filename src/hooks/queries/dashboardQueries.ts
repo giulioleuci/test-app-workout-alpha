@@ -1,12 +1,10 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+// src/hooks/queries/dashboardQueries.ts
+import { useQuery } from '@tanstack/react-query';
 
 import { DEFAULT_REGULATION_PROFILE } from '@/domain/entities';
-import { 
-  getLastWorkoutSummary, 
-  buildTrainingCalendar, 
-  getDashboardStats,
-  getConsistencyHeatmap,
-  getMuscleFreshness
+import {
+  getLastWorkoutSummary, buildTrainingCalendar, getDashboardStats,
+  getConsistencyHeatmap, getMuscleFreshness,
 } from '@/services/dashboardService';
 import { profileService } from '@/services/profileService';
 import { getNextSessionSuggestionDetail } from '@/services/sessionRotation';
@@ -22,55 +20,83 @@ export const dashboardKeys = {
   regulation: () => [...dashboardKeys.all, 'regulation'] as const,
   heatmap: (days: number) => [...dashboardKeys.all, 'heatmap', days] as const,
   muscleFreshness: () => [...dashboardKeys.all, 'muscleFreshness'] as const,
+  weightRecords: () => [...weightRecordKeys.all] as const,
 };
 
 export function useDashboardStats() {
-  const data = useLiveQuery(getDashboardStats);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: dashboardKeys.stats(),
+    queryFn: getDashboardStats,
+    staleTime: Infinity,
+  });
 }
 
 export function useConsistencyHeatmap(days = 365) {
-  const data = useLiveQuery(() => getConsistencyHeatmap(days), [days]);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: dashboardKeys.heatmap(days),
+    queryFn: () => getConsistencyHeatmap(days),
+    staleTime: Infinity,
+  });
 }
 
 export function useMuscleFreshness() {
-  const data = useLiveQuery(getMuscleFreshness);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: dashboardKeys.muscleFreshness(),
+    queryFn: getMuscleFreshness,
+    staleTime: Infinity,
+  });
 }
 
 export function useNextSessionSuggestion() {
-  const data = useLiveQuery(getNextSessionSuggestionDetail);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: dashboardKeys.suggestion(),
+    queryFn: getNextSessionSuggestionDetail,
+    staleTime: Infinity,
+  });
 }
 
 export function useLastWorkout() {
-  const data = useLiveQuery(getLastWorkoutSummary);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: dashboardKeys.lastWorkout(),
+    queryFn: getLastWorkoutSummary,
+    staleTime: Infinity,
+  });
 }
 
 export function useUserProfile() {
-  const data = useLiveQuery(async () => {
-    const profile = await profileService.getProfile();
-    return profile || null;
+  return useQuery({
+    queryKey: dashboardKeys.profile(),
+    queryFn: async () => {
+      const profile = await profileService.getProfile();
+      return profile || null;
+    },
+    staleTime: Infinity,
   });
-  return { data, isLoading: data === undefined };
 }
 
 export function useWeightRecords() {
-  const data = useLiveQuery(() => profileService.getBodyWeightRecords());
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: dashboardKeys.weightRecords(),
+    queryFn: () => profileService.getBodyWeightRecords(),
+    staleTime: Infinity,
+  });
 }
 
 export function useUserRegulation() {
-  const data = useLiveQuery(async () => {
-    const profile = await profileService.getRegulationProfile();
-    return profile || { ...DEFAULT_REGULATION_PROFILE, updatedAt: new Date() };
+  return useQuery({
+    queryKey: dashboardKeys.regulation(),
+    queryFn: async () => {
+      const profile = await profileService.getRegulationProfile();
+      return profile || { ...DEFAULT_REGULATION_PROFILE, updatedAt: new Date() };
+    },
+    staleTime: Infinity,
   });
-  return { data, isLoading: data === undefined };
 }
 
 export function useTrainingCalendar(month: Date) {
-  const data = useLiveQuery(() => buildTrainingCalendar(month), [month.toISOString()]);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: [...dashboardKeys.all, 'calendar', month.toISOString()],
+    queryFn: () => buildTrainingCalendar(month),
+    staleTime: Infinity,
+  });
 }
