@@ -4,6 +4,7 @@ import { UserProfileRepository } from '@/db/repositories/UserProfileRepository';
 import type { Exercise, WarmupSetConfiguration } from '@/domain/entities';
 import { ExerciseType, MuscleGroup, MuscleGroupMuscles } from '@/domain/enums';
 import { roundToHalf } from '@/lib/math';
+import { buildWarmupScheme } from './logic/warmupLogic';
 
 export type WarmupExerciseType = "compound_upper" | "compound_lower" | "isolation";
 
@@ -116,75 +117,12 @@ export async function generateWarmup(
     bw = latestBW ? latestBW.weight : null;
   }
 
-  let highStress = false;
-  let mediumStress = false;
+  const ratio = (bw !== null && bw > 0) ? workingWeight / bw : null;
+  const specs = buildWarmupScheme({ exerciseType, isFirst, bodyWeightRatio: ratio });
 
-  // STRESS CLASSIFICATION
-  if (exerciseType !== "isolation") {
-    if (bw !== null && bw > 0) {
-      const ratio = workingWeight / bw;
-
-      if (exerciseType === "compound_upper") {
-        if (ratio >= 1.0) {
-          highStress = true;
-        } else if (ratio >= 0.5) {
-          mediumStress = true;
-        }
-      } else if (exerciseType === "compound_lower") {
-        if (ratio >= 1.25) {
-          highStress = true;
-        } else if (ratio >= 0.75) {
-          mediumStress = true;
-        }
-      }
-    } else {
-      // Conservative fallback if BW is missing
-      highStress = true;
-    }
-  }
-
-  // BUILD WARM-UP SCHEME
-  let warmupScheme: [number, number][] = [];
-
-  if (exerciseType === "isolation") {
-    if (isFirst) {
-      warmupScheme = [
-        [0.60, 8],
-        [0.80, 3]
-      ];
-    } else {
-      warmupScheme = [
-        [0.60, 8]
-      ];
-    }
-  } else { // compound movements
-    if (highStress) {
-      warmupScheme = [
-        [0.50, 6],
-        [0.70, 4],
-        [0.85, 2]
-      ];
-    } else if (mediumStress) {
-      warmupScheme = [
-        [0.60, 5],
-        [0.80, 3]
-      ];
-    } else {
-      warmupScheme = [
-        [0.65, 5]
-      ];
-    }
-
-    // Reduce warm-up volume if not first exercise for that muscle
-    if (!isFirst && warmupScheme.length > 1) {
-      warmupScheme.shift(); // Remove first element
-    }
-  }
-
-  // CONVERT PERCENTAGES TO REAL WEIGHTS
-  return warmupScheme.map(([percentage, reps]) => ({
-    weight: roundToHalf(workingWeight * percentage),
-    reps,
-    percent: Math.round(percentage * 100)
+  return specs.map(spec => ({
+    weight: roundToHalf(workingWeight * spec.percent / 100),
+    reps: spec.reps,
+    percent: spec.percent,
   }));
 }
