@@ -1,63 +1,68 @@
-import { useMutation } from '@tanstack/react-query';
+// src/hooks/mutations/sessionMutations.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { WorkoutSession, SessionSet, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet } from '@/domain/entities';
+import { analyticsKeys } from '@/hooks/queries/analyticsQueries';
+import { dashboardKeys } from '@/hooks/queries/dashboardQueries';
+import { sessionKeys } from '@/hooks/queries/sessionHistoryQueries';
+import { workoutKeys } from '@/hooks/queries/workoutPlanQueries';
 import {
-  deleteHistorySession, updateHistorySessionMeta, updateSessionSet, deleteSessionSet, addSessionSet
+  deleteHistorySession, updateHistorySessionMeta, updateSessionSet, deleteSessionSet, addSessionSet,
 } from '@/services/historyService';
 import { updateSessionStructure } from '@/services/workoutService';
 
 export function useSessionMutations() {
+  const queryClient = useQueryClient();
+
+  const invalidateHistory = () => {
+    queryClient.invalidateQueries({ queryKey: sessionKeys.all });
+    queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+    queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
+  };
+
   const saveSessionMutation = useMutation({
     mutationFn: async ({
-      sessionId: _sessionId, name, dayNumber, notes, groups, items, sets,
-      removedGroupIds, removedItemIds, removedSetIds
+      sessionId, name, dayNumber, notes, groups, items, sets,
+      removedGroupIds, removedItemIds, removedSetIds,
     }: {
-      sessionId: string, name: string, dayNumber: number, notes?: string,
-      groups: PlannedExerciseGroup[], items: PlannedExerciseItem[], sets: PlannedSet[],
-      removedGroupIds: string[], removedItemIds: string[], removedSetIds: string[]
+      sessionId: string; name: string; dayNumber: number; notes?: string;
+      groups: PlannedExerciseGroup[]; items: PlannedExerciseItem[]; sets: PlannedSet[];
+      removedGroupIds: string[]; removedItemIds: string[]; removedSetIds: string[];
     }) => {
-      // This is a transactional bulk update for a Planned Session (Template Editing).
       await updateSessionStructure(
-        _sessionId,
-        { name, dayNumber, notes },
+        sessionId, { name, dayNumber, notes },
         { groups, items, sets },
         { removedGroupIds, removedItemIds, removedSetIds }
       );
     },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: workoutKeys.all }),
   });
 
   const deleteSessionMutation = useMutation({
-    mutationFn: async (id: string) => {
-      // This deletes a COMPLETED session (WorkoutSession).
-      await deleteHistorySession(id);
-    },
+    mutationFn: (id: string) => deleteHistorySession(id),
+    onSuccess: invalidateHistory,
   });
 
   const updateSessionMetaMutation = useMutation({
-    mutationFn: async ({ id, updates }: { id: string, updates: Partial<WorkoutSession> }) => {
-      // WorkoutSession update (e.g. notes, dates).
-      await updateHistorySessionMeta(id, updates);
-    },
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<WorkoutSession> }) =>
+      updateHistorySessionMeta(id, updates),
+    onSuccess: invalidateHistory,
   });
 
   const updateSessionSetMutation = useMutation({
-    mutationFn: async ({ id, sessionId: _sessionId, updates }: { id: string, sessionId: string, updates: Partial<SessionSet> }) => {
-      // Updates a performed set (SessionSet).
-      await updateSessionSet(id, updates);
-    },
+    mutationFn: ({ id, updates }: { id: string; sessionId: string; updates: Partial<SessionSet> }) =>
+      updateSessionSet(id, updates),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: sessionKeys.all }),
   });
 
   const deleteSessionSetMutation = useMutation({
-    mutationFn: async ({ id, sessionId: _sessionId }: { id: string, sessionId: string }) => {
-      await deleteSessionSet(id);
-    },
+    mutationFn: ({ id }: { id: string; sessionId: string }) => deleteSessionSet(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: sessionKeys.all }),
   });
 
   const addSessionSetMutation = useMutation({
-    mutationFn: async ({ sessionId: _sessionId, set }: { sessionId: string, set: SessionSet }) => {
-      // Adds a performed set.
-      await addSessionSet(set);
-    },
+    mutationFn: ({ set }: { sessionId: string; set: SessionSet }) => addSessionSet(set),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: sessionKeys.all }),
   });
 
   return {

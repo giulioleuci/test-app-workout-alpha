@@ -16,7 +16,7 @@ import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import type { SessionSet } from '@/domain/entities';
 import { SetType, ToFailureIndicator } from '@/domain/enums';
 import { useSessionMutations } from '@/hooks/mutations/sessionMutations';
-import { useHistoryDetail } from '@/hooks/queries/sessionQueries';
+import { useHistoryDetail } from '@/hooks/queries/sessionHistoryQueries';
 import { useToast } from '@/hooks/useToast';
 import dayjs from '@/lib/dayjs';
 import { formatDate, formatTime, durationMinutes } from '@/lib/formatting';

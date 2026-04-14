@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ListPageSkeleton } from '@/components/ui/page-skeleton';
 import { useSessionMutations } from '@/hooks/mutations/sessionMutations';
 import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
-import { useHistoryList } from '@/hooks/queries/sessionQueries';
+import { useHistoryList } from '@/hooks/queries/sessionHistoryQueries';
 
 export default function HistoryList() {
   const { t } = useTranslation();
