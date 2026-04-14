@@ -78,8 +78,10 @@ export const nativeDeviceService = {
             title: t('settings.restTimerFinished'),
             body: t('settings.restTimerFinishedDesc'),
             id: 101,
-            schedule: { at: new Date(Date.now() + seconds * 1000) },
-            sound: 'beep.wav', // Fallback to default if not found
+            schedule: { 
+              at: new Date(Date.now() + seconds * 1000),
+              allowWhileIdle: true,
+            },
             channelId: 'rest-timer',
           }
         ]

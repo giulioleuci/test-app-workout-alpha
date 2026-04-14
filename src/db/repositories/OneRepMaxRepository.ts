@@ -3,8 +3,8 @@
  * Owns table: oneRepMaxRecords
  */
 import type { OneRepMaxRecord } from '@/domain/entities';
-
 import { OneRepMaxRecordSchema } from '@/domain/schemas';
+
 import { db } from '../database';
 import { BaseRepository } from './BaseRepository';
 

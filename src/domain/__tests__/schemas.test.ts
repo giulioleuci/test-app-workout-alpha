@@ -1,15 +1,16 @@
 import { describe, it, expect } from 'vitest';
+
+import {
+  ExerciseType, Muscle, Equipment, MovementPattern, CounterType,
+  ObjectiveType, WorkType, PlannedWorkoutStatus, PlannedSessionStatus,
+  ExerciseGroupType, SetType, ToFailureIndicator, MuscleGroup,
+} from '@/domain/enums';
 import {
   ExerciseSchema, ExerciseVersionSchema, PlannedWorkoutSchema, PlannedSessionSchema,
   PlannedExerciseGroupSchema, PlannedExerciseItemSchema, PlannedSetSchema,
   WorkoutSessionSchema, SessionExerciseGroupSchema, SessionExerciseItemSchema,
   SessionSetSchema, OneRepMaxRecordSchema, SessionTemplateSchema,
 } from '@/domain/schemas';
-import {
-  ExerciseType, Muscle, Equipment, MovementPattern, CounterType,
-  ObjectiveType, WorkType, PlannedWorkoutStatus, PlannedSessionStatus,
-  ExerciseGroupType, SetType, ToFailureIndicator, MuscleGroup,
-} from '@/domain/enums';
 
 const validExercise = {
   id: 'ex1', name: 'Bench Press', type: ExerciseType.Compound,

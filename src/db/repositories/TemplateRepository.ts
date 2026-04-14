@@ -3,8 +3,8 @@
  * Owns table: sessionTemplates
  */
 import type { SessionTemplate } from '@/domain/entities';
-
 import { SessionTemplateSchema } from '@/domain/schemas';
+
 import { db } from '../database';
 import { BaseRepository } from './BaseRepository';
 

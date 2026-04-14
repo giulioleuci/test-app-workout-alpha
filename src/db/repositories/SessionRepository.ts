@@ -6,13 +6,13 @@ import {
     WorkoutSession, SessionExerciseGroup, SessionExerciseItem, SessionSet, Exercise, ExerciseSubstitution
 } from '@/domain/entities';
 import { CounterType, ExerciseType, MovementPattern } from '@/domain/enums';
-import { generateSequentialRanks } from '@/lib/lexorank';
 import {
   WorkoutSessionSchema, SessionExerciseGroupSchema,
   SessionExerciseItemSchema, SessionSetSchema,
 } from '@/domain/schemas';
-import { BaseRepository } from './BaseRepository';
+import { generateSequentialRanks } from '@/lib/lexorank';
 
+import { BaseRepository } from './BaseRepository';
 import { db } from '../database';
 import { ExerciseRepository } from './ExerciseRepository';
 import { WorkoutPlanRepository } from './WorkoutPlanRepository';

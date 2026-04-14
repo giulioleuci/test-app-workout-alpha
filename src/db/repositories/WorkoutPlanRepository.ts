@@ -7,19 +7,19 @@ import {
     ExerciseSubstitution, Exercise
 } from '@/domain/entities';
 import { PlannedWorkoutStatus } from '@/domain/enums';
+import {
+    PlannedWorkoutSchema, PlannedSessionSchema, PlannedExerciseGroupSchema,
+    PlannedExerciseItemSchema, PlannedSetSchema,
+} from '@/domain/schemas';
 
 import { db } from '../database';
+import { BaseRepository } from './BaseRepository';
 import { ExerciseRepository } from './ExerciseRepository';
 
 import type {
     HydratedPlannedSession, HydratedPlannedGroup, HydratedPlannedItem, HydratedPlannedWorkout
 } from './types';
 
-import {
-    PlannedWorkoutSchema, PlannedSessionSchema, PlannedExerciseGroupSchema,
-    PlannedExerciseItemSchema, PlannedSetSchema,
-} from '@/domain/schemas';
-import { BaseRepository } from './BaseRepository';
 
 
 export class WorkoutPlanRepository extends BaseRepository {

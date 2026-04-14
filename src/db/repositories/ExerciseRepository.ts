@@ -10,6 +10,7 @@ import { ExerciseSchema, ExerciseVersionSchema } from '@/domain/schemas';
 
 import { db } from '../database';
 import { BaseRepository } from './BaseRepository';
+
 import type { ExerciseFilters } from './types';
 
 export class ExerciseRepository extends BaseRepository {
