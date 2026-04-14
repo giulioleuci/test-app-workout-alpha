@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
 
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Calculator, Copy, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePrioritized1RM } from '@/hooks/queries/oneRepMaxQueries';
 import { LoadCalculationService } from '@/services/loadCalculationService';
-import { OneRepMaxService } from '@/services/oneRepMaxService';
 
 interface IntensityCalculatorProps {
   exerciseId: string;
@@ -28,12 +27,7 @@ export default function IntensityCalculator({ exerciseId, initialReps = 8, onApp
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
 
-  const p1RM = useLiveQuery(
-    () => (exerciseId && exerciseId !== 'all') ? OneRepMaxService.getPrioritized1RM(exerciseId) : Promise.resolve(null),
-    [exerciseId]
-  );
-
-  const isLoading = p1RM === undefined && !!exerciseId && exerciseId !== 'all';
+  const { data: p1RM, isLoading } = usePrioritized1RM(exerciseId);
 
   const results = useMemo(() => {
     if (!p1RM?.value) return [];

@@ -15,7 +15,7 @@ import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import type { PlannedSession, SessionTemplate } from '@/domain/entities';
 import { PlannedSessionStatus, ObjectiveType, WorkType } from '@/domain/enums';
 import { useWorkoutPlanMutations } from '@/hooks/mutations/workoutPlanMutations';
-import { useWorkoutDetail, useSessionTemplates } from '@/hooks/queries/workoutPlanQueries';
+import { useWorkoutDetail, useSessionTemplates } from '@/hooks/queries/workoutQueries';
 import { useDialogManager } from '@/hooks/useDialogManager';
 import { useSessionActivation } from '@/hooks/useSessionActivation';
 import { useToast } from '@/hooks/useToast';

@@ -1,7 +1,7 @@
 // src/hooks/mutations/templateMutations.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { templateKeys, workoutKeys } from '@/hooks/queries/workoutPlanQueries';
+import { templateKeys, workoutKeys } from '@/hooks/queries/workoutQueries';
 import { deleteTemplate, updateTemplate } from '@/services/templateService';
 
 export function useTemplateMutations() {

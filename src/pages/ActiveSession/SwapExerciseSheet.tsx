@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { useEnhancedExerciseCatalog } from '@/hooks/queries/workoutQueries';
+import { useEnhancedExerciseCatalog } from '@/hooks/queries/exerciseQueries';
 
 interface SwapExerciseSheetProps {
   open: boolean;

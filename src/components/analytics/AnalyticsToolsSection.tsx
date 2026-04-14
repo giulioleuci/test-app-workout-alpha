@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import ExercisePicker from '@/components/exercises/ExercisePicker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useExerciseList } from '@/hooks/queries/workoutQueries';
+import { useExerciseList } from '@/hooks/queries/exerciseQueries';
 
 import IntensityCalculator from './IntensityCalculator';
 import TheoreticalPerformanceMatrix from './TheoreticalPerformanceMatrix';

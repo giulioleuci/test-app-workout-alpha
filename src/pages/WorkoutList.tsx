@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PlannedWorkout } from '@/domain/entities';
 import { PlannedWorkoutStatus } from '@/domain/enums';
 import { useWorkoutPlanMutations } from '@/hooks/mutations/workoutPlanMutations';
-import { useWorkoutList, useSessionTemplates } from '@/hooks/queries/workoutPlanQueries';
+import { useWorkoutList, useSessionTemplates } from '@/hooks/queries/workoutQueries';
 import { useSessionActivation } from '@/hooks/useSessionActivation';
 import { useToast } from '@/hooks/useToast';
 import dayjs from '@/lib/dayjs';

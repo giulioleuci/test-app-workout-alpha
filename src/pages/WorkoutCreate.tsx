@@ -10,12 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ObjectiveType, WorkType, PlannedWorkoutStatus } from '@/domain/enums';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
+import { useWorkoutPlanMutations } from '@/hooks/mutations/workoutPlanMutations';
 
 export default function WorkoutCreate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const mutations = useWorkoutMutations();
+  const mutations = useWorkoutPlanMutations();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');

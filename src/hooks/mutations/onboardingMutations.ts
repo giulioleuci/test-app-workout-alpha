@@ -1,13 +1,16 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { nanoid } from 'nanoid';
 
 import { DEFAULT_REGULATION_PROFILE } from '@/domain/entities';
 import { PlannedWorkoutStatus } from '@/domain/enums';
+import { onboardingKeys } from '@/hooks/queries/onboardingQueries';
 import dayjs from '@/lib/dayjs';
 import { profileService } from '@/services/profileService';
 import { SystemMaintenanceService } from '@/services/systemMaintenanceService';
 
 export function useOnboardingMutations() {
+  const queryClient = useQueryClient();
+
   const onboardUserMutation = useMutation({
     mutationFn: async ({ name, gender, weight, seedOptions, language = 'en' }: {
       name: string, gender: 'male' | 'female' | 'undisclosed', weight: number,
@@ -60,6 +63,7 @@ export function useOnboardingMutations() {
         await selectedPlans[i].fn(isLast ? PlannedWorkoutStatus.Active : PlannedWorkoutStatus.Inactive);
       }
     },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: onboardingKeys.all }),
   });
 
   return {

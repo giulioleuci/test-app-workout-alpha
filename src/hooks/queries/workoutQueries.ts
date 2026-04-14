@@ -1,12 +1,9 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useQuery } from '@tanstack/react-query';
 
-import { getAllExercises, getEnhancedExerciseCatalog, type ExerciseCatalogOptions } from '@/services/exerciseService';
-import { getGroupedData } from '@/services/oneRepMaxService';
+import type { ExerciseCatalogOptions } from '@/services/exerciseService';
 import { getAllTemplates, getTemplateDetail } from '@/services/templateService';
 import { getSessionVolumeAndDuration } from '@/services/volumeAnalyzer';
 import { getWorkoutListData, getPlannedSessionDetail, getWorkoutDetail, getRoutineInsights } from '@/services/workoutService';
-
-import { sessionKeys } from './sessionQueries';
 
 export const workoutKeys = {
   all: ['workouts'] as const,
@@ -45,54 +42,65 @@ export const sessionVolumeKeys = {
 };
 
 export function useWorkoutList() {
-  const data = useLiveQuery(getWorkoutListData);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: workoutKeys.list(),
+    queryFn: getWorkoutListData,
+    staleTime: Infinity,
+  });
 }
 
 export function useWorkoutDetail(id?: string) {
-  const data = useLiveQuery(() => id ? getWorkoutDetail(id) : Promise.resolve(null), [id]);
-  return { data, isLoading: data === undefined && !!id };
+  return useQuery({
+    queryKey: workoutKeys.detail(id ?? ''),
+    queryFn: () => getWorkoutDetail(id!),
+    enabled: !!id,
+    staleTime: Infinity,
+  });
 }
 
-export function useSessionDetail(sessionId?: string) {
-  const data = useLiveQuery(() => sessionId ? getPlannedSessionDetail(sessionId) : Promise.resolve(null), [sessionId]);
-  return { data, isLoading: data === undefined && !!sessionId };
+export function usePlannedSessionDetail(sessionId?: string) {
+  return useQuery({
+    queryKey: workoutKeys.session(sessionId ?? ''),
+    queryFn: () => getPlannedSessionDetail(sessionId!),
+    enabled: !!sessionId,
+    staleTime: Infinity,
+  });
 }
 
 export function useSessionTemplates() {
-  const data = useLiveQuery(async () => {
-    const templates = await getAllTemplates();
-    return templates.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  return useQuery({
+    queryKey: templateKeys.list(),
+    queryFn: async () => {
+      const templates = await getAllTemplates();
+      return templates.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    },
+    staleTime: Infinity,
   });
-  return { data, isLoading: data === undefined };
 }
 
 export function useTemplateDetail(templateId?: string) {
-  const data = useLiveQuery(() => templateId ? getTemplateDetail(templateId) : Promise.resolve(null), [templateId]);
-  return { data, isLoading: data === undefined && !!templateId };
-}
-
-export function useExerciseList() {
-  const data = useLiveQuery(getAllExercises);
-  return { data, isLoading: data === undefined };
-}
-
-export function useOneRepMaxData() {
-  const data = useLiveQuery(getGroupedData);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: templateKeys.detail(templateId ?? ''),
+    queryFn: () => getTemplateDetail(templateId!),
+    enabled: !!templateId,
+    staleTime: Infinity,
+  });
 }
 
 export function useSessionVolume(sessionId: string | null | undefined) {
-  const data = useLiveQuery(() => sessionId ? getSessionVolumeAndDuration(sessionId) : Promise.resolve(null), [sessionId]);
-  return { data, isLoading: data === undefined && !!sessionId };
-}
-
-export function useEnhancedExerciseCatalog(options?: ExerciseCatalogOptions) {
-  const data = useLiveQuery(() => getEnhancedExerciseCatalog(options), [JSON.stringify(options)]);
-  return { data, isLoading: data === undefined };
+  return useQuery({
+    queryKey: sessionVolumeKeys.detail(sessionId ?? ''),
+    queryFn: () => getSessionVolumeAndDuration(sessionId!),
+    enabled: !!sessionId,
+    staleTime: Infinity,
+  });
 }
 
 export function useRoutineInsights(workoutId?: string) {
-  const data = useLiveQuery(() => workoutId ? getRoutineInsights(workoutId) : Promise.resolve(null), [workoutId]);
-  return { data, isLoading: data === undefined && !!workoutId };
+  return useQuery({
+    queryKey: workoutKeys.insights(workoutId ?? ''),
+    queryFn: () => getRoutineInsights(workoutId!),
+    enabled: !!workoutId,
+    staleTime: Infinity,
+  });
 }

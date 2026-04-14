@@ -5,7 +5,7 @@ import type { WorkoutSession, SessionSet, PlannedExerciseGroup, PlannedExerciseI
 import { analyticsKeys } from '@/hooks/queries/analyticsQueries';
 import { dashboardKeys } from '@/hooks/queries/dashboardQueries';
 import { sessionKeys } from '@/hooks/queries/sessionHistoryQueries';
-import { workoutKeys } from '@/hooks/queries/workoutPlanQueries';
+import { workoutKeys } from '@/hooks/queries/workoutQueries';
 import {
   deleteHistorySession, updateHistorySessionMeta, updateSessionSet, deleteSessionSet, addSessionSet,
 } from '@/services/historyService';

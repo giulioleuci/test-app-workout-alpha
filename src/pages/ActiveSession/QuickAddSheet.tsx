@@ -14,7 +14,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { ExerciseGroupType } from '@/domain/enums';
-import { useEnhancedExerciseCatalog } from '@/hooks/queries/workoutQueries';
+import { useEnhancedExerciseCatalog } from '@/hooks/queries/exerciseQueries';
 
 type WizardStep = 'type' | 'exercise' | 'confirm';
 

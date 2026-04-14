@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import type { SessionTemplateContent, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet, Exercise } from '@/domain/entities';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
+import { useTemplateMutations } from '@/hooks/mutations/templateMutations';
 import { useTemplateDetail } from '@/hooks/queries/workoutQueries';
 import { usePlanEditor } from '@/hooks/usePlanEditor';
 import { useToast } from '@/hooks/useToast';
@@ -23,7 +23,7 @@ export default function TemplateEdit() {
   const { toast } = useToast();
 
   const { data, isLoading } = useTemplateDetail(templateId);
-  const mutations = useWorkoutMutations();
+  const mutations = useTemplateMutations();
 
   const {
     groups, items, sets,

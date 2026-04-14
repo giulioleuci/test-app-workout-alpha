@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import type { Exercise } from '@/domain/entities';
 import { useSessionMutations } from '@/hooks/mutations/sessionMutations';
-import { useSessionDetail } from '@/hooks/queries/workoutQueries';
+import { usePlannedSessionDetail } from '@/hooks/queries/workoutQueries';
 import { usePlanEditor } from '@/hooks/usePlanEditor';
 import { useToast } from '@/hooks/useToast';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
@@ -25,7 +25,7 @@ export default function SessionDetail() {
   const { id: workoutId, sessionId } = useParams<{ id: string; sessionId: string }>();
   const { toast } = useToast();
 
-  const { data, isLoading } = useSessionDetail(sessionId);
+  const { data, isLoading } = usePlannedSessionDetail(sessionId);
   const mutations = useSessionMutations();
 
   const {

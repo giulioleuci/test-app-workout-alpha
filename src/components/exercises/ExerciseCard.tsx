@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import type { Exercise } from '@/domain/entities';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
+import { useExerciseMutations } from '@/hooks/mutations/exerciseMutations';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -21,7 +21,7 @@ interface ExerciseCardProps {
 
 const ExerciseCard = memo(function ExerciseCard({ exercise, onEdit }: ExerciseCardProps) {
   const { t } = useTranslation();
-  const mutations = useWorkoutMutations();
+  const mutations = useExerciseMutations();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDelete = async () => {

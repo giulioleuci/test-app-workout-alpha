@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Info, BarChart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { usePrioritized1RM } from '@/hooks/queries/oneRepMaxQueries';
 import { LoadCalculationService } from '@/services/loadCalculationService';
-import { OneRepMaxService } from '@/services/oneRepMaxService';
 
 interface TheoreticalPerformanceMatrixProps {
   exerciseId: string;
@@ -17,12 +16,7 @@ interface TheoreticalPerformanceMatrixProps {
 export default function TheoreticalPerformanceMatrix({ exerciseId }: TheoreticalPerformanceMatrixProps) {
   const { t } = useTranslation();
 
-  const p1RM = useLiveQuery(
-    () => (exerciseId && exerciseId !== 'all') ? OneRepMaxService.getPrioritized1RM(exerciseId) : Promise.resolve(null),
-    [exerciseId]
-  );
-
-  const isLoading = p1RM === undefined && !!exerciseId && exerciseId !== 'all';
+  const { data: p1RM, isLoading } = usePrioritized1RM(exerciseId);
 
   const matrixData = useMemo(() => {
     if (!p1RM?.value) return null;
