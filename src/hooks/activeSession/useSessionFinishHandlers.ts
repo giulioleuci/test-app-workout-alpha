@@ -1,6 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
-
-import { dashboardKeys } from '@/hooks/queries/dashboardQueries';
+import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import { SessionExecutionService } from '@/services/sessionExecutionService';
 import type { UnresolvedSet } from '@/services/sessionMutator';
 
@@ -19,23 +17,21 @@ export function useSessionFinishHandlers(
   unresolvedSetsState: { open: boolean; sets: UnresolvedSet[] },
   setUnresolvedSetsState: (state: { open: boolean; sets: UnresolvedSet[] }) => void,
 ) {
-    const queryClient = useQueryClient();
+    const { invalidateSessionContext } = useInvalidation();
 
     const handleEndSession = async (allDone: boolean, title: string, incompleteConfirmDesc: string) => {
         if (!activeSessionId) return;
 
         const doFinish = async () => {
             await SessionExecutionService.finishSession(activeSessionId);
-            await queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+            await invalidateSessionContext();
             resetSessionStore();
             navigate('/');
         };
 
-        // Run validation to find unresolved sets
         const validation = await SessionExecutionService.validateSessionCompletion(activeSessionId);
 
         if (!validation.isValid) {
-            // Show the unresolved sets dialog
             setUnresolvedSetsState({ open: true, sets: validation.unresolvedSets });
             return;
         }
@@ -56,12 +52,11 @@ export function useSessionFinishHandlers(
     const handleSkipAllAndFinish = async () => {
         if (!activeSessionId) return;
 
-        // Bulk-mark all unresolved sets as skipped
         await SessionExecutionService.skipUnresolvedSets(unresolvedSetsState.sets);
 
         setUnresolvedSetsState({ open: false, sets: [] });
         await SessionExecutionService.finishSession(activeSessionId);
-        await queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+        await invalidateSessionContext();
         resetSessionStore();
         navigate('/');
     };
@@ -74,7 +69,7 @@ export function useSessionFinishHandlers(
             onConfirm: async () => {
                 if (!activeSessionId) return;
                 await SessionExecutionService.discardSession(activeSessionId);
-                await queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+                await invalidateSessionContext();
                 resetSessionStore();
                 navigate('/');
             },
