@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { ListPageSkeleton } from '@/components/ui/page-skeleton';
 import type { HistoryEstimate } from '@/domain/analytics-types';
 import type { OneRepMaxRecord, Exercise } from '@/domain/entities';
-import { useWorkoutMutations } from '@/hooks/mutations/workoutMutations';
-import { useOneRepMaxData } from '@/hooks/queries/workoutQueries';
+import { useOneRepMaxMutations } from '@/hooks/mutations/oneRepMaxMutations';
+import { useOneRepMaxData } from '@/hooks/queries/oneRepMaxQueries';
 import dayjs from '@/lib/dayjs';
 import { sortByLocaleName } from '@/lib/utils';
 import { estimateAllFromHistory } from '@/services/oneRepMaxEstimator';
@@ -30,7 +30,7 @@ type SortKey = 'az' | 'za' | 'loadDesc' | 'loadAsc';
 export default function OneRepMaxPage() {
   const { t } = useTranslation();
   const { data, isLoading } = useOneRepMaxData();
-  const mutations = useWorkoutMutations();
+  const { saveRecord, deleteRecord } = useOneRepMaxMutations();
 
   const allGrouped = useMemo(() => data?.allGrouped || [], [data?.allGrouped]);
   const bodyWeightRecords = useMemo(() => data?.bodyWeightRecords || [], [data?.bodyWeightRecords]);
@@ -125,11 +125,11 @@ export default function OneRepMaxPage() {
 
   const handleSave = async (record: OneRepMaxRecord) => {
     setDialogOpen(false);
-    await mutations.saveOneRepMaxRecord(record);
+    await saveRecord(record);
   };
 
   const handleDelete = async (id: string) => {
-    await mutations.deleteOneRepMaxRecord(id);
+    await deleteRecord(id);
   };
 
   const allExercisesList = allGrouped.map((e) => e.exercise);
