@@ -1,4 +1,12 @@
 import { roundToHalf, roundTo01 } from '@/lib/math';
+import {
+  estimateBrzycki, estimateEpley, estimateOConner, estimateLombardi,
+} from './logic/oneRepMaxLogic';
+
+export {
+  estimateBrzycki, estimateEpley, estimateOConner, estimateLombardi,
+  computeWeighted1RM, type WeightedEstimate,
+} from './logic/oneRepMaxLogic';
 
 /**
  * RPE × Reps → %1RM lookup table (Tuchscherer/RTS-based).
@@ -61,25 +69,7 @@ export function suggestLoad(
   return { media: loadMedia, min: loadMin, max: loadMax };
 }
 
-// ===== New Weighted 1RM Estimation Formulas =====
-
-export function estimateBrzycki(load: number, r_tot: number): number | null {
-  if (r_tot > 10 || r_tot < 1) return null;
-  return load * 36 / (37 - r_tot);
-}
-
-export function estimateEpley(load: number, r_tot: number): number {
-  return load * (1 + 0.0333 * r_tot);
-}
-
-export function estimateOConner(load: number, r_tot: number): number {
-  return load * (1 + 0.025 * r_tot);
-}
-
-export function estimateLombardi(load: number, r_tot: number): number | null {
-  if (r_tot > 6 || r_tot < 1) return null;
-  return load * Math.pow(r_tot, 0.10);
-}
+// ===== Weighted 1RM Estimation =====
 
 export function estimatePercentage(load: number, reps: number, rpe: number): number | null {
   const pct = getPercentage1RM(reps, rpe);
