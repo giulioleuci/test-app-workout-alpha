@@ -1,15 +1,15 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { nanoid } from 'nanoid';
 
 import { DEFAULT_REGULATION_PROFILE } from '@/domain/entities';
 import { PlannedWorkoutStatus } from '@/domain/enums';
-import { onboardingKeys } from '@/hooks/queries/onboardingQueries';
+import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import dayjs from '@/lib/dayjs';
 import { profileService } from '@/services/profileService';
 import { SystemMaintenanceService } from '@/services/systemMaintenanceService';
 
 export function useOnboardingMutations() {
-  const queryClient = useQueryClient();
+  const { invalidateAll } = useInvalidation();
 
   const onboardUserMutation = useMutation({
     mutationFn: async ({ name, gender, weight, seedOptions, language = 'en' }: {
@@ -19,7 +19,6 @@ export function useOnboardingMutations() {
     }) => {
       const now = dayjs().toDate();
 
-      // 1. Create user profile
       await profileService.upsertProfile({
         id: 'default',
         name: name.trim(),
@@ -28,13 +27,11 @@ export function useOnboardingMutations() {
         updatedAt: now,
       });
 
-      // 1b. Initialize default regulation profile
       await profileService.upsertRegulationProfile({
         ...DEFAULT_REGULATION_PROFILE,
         updatedAt: now,
       });
 
-      // 2. Add body weight if provided
       if (weight > 0) {
         await profileService.addBodyWeightRecord({
           id: nanoid(),
@@ -43,12 +40,10 @@ export function useOnboardingMutations() {
         });
       }
 
-      // 3. Seed exercises if selected
       if (seedOptions.exercises) {
         await SystemMaintenanceService.seedExercises(language);
       }
 
-      // 4. Seed plans
       const plansToSeed: { fn: (status: PlannedWorkoutStatus) => Promise<void>; selected: boolean }[] = [
         { fn: (s) => SystemMaintenanceService.seedFullBody2x(s, language), selected: seedOptions.fullBody },
         { fn: (s) => SystemMaintenanceService.seedPPL3x(s, language), selected: seedOptions.ppl },
@@ -63,7 +58,7 @@ export function useOnboardingMutations() {
         await selectedPlans[i].fn(isLast ? PlannedWorkoutStatus.Active : PlannedWorkoutStatus.Inactive);
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: onboardingKeys.all }),
+    onSuccess: invalidateAll,
   });
 
   return {
