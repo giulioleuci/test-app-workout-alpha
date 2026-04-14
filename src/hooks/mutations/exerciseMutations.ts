@@ -1,25 +1,21 @@
 // src/hooks/mutations/exerciseMutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import type { Exercise } from '@/domain/entities';
-import { exerciseKeys } from '@/hooks/queries/exerciseQueries';
+import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import { upsertExercise, deleteExercise } from '@/services/exerciseService';
 
 export function useExerciseMutations() {
-  const queryClient = useQueryClient();
+  const { invalidateExerciseContext } = useInvalidation();
 
   const saveExerciseMutation = useMutation({
     mutationFn: (exercise: Exercise) => upsertExercise(exercise),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exerciseKeys.all });
-    },
+    onSuccess: invalidateExerciseContext,
   });
 
   const deleteExerciseMutation = useMutation({
     mutationFn: (id: string) => deleteExercise(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: exerciseKeys.all });
-    },
+    onSuccess: invalidateExerciseContext,
   });
 
   return {
