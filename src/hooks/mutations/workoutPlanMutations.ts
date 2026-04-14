@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { PlannedWorkout } from '@/domain/entities';
 import { ObjectiveType, WorkType, PlannedWorkoutStatus } from '@/domain/enums';
-import { templateKeys } from '@/hooks/queries/workoutQueries';
 import { useInvalidation } from '@/hooks/queries/useInvalidation';
+import { templateKeys } from '@/hooks/queries/workoutQueries';
 import { deleteTemplate, updateTemplate } from '@/services/templateService';
 import {
   activateWorkout, deactivateWorkout, archiveWorkout, restoreWorkout,
