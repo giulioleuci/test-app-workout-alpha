@@ -834,7 +834,8 @@
     "genderOptions": {
       "male": "Male",
       "female": "Female",
-      "undisclosed": "Undisclosed"
+      "undisclosed": "Undisclosed",
+      "undisclosedShort": "?"
     },
     "currentWeight": "Current weight",
     "addWeight": "Register weight",
@@ -900,6 +901,9 @@
     "start": "Start!",
     "next": "Next",
     "back": "Back",
+    "createAndStart": "Create Profile & Start",
+    "workoutLibrary": "Workout Library",
+    "selectLibraryPlans": "Select the workout plans you'd like to include in your library.",
     "loading": "Preparing..."
   },
   "presentation": {
@@ -948,7 +952,7 @@
     "R": "R"
   },
   "users": {
-    "title": "Users",
+    "title": "Athlete",
     "privacyTitle": "100% Offline & Privacy",
     "noServersBadge": "No servers, local data only",
     "appOfflineInfo": "This app works 100% offline. Your data is NOT sent to any server and stays exclusively on this device.",
@@ -970,9 +974,14 @@
     "enterPin": "Enter PIN",
     "wrongPin": "Wrong PIN",
     "color": "Color",
+    "syncProfileName": "Keep synced with athlete name",
+    "seedData": "Initial Data",
+    "seedDataDescription": "Load a set of common exercises to start tracking your workouts right away.",
     "noUsers": "No users. Create the first profile to start.",
     "welcome": "Welcome",
-    "lastLogin": "Last login"
+    "lastLogin": "Last login",
+    "namePlaceholder": "e.g. John",
+    "weightPlaceholder": "70"
   },
   "sessionMutator": {
     "swapExercise": "Swap exercise",

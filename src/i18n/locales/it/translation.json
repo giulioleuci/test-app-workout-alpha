@@ -44,6 +44,7 @@
   },
   "common": {
     "loading": "Caricamento...",
+    "preview": "Anteprima",
     "calculating": "Calcolo in corso…",
     "areYouSure": "Sei sicuro?",
     "noData": "Nessun dato disponibile",
@@ -769,7 +770,10 @@
     "languageDisclaimer": "La lingua si applica a tutti i profili su questo dispositivo.",
     "languages": {
       "it": "Italiano",
-      "en": "English"
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "zh": "中文"
     },
     "developerTools": "Strumenti sviluppatore",
     "regulationProfile": "Profilo autoregolazione",
@@ -834,7 +838,8 @@
     "genderOptions": {
       "male": "Maschio",
       "female": "Femmina",
-      "undisclosed": "Non dichiarato"
+      "undisclosed": "Non dichiarato",
+      "undisclosedShort": "?"
     },
     "currentWeight": "Peso attuale",
     "addWeight": "Registra peso",
@@ -900,12 +905,15 @@
     "start": "Inizia!",
     "next": "Avanti",
     "back": "Indietro",
+    "createAndStart": "Crea profilo e inizia",
+    "workoutLibrary": "Libreria allenamenti",
+    "selectLibraryPlans": "Seleziona i piani di allenamento che desideri includere nella tua libreria.",
     "loading": "Preparazione in corso..."
   },
   "presentation": {
     "title": "Scopri Workout Tracker 2",
     "offline": {
-      "title": "100% Offline",
+      "title": "100% offline",
       "description": "I tuoi dati restano sul tuo dispositivo. Niente cloud, niente tracciamento, massima privacy e velocità."
     },
     "plans": {
@@ -948,11 +956,11 @@
     "R": "R"
   },
   "users": {
-    "title": "Utenti",
-    "privacyTitle": "100% Offline & Privacy",
+    "title": "Atleta",
+    "privacyTitle": "100% offline & privacy",
     "noServersBadge": "Nessun server, dati solo locali",
     "appOfflineInfo": "Questa app funziona al 100% offline. I tuoi dati NON vengono inviati a nessun server e restano esclusivamente su questo dispositivo.",
-    "appOfflineDetail": "Assicurati di usare la funzione Backup per trasferire i dati su un altro dispositivo o salvarli in sicurezza.",
+    "appOfflineDetail": "Assicurati di usare la funzione backup per trasferire i dati su un altro dispositivo o salvarli in sicurezza.",
     "selectUser": "Seleziona utente",
     "createUser": "Crea utente",
     "createUserDescription": "Crea un nuovo profilo utente",
@@ -970,9 +978,15 @@
     "enterPin": "Inserisci PIN",
     "wrongPin": "PIN errato",
     "color": "Colore",
+    "customizeProfileName": "Personalizza nome profilo",
+    "syncProfileName": "Mantieni sincronizzato con il nome atleta",
+    "seedData": "Dati iniziali",
+    "seedDataDescription": "Carica un set di esercizi comuni per iniziare subito a tracciare i tuoi allenamenti.",
     "noUsers": "Nessun utente. Crea il primo profilo per iniziare.",
     "welcome": "Benvenuto",
-    "lastLogin": "Ultimo accesso"
+    "lastLogin": "Ultimo accesso",
+    "namePlaceholder": "es. Mario",
+    "weightPlaceholder": "70"
   },
   "sessionMutator": {
     "swapExercise": "Sostituisci esercizio",

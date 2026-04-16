@@ -1,24 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowRight, 
-  ArrowLeft, 
   Loader2, 
   User, 
   Dumbbell, 
   Scale, 
   Settings2,
-  Check
+  Check,
+  Pencil,
+  Zap,
+  ArrowUpDown,
+  Trophy,
+  PersonStanding,
+  ChevronRight
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
 import { 
   Dialog, 
   DialogContent, 
@@ -35,14 +40,9 @@ import {
   FormMessage, 
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { INPUT_STEPS } from '@/domain/enums';
 import { AVATAR_COLORS } from '@/domain/global-entities';
 import { useOnboardingMutations } from '@/hooks/mutations/onboardingMutations';
@@ -79,23 +79,34 @@ interface Props {
   onUserCreated: (userId: string) => void;
 }
 
+const getInitials = (name: string) => {
+  if (!name) return '?';
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
 export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
   const { t, i18n } = useTranslation();
   const language = i18n.language as 'en' | 'it' | 'es' | 'fr' | 'zh';
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isNameSynced, setIsNameSynced] = useState(true);
   const onboarding = useOnboardingMutations();
 
   const form = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: { 
-      profileName: t('appName'),
+      profileName: '',
       pin: '', 
       avatarColor: AVATAR_COLORS[0],
-      athleteName: t('profile.athlete'),
+      athleteName: '',
       gender: 'male',
       weight: '',
-      seedExercises: true,
+      seedExercises: false,
       seedFullBody: false,
       seedPPL: false,
       seedUpperLower: false,
@@ -103,6 +114,16 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
       seedCalisthenics: false,
     },
   });
+
+  const athleteName = form.watch('athleteName');
+  const avatarColor = form.watch('avatarColor');
+
+  // Sync profileName with athleteName if synced
+  useEffect(() => {
+    if (isNameSynced) {
+      form.setValue('profileName', athleteName || '');
+    }
+  }, [athleteName, isNameSynced, form]);
 
   const onSubmit = async (values: Values) => {
     setLoading(true);
@@ -133,7 +154,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
       // 4. Success
       onUserCreated(globalUser.id);
       form.reset();
-      setStep(1);
+      setIsNameSynced(true);
     } catch (error) {
       console.error('Failed to create user:', error);
     } finally {
@@ -141,26 +162,13 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
     }
   };
 
-  const nextStep = async () => {
-    const fieldsStep1: (keyof Values)[] = ['profileName', 'athleteName', 'gender', 'weight', 'pin'];
-    const isValid = await form.trigger(fieldsStep1);
-    if (isValid) {
-      setStep(2);
-    }
-  };
-
-  const prevStep = () => setStep(1);
-
-  const handleExercisesToggle = (checked: boolean) => {
-    form.setValue('seedExercises', checked);
-    if (!checked) {
-      form.setValue('seedFullBody', false);
-      form.setValue('seedPPL', false);
-      form.setValue('seedUpperLower', false);
-      form.setValue('seedPowerlifting', false);
-      form.setValue('seedCalisthenics', false);
-    }
-  };
+  const PLANS = [
+    { id: 'seedFullBody', label: 'onboarding.seedFullBody', icon: Dumbbell },
+    { id: 'seedPPL', label: 'onboarding.seedPPL', icon: Zap },
+    { id: 'seedUpperLower', label: 'onboarding.seedUpperLower', icon: ArrowUpDown },
+    { id: 'seedPowerlifting', label: 'onboarding.seedPowerlifting', icon: Trophy },
+    { id: 'seedCalisthenics', label: 'onboarding.seedCalisthenics', icon: PersonStanding },
+  ] as const;
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
@@ -168,240 +176,328 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
         onOpenChange(val);
         if (!val) {
           setTimeout(() => {
-            setStep(1);
             form.reset();
+            setIsNameSynced(true);
           }, 300);
         }
       }
     }}>
-      <DialogContent className="max-w-md overflow-hidden p-0">
-        <DialogHeader className="px-6 pt-6">
+      <DialogContent className="max-w-md overflow-hidden p-0 max-h-[90vh] flex flex-col">
+        <DialogHeader className="px-6 pt-6 shrink-0">
           <div className="flex items-center justify-between">
-            <div className="flex gap-1.5">
-              <div className={cn("h-1.5 w-8 rounded-full transition-all", step === 1 ? "bg-primary" : "bg-muted")} />
-              <div className={cn("h-1.5 w-8 rounded-full transition-all", step === 2 ? "bg-primary" : "bg-muted")} />
-            </div>
             <LanguageSwitcher showLabel={false} iconOnly={true} />
           </div>
-          <DialogTitle className="mt-4 text-h4 font-black">
-            {step === 1 ? t('users.createUser') : t('onboarding.step2Title')}
+          <DialogTitle className="mt-2 text-h4 font-black">
+            {t('users.createUser')}
           </DialogTitle>
           <DialogDescription>
-            {step === 1 ? t('users.createUserDescription') : t('onboarding.step2Subtitle')}
+            {t('users.createUserDescription')}
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="relative px-6 pb-8 pt-4">
-            <AnimatePresence mode="wait">
-              {step === 1 ? (
-                <motion.div
-                  key="step1"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <div className="space-y-4 rounded-xl bg-muted/30 p-4 border border-border/50">
-                    <FormField control={form.control} name="profileName" render={({ field }) => (
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          {/* Profile Card Preview */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <Card className="p-4 flex items-center gap-4 bg-muted/30 border-2 border-dashed border-border/50">
+              <Avatar className="h-16 w-16 border-2 border-white shadow-xl transition-colors duration-300" style={{ backgroundColor: avatarColor }}>
+                <AvatarFallback className="bg-transparent text-white text-xl font-black">
+                  {getInitials(athleteName)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                  {t('common.preview')}
+                </p>
+                <h3 className="text-xl font-black truncate leading-tight">
+                  {athleteName || t('profile.athlete')}
+                </h3>
+                <p className="text-sm text-muted-foreground truncate">
+                  {form.watch('profileName') || t('users.title')}
+                </p>
+              </div>
+            </Card>
+          </motion.div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {/* Identity Section */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-4 w-1 bg-primary rounded-full" />
+                  <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {t('profile.nameAndGender')}
+                  </h3>
+                </div>
+
+                <div className="space-y-4">
+                  <FormField control={form.control} name="athleteName" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center justify-between">
+                        <span className="flex items-center gap-2">
+                          <User className="h-3.5 w-3.5 text-primary" />
+                          {t('profile.name')}
+                        </span>
+                        {isNameSynced && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button 
+                                  type="button" 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-6 w-6" 
+                                  onClick={() => setIsNameSynced(false)}
+                                >
+                                  <Pencil className="h-3 w-3" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>{t('users.customizeProfileName')}</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          className="h-12 border-2 font-bold text-lg focus-visible:ring-primary" 
+                          placeholder={t('users.namePlaceholder')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <AnimatePresence>
+                    {!isNameSynced && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                      >
+                        <FormField control={form.control} name="profileName" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center justify-between text-muted-foreground">
+                              <span className="flex items-center gap-2">
+                                <Settings2 className="h-3.5 w-3.5" />
+                                {t('users.title')}
+                              </span>
+                              <Button 
+                                type="button" 
+                                variant="link" 
+                                size="sm" 
+                                className="h-6 px-0 text-[10px] font-bold uppercase" 
+                                onClick={() => setIsNameSynced(true)}
+                              >
+                                {t('users.syncProfileName')}
+                              </Button>
+                            </FormLabel>
+                            <FormControl>
+                              <Input {...field} className="h-10 border-2 font-medium" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div className="flex flex-col gap-6">
+                    <FormField control={form.control} name="gender" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-primary">
-                          <Settings2 className="h-3.5 w-3.5" />
-                          {t('users.title')}
+                        <FormLabel className="flex items-center gap-2">
+                          <PersonStanding className="h-3.5 w-3.5 text-primary" />
+                          {t('profile.gender')}
                         </FormLabel>
-                        <FormControl><Input {...field} className="h-11 border-2 font-black text-base" placeholder="Workout" /></FormControl>
+                        <FormControl>
+                          <ToggleGroup 
+                            type="single" 
+                            value={field.value} 
+                            onValueChange={(val) => val && field.onChange(val)}
+                            className="justify-start gap-2"
+                          >
+                            <ToggleGroupItem value="male" className="flex-1 h-11 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                              {t('profile.genderOptions.male')}
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="female" className="flex-1 h-11 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                              {t('profile.genderOptions.female')}
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="undisclosed" className="flex-1 h-11 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                              {t('profile.genderOptions.undisclosedShort')}
+                            </ToggleGroupItem>
+                          </ToggleGroup>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
 
-                    <div className="flex gap-4">
-                      {/* FEATURE HIDDEN: PIN creation is currently hidden from UI but logic is retained.
-                      <FormField control={form.control} name="pin" render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel className="text-[10px] font-black uppercase tracking-widest">{t('users.pin')}</FormLabel>
-                          <FormControl>
-                            <Input 
-                              {...field} 
-                              type="password" 
-                              inputMode="numeric" 
-                              maxLength={6} 
-                              placeholder="••••" 
-                              className="h-11 border-2"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-                      */}
-
-                      <FormField control={form.control} name="avatarColor" render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel className="text-[10px] font-black uppercase tracking-widest">{t('users.color')}</FormLabel>
-                          <div className="flex flex-wrap gap-1.5 pt-1">
-                            {AVATAR_COLORS.slice(0, 5).map(color => (
-                              <button 
-                                key={color} 
-                                type="button"
-                                className={cn(
-                                  'w-6 h-6 rounded-full transition-all relative flex items-center justify-center', 
-                                  field.value === color ? 'ring-2 ring-offset-1 ring-primary scale-110' : 'opacity-60 hover:opacity-100'
-                                )}
-                                style={{ backgroundColor: color }}
-                                onClick={() => field.onChange(color)}
-                              >
-                                {field.value === color && <Check className="h-3 w-3 text-white" />}
-                              </button>
-                            ))}
-                          </div>
-                        </FormItem>
-                      )} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 px-1">
-                    <div className="flex items-center gap-3">
-                      <div className="h-px flex-1 bg-border" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{t('profile.athlete')}</span>
-                      <div className="h-px flex-1 bg-border" />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <FormField control={form.control} name="athleteName" render={({ field }) => (
-                        <FormItem className="sm:col-span-2">
-                          <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                            <User className="h-3.5 w-3.5" />
-                            {t('profile.name')} *
-                          </FormLabel>
-                          <FormControl><Input {...field} className="h-11 border-2" /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-
-                      <FormField control={form.control} name="gender" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[10px] font-black uppercase tracking-widest">
-                            {t('profile.gender')} *
-                          </FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="h-11 border-2">
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="male">{t('profile.genderOptions.male')}</SelectItem>
-                              <SelectItem value="female">{t('profile.genderOptions.female')}</SelectItem>
-                              <SelectItem value="undisclosed">{t('profile.genderOptions.undisclosed')}</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-
-                      <FormField control={form.control} name="weight" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                            <Scale className="h-3.5 w-3.5" />
-                            {t('profile.weightKg')}
-                          </FormLabel>
-                          <FormControl>
+                    <FormField control={form.control} name="weight" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Scale className="h-3.5 w-3.5 text-primary" />
+                          {t('profile.weightKg')}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
                             <Input 
                               {...field} 
                               type="number" 
-                              className="h-11 border-2" 
+                              className="h-11 border-2 font-bold pr-10" 
                               step={INPUT_STEPS.bodyWeight} 
-                              placeholder="70"
+                              placeholder={t('users.weightPlaceholder')}
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-                    </div>
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-muted-foreground">
+                              {t('units.kg')}
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
+                </div>
+              </div>
 
-                  <Button type="button" onClick={nextStep} className="h-14 w-full text-lg font-black shadow-lg">
-                    {t('onboarding.next')}
-                    <ArrowRight className="ml-2 h-6 w-6" />
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="step2"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="space-y-6"
-                >
-                  <div className="space-y-3 rounded-2xl border-2 border-border/50 bg-muted/30 p-4">
-                    <div className="flex items-center space-x-3 border-b pb-3">
-                      <Checkbox
-                        id="seed-exercises"
-                        checked={form.watch('seedExercises')}
-                        onCheckedChange={(c) => handleExercisesToggle(!!c)}
-                      />
-                      <Label htmlFor="seed-exercises" className="cursor-pointer text-sm font-bold flex items-center gap-2">
-                        <Dumbbell className="h-4 w-4 text-primary" />
-                        {t('onboarding.seedExercises')}
-                      </Label>
-                    </div>
+              {/* Visual Customization */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-4 w-1 bg-primary rounded-full" />
+                  <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {t('users.color')}
+                  </h3>
+                </div>
 
-                    <div className="grid grid-cols-1 gap-3 pt-1">
-                      {(['seedFullBody', 'seedPPL', 'seedUpperLower', 'seedPowerlifting', 'seedCalisthenics'] as const).map((planId) => (
-                        <div key={planId} className="flex items-start space-x-3">
-                          <Checkbox
-                            id={planId}
-                            checked={form.watch(planId)}
-                            disabled={!form.watch('seedExercises')}
-                            onCheckedChange={(c) => form.setValue(planId, !!c)}
-                          />
-                          <Label 
-                            htmlFor={planId} 
-                            className={cn(
-                              "cursor-pointer text-[13px] leading-tight transition-colors",
-                              !form.watch('seedExercises') ? 'text-muted-foreground' : 'hover:text-primary'
-                            )}
-                          >
-                            {t(`onboarding.${planId}`)}
-                          </Label>
-                        </div>
+                <FormField control={form.control} name="avatarColor" render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-wrap gap-3">
+                      {AVATAR_COLORS.map(color => (
+                        <button 
+                          key={color} 
+                          type="button"
+                          className={cn(
+                            'w-10 h-10 rounded-full transition-all relative flex items-center justify-center shadow-md', 
+                            field.value === color ? 'ring-4 ring-primary ring-offset-2 scale-110' : 'hover:scale-105'
+                          )}
+                          style={{ backgroundColor: color }}
+                          onClick={() => field.onChange(color)}
+                        >
+                          {field.value === color && <Check className="h-5 w-5 text-white stroke-[3px]" />}
+                        </button>
                       ))}
                     </div>
-                  </div>
+                  </FormItem>
+                )} />
+              </div>
 
-                  <div className="flex gap-3">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={prevStep} 
-                      disabled={loading}
-                      className="h-12 flex-1 border-2 font-black"
+              {/* Seeding Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-4 w-1 bg-primary rounded-full" />
+                  <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    {t('users.seedData')}
+                  </h3>
+                </div>
+
+                <Card className="p-4 border-2">
+                  <FormField control={form.control} name="seedExercises" render={({ field }) => (
+                    <FormItem className="flex items-center justify-between space-y-0">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-sm font-bold">
+                          {t('onboarding.seedExercises')}
+                        </FormLabel>
+                        <p className="text-[12px] text-muted-foreground leading-tight">
+                          {t('users.seedDataDescription')}
+                        </p>
+                      </div>
+                      <FormControl>
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked);
+                            if (!checked) {
+                              // Reset all plans if exercises are disabled
+                              PLANS.forEach(plan => form.setValue(plan.id, false));
+                            }
+                          }} 
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )} />
+                </Card>
+
+                <AnimatePresence>
+                  {form.watch('seedExercises') && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-4 pt-2"
                     >
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      {t('onboarding.back')}
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      disabled={loading} 
-                      className="h-12 flex-grow text-base font-black shadow-lg"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          {t('common.loading')}
-                        </>
-                      ) : (
-                        <>
-                          {t('onboarding.start')}
-                          <ArrowRight className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </form>
-        </Form>
+                      <p className="text-[13px] text-muted-foreground font-medium leading-snug">
+                        {t('onboarding.selectLibraryPlans')}
+                      </p>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        {PLANS.map((plan) => (
+                          <button
+                            key={plan.id}
+                            type="button"
+                            onClick={() => form.setValue(plan.id, !form.watch(plan.id))}
+                            className={cn(
+                              "flex flex-col items-start p-3 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
+                              form.watch(plan.id) 
+                                ? "border-primary bg-primary/5 shadow-md" 
+                                : "border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40"
+                            )}
+                          >
+                            <plan.icon className={cn(
+                              "h-5 w-5 mb-2 transition-colors",
+                              form.watch(plan.id) ? "text-primary" : "text-muted-foreground"
+                            )} />
+                            <span className={cn(
+                              "text-xs font-bold leading-tight",
+                              form.watch(plan.id) ? "text-foreground" : "text-muted-foreground"
+                            )}>
+                              {t(plan.label)}
+                            </span>
+                            {form.watch(plan.id) && (
+                              <div className="absolute top-2 right-2 h-4 w-4 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="h-2.5 w-2.5 text-white stroke-[4px]" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="pt-4 shrink-0">
+                <Button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="h-16 w-full text-lg font-black shadow-xl rounded-2xl group"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                      {t('common.loading')}
+                    </>
+                  ) : (
+                    <>
+                      {t('onboarding.createAndStart')}
+                      <ChevronRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-1" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

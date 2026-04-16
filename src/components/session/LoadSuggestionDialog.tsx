@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useQuery } from '@tanstack/react-query';
 import { Sparkles, Copy, Info, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -60,9 +60,9 @@ export default function LoadSuggestionDialog({
     setManualPage(0);
   }, [manualMode, open]);
 
-  const historicalData = useLiveQuery(
-    async () => {
-      if (!open) return null;
+  const { data: historicalData, isLoading } = useQuery({
+    queryKey: ['sessions', 'loadSuggestionHistorical', exerciseId, plannedSet?.id],
+    queryFn: async () => {
       const [p1RM, lastSetPerf, lastGeneralPerf] = await Promise.all([
         OneRepMaxService.getPrioritized1RM(exerciseId),
         plannedSet?.id ? SessionRepository.getLastSetPerformance(plannedSet.id) : null,
@@ -70,10 +70,9 @@ export default function LoadSuggestionDialog({
       ]);
       return { p1RM, lastSetPerf, lastGeneralPerf };
     },
-    [exerciseId, plannedSet?.id, open]
-  );
-
-  const isLoading = historicalData === undefined && open;
+    enabled: open,
+    staleTime: 0,
+  });
 
   const planRecommendations = useMemo(() => {
     if (!historicalData || hidePlanTab) return [];

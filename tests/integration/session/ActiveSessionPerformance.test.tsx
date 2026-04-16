@@ -56,6 +56,9 @@ describe('ActiveSession Performance', () => {
       activeSessionId: 'session-1',
       startRestTimer: vi.fn(),
       reset: vi.fn(),
+      transientSetValues: {},
+      setTransientSetValue: vi.fn(),
+      clearTransientSetValues: vi.fn(),
     });
 
     vi.useFakeTimers();

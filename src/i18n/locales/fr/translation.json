@@ -44,6 +44,7 @@
   },
   "common": {
     "loading": "Chargement...",
+    "preview": "Aperçu",
     "calculating": "Calcul...",
     "areYouSure": "Êtes-vous sûr ?",
     "noData": "Aucune donnée disponible",
@@ -725,7 +726,7 @@
     "9.5": "Presque maximal"
   },
   "oneRepMax": {
-    "title": "Gestion du 1RM",
+    "title": "Gestione du 1RM",
     "navLabel": "1RM",
     "addRecord": "Nouveau record",
     "editRecord": "Modifier record",
@@ -837,7 +838,8 @@
     "genderOptions": {
       "male": "Homme",
       "female": "Femme",
-      "undisclosed": "Non précisé"
+      "undisclosed": "Non précisé",
+      "undisclosedShort": "?"
     },
     "currentWeight": "Poids actuel",
     "addWeight": "Enregistrer poids",
@@ -898,9 +900,14 @@
     "seedFullBody": "Full Body 2x par semaine",
     "seedPPL": "Push-Pull-Legs 3x par semaine",
     "seedUpperLower": "Haut/Bas corps 4x par semaine",
+    "seedPowerlifting": "Plan Powerlifting (SBD)",
+    "seedCalisthenics": "Plan Calisthénie",
     "start": "C'est parti !",
     "next": "Suivant",
     "back": "Retour",
+    "createAndStart": "Créer le Profil & Démarrer",
+    "workoutLibrary": "Bibliothèque d'Entraînements",
+    "selectLibraryPlans": "Sélectionnez les plans d'entraînement que vous souhaitez inclure dans votre bibliothèque.",
     "loading": "Préparation..."
   },
   "presentation": {
@@ -949,7 +956,7 @@
     "R": "R"
   },
   "users": {
-    "title": "Utilisateurs",
+    "title": "Athlète",
     "privacyTitle": "100% Hors-ligne et Confidentialité",
     "noServersBadge": "Pas de serveurs, données locales uniquement",
     "appOfflineInfo": "Cette application fonctionne 100% hors-ligne. Vos données ne sont pas envoyées à un serveur et restent exclusivement sur cet appareil.",
@@ -971,8 +978,14 @@
     "enterPin": "Entrer PIN",
     "wrongPin": "Code incorrect",
     "color": "Couleur",
+    "customizeProfileName": "Personnaliser le nom du profil",
+    "syncProfileName": "Garder synchronisé avec le nom de l'athlète",
+    "seedData": "Données initiales",
+    "seedDataDescription": "Chargez un ensemble d'exercices communs pour commencer à suivre vos entraînements immédiatement.",
     "noUsers": "Aucun utilisateur. Créez un profil pour commencer.",
-    "welcome": "Bienvenue"
+    "welcome": "Bienvenue",
+    "namePlaceholder": "ex : Jean",
+    "weightPlaceholder": "70"
   },
   "sessionMutator": {
     "swapExercise": "Remplacer l'exercice",

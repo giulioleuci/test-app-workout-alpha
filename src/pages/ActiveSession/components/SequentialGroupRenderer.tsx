@@ -191,9 +191,9 @@ export default function SequentialGroupRenderer(props: Pick<ExerciseGroupRendere
                                                         completedSets={allSets.filter((s) => s.set.isCompleted).map((s, idx: number) => ({
                                                             id: s.set.id,
                                                             index: idx,
-                                                            count: s.actualCount,
-                                                            load: s.actualLoad,
-                                                            rpe: s.actualRPE,
+                                                            count: s.set.actualCount,
+                                                            load: s.set.actualLoad,
+                                                            rpe: s.set.actualRPE,
                                                             isSkipped: s.set.isSkipped,
                                                             relativeIntensity: s.set.relativeIntensity,
                                                         }))}

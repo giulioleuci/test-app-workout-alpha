@@ -1,10 +1,10 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useQuery } from '@tanstack/react-query';
 
 import type { OneRepMaxRecord } from '@/domain/entities';
 import { getLatestOneRepMax } from '@/services/oneRepMaxService';
 import type { PerformanceAnalysis } from '@/services/performanceAnalyzer';
 
-import { useExerciseHistory, usePerformanceTrend } from './queries/sessionQueries';
+import { useExerciseHistory, usePerformanceTrend, sessionKeys } from './queries/sessionQueries';
 
 export interface PerformanceTrendsResult {
     trend: PerformanceAnalysis | null;
@@ -23,15 +23,17 @@ export function usePerformanceTrends(
         activeSessionId ?? '',
     );
 
-    const oneRepMaxData = useLiveQuery(
-        () => exerciseId ? getLatestOneRepMax(exerciseId) : Promise.resolve(null),
-        [exerciseId]
-    );
+    const { data: oneRepMaxData, isLoading: isOneRepMaxLoading } = useQuery({
+        queryKey: sessionKeys.oneRepMax(exerciseId ?? ''),
+        queryFn: () => getLatestOneRepMax(exerciseId!),
+        enabled: !!exerciseId,
+        staleTime: 0,
+    });
 
     return {
         trend: trendQuery.data ?? null,
         history: historyQuery.data,
         oneRepMax: oneRepMaxData ?? null,
-        isLoading: trendQuery.isLoading || historyQuery.isLoading || (oneRepMaxData === undefined && !!exerciseId),
+        isLoading: trendQuery.isLoading || historyQuery.isLoading || (isOneRepMaxLoading && !!exerciseId),
     };
 }

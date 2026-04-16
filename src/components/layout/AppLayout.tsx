@@ -10,6 +10,7 @@ import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
 import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
 import AppHeader from './AppHeader';
+import { PageBackground } from '../backgrounds/PageBackground';
 import DesktopSidebar from './DesktopSidebar';
 import MobileBottomNav from './MobileBottomNav';
 
@@ -69,38 +70,44 @@ export function AppLayout() {
   const pageLabel = currentPage?.label ?? t('appName');
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <AppHeader
-        pageLabel={pageLabel}
-        PageIcon={PageIcon}
-        activeSessionId={activeSessionId}
-      />
+    <div className="relative flex min-h-screen flex-col overflow-hidden">
+      {/* Background Layer: isolato e fisso dietro tutto il contenuto */}
+      <PageBackground />
 
-      <div className="flex flex-1">
-        <DesktopSidebar navItems={navItems} />
+      {/* Content Layer: z-index superiore per garantire l'interattività */}
+      <div className="relative z-10 flex flex-1 flex-col">
+        <AppHeader
+          pageLabel={pageLabel}
+          PageIcon={PageIcon}
+          activeSessionId={activeSessionId}
+        />
 
-        {/* Main content */}
-        <main className="flex-1 overflow-auto">
-          <div className="container max-w-5xl px-4 pb-20 pt-4">
-            <Suspense fallback={
-              <div className="py-8">
-                <ListPageSkeleton />
-              </div>
-            }>
-              <Outlet />
-            </Suspense>
-          </div>
-        </main>
+        <div className="flex flex-1">
+          <DesktopSidebar navItems={navItems} />
 
-        <ScrollRestoration />
+          {/* Main content */}
+          <main className="flex-1 overflow-auto">
+            <div className="container max-w-5xl px-4 pb-20 pt-4">
+              <Suspense fallback={
+                <div className="py-8">
+                  <ListPageSkeleton />
+                </div>
+              }>
+                <Outlet />
+              </Suspense>
+            </div>
+          </main>
+
+          <ScrollRestoration />
+        </div>
+
+        <RestTimer />
+
+        <MobileBottomNav
+          bottomNavItems={bottomNavItems}
+          moreItems={moreItems}
+        />
       </div>
-
-      <RestTimer />
-
-      <MobileBottomNav
-        bottomNavItems={bottomNavItems}
-        moreItems={moreItems}
-      />
     </div>
   );
 }

@@ -44,6 +44,7 @@
   },
   "common": {
     "loading": "Cargando...",
+    "preview": "Vista previa",
     "calculating": "Calculando...",
     "areYouSure": "¿Estás seguro?",
     "noData": "No hay datos disponibles",
@@ -903,6 +904,9 @@
     "start": "¡Empezar!",
     "next": "Siguiente",
     "back": "Atrás",
+    "createAndStart": "Crear Perfil y Empezar",
+    "workoutLibrary": "Biblioteca de Entrenamientos",
+    "selectLibraryPlans": "Selecciona los planes de entrenamiento que deseas incluir en tu biblioteca.",
     "loading": "Preparando..."
   },
   "presentation": {
@@ -934,7 +938,7 @@
   },
 
   "users": {
-    "title": "Usuarios",
+    "title": "Atleta",
     "privacyTitle": "100% Offline y Privacidad",
     "noServersBadge": "Sin servidores, datos solo locales",
     "appOfflineInfo": "Esta aplicación funciona 100% offline. Tus datos NO se envían a ningún servidor y permanecen exclusivamente en este dispositivo.",
@@ -956,9 +960,14 @@
     "enterPin": "Introduce el PIN",
     "wrongPin": "PIN incorrecto",
     "color": "Color",
-    "noUsers": "No hay usuarios. Crea el primer perfil para empezar.",
+    "syncProfileName": "Mantener sincronizado con el nombre del atleta",
+    "seedData": "Datos iniciales",
+    "seedDataDescription": "Carga un conjunto de ejercicios comunes para comenzar a rastrear tus entrenamientos de inmediato.",
+    "noUsers": "No hay usuarios. Crea el primo perfil para empezar.",
     "welcome": "Bienvenido",
-    "lastLogin": "Último acceso"
+    "lastLogin": "Último acceso",
+    "namePlaceholder": "ej. Carlos",
+    "weightPlaceholder": "70"
   },
   "sessionMutator": {
     "swapExercise": "Cambiar ejercicio",
