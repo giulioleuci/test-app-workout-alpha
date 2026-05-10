@@ -1,0 +1,621 @@
+
+ RUN  v3.2.4 /home/giulio/Desktop/workout-tracker-v2-main
+
+stdout | tests/integration/session/ActiveSessionSimpleMode.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/sessionMutator.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/sessionRotation.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/integration/session/full_session_flow.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/delete_benchmark.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/repositories/SessionRepository.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/workout_activation_performance.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/MuscleOverlapMatrix.bench.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/benchmark_workout_list.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/seed_history.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/ExercisePicker.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/delete_benchmark.test.ts > Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete
+Warming up...
+
+stdout | tests/performance/repositories/SessionRepository.bench.test.ts > SessionRepository - reorderGroups Performance Benchmark > benchmarks original logic
+Original logic time: 225.10ms
+
+stdout | tests/performance/benchmark_workout_list.test.ts > WorkoutList performance benchmark > measures N+1 impact
+Seeding DB with 5 workouts...
+
+stdout | tests/unit/services/seed_history.test.ts > Seed History > should generate workout history when requested
+Generated 30 sessions
+
+stdout | tests/performance/benchmark_workout_list.test.ts > WorkoutList performance benchmark > measures N+1 impact
+Seeding complete. Running original load...
+
+stdout | tests/unit/services/seed_history.test.ts > Seed History > should generate workout history when requested
+Squat loads: [
+    [33m30[39m, [33m24[39m, [33m31.5[39m, [33m31.5[39m,
+  [33m31.5[39m, [33m30[39m, [33m31.5[39m, [33m32.5[39m,
+    [33m30[39m, [33m30[39m, [33m31.5[39m,   [33m30[39m,
+    [33m30[39m, [33m25[39m, [33m31.5[39m
+]
+
+ ✓ tests/unit/services/seed_history.test.ts (1 test) 508ms
+   ✓ Seed History > should generate workout history when requested  399ms
+stdout | tests/performance/repositories/SessionRepository.bench.test.ts > SessionRepository - reorderGroups Performance Benchmark > benchmarks optimized logic
+Optimized logic time: 134.28ms
+
+ ❯ tests/performance/repositories/SessionRepository.bench.test.ts (2 tests | 2 failed) 764ms
+   × SessionRepository - reorderGroups Performance Benchmark > benchmarks original logic 400ms
+     → expected +0 to be '0|8zzzzz:' // Object.is equality
+   × SessionRepository - reorderGroups Performance Benchmark > benchmarks optimized logic 295ms
+     → expected +0 to be '0|8zzzzz:' // Object.is equality
+ ❯ tests/unit/services/sessionMutator.test.ts (24 tests | 5 failed) 794ms
+   ✓ SessionMutator > swapExercise > should replace the exerciseId on the item 85ms
+   ✓ SessionMutator > swapExercise > should set originalExerciseId to the first original exercise 23ms
+   ✓ SessionMutator > swapExercise > should preserve originalExerciseId across a double swap 29ms
+   ✓ SessionMutator > swapExercise > should delete incomplete sets and create new ones 28ms
+   ✓ SessionMutator > swapExercise > should preserve completed and skipped sets 29ms
+   ✓ SessionMutator > swapExercise > should record an ExerciseSubstitution when plannedWorkoutId is provided 28ms
+   ✓ SessionMutator > swapExercise > should NOT record substitution when item has no plannedExerciseItemId 43ms
+   ✓ SessionMutator > swapExercise > should throw if item does not exist 13ms
+   × SessionMutator > addExercise > should create group, item, and 3 fallback sets at the target position 42ms
+     → expected '0|hzzzzz:' to be '0|8zzzzz:' // Object.is equality
+   × SessionMutator > addExercise > should shift existing groups when inserting at an occupied index 29ms
+     → expected '0|900003:' to be '0|900007:' // Object.is equality
+   ✓ SessionMutator > addExercise > should accept a custom groupType 25ms
+   × SessionMutator > addSuperset > should create a Superset group with multiple items, each with 3 sets 27ms
+     → expected '0|hzzzzz:' to be '0|8zzzzz:' // Object.is equality
+   × SessionMutator > addSuperset > should shift existing groups 19ms
+     → expected '0|8zzzzr:' to be '0|8zzzzz:' // Object.is equality
+   ✓ SessionMutator > addSuperset > should allow a custom groupType 21ms
+   ✓ SessionMutator > removeExercise > should delete the item and its sets 45ms
+   ✓ SessionMutator > removeExercise > should delete the group if it becomes empty 56ms
+   × SessionMutator > removeExercise > should re-compact orderIndex on remaining groups after group deletion 27ms
+     → expected '0|90000f:' to be '0|900007:' // Object.is equality
+   ✓ SessionMutator > removeExercise > should throw if item does not exist 39ms
+   ✓ SessionMutator > validateSessionCompletion > should return valid when all sets are completed 20ms
+   ✓ SessionMutator > validateSessionCompletion > should return valid when all sets are completed or skipped 12ms
+   ✓ SessionMutator > validateSessionCompletion > should return unresolved sets that are neither completed nor skipped 24ms
+   ✓ SessionMutator > validateSessionCompletion > should return valid for a session with no groups 11ms
+   ✓ SessionMutator > validateSessionCompletion > should include correct exercise name for each unresolved set 26ms
+   ✓ SessionMutator > validateSessionCompletion > should use "Unknown" for exercise names when exercise is missing 12ms
+stdout | tests/performance/benchmark_workout_list.test.ts > WorkoutList performance benchmark > measures N+1 impact
+Original load time for 5 workouts: 454.55ms
+Running optimized load...
+
+stdout | tests/performance/benchmark_workout_list.test.ts > WorkoutList performance benchmark > measures N+1 impact
+Optimized load time for 5 workouts: 273.80ms
+Improvement: 39.76%
+
+ ✓ tests/performance/benchmark_workout_list.test.ts (1 test) 1020ms
+   ✓ WorkoutList performance benchmark > measures N+1 impact  916ms
+ ❯ tests/integration/session/full_session_flow.test.ts (1 test | 1 failed) 361ms
+   × Full Session Flow Integration > runs a complete session lifecycle 259ms
+     → a.orderIndex.localeCompare is not a function
+stdout | tests/performance/sessionRotation.bench.test.ts > sessionRotation benchmark > measures getNextSessionSuggestion performance (Active Frequent)
+Active Frequent time: 13.22ms
+
+stdout | tests/unit/services/workout_activation_performance.test.ts > Workout Activation Performance > measures performance improvement for deactivating many workouts
+Sequential execution time: 1559.33ms
+
+stdout | tests/performance/sessionRotation.bench.test.ts > sessionRotation benchmark > measures getNextSessionSuggestion performance (Rare Workout)
+Rare Workout time: 2.33ms
+
+ ✓ tests/performance/sessionRotation.bench.test.ts (2 tests) 1913ms
+   ✓ sessionRotation benchmark > measures getNextSessionSuggestion performance (Active Frequent)  1369ms
+   ✓ sessionRotation benchmark > measures getNextSessionSuggestion performance (Rare Workout)  415ms
+stdout | tests/performance/bulkUpdateSets.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/benchmark_hydration.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/integration/session/ActiveSession.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/workout_activation_performance.test.ts > Workout Activation Performance > measures performance improvement for deactivating many workouts
+Parallel (Promise.all) execution time: 1318.64ms
+
+stdout | tests/performance/performance.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/benchmark_hydration.test.ts > Hydration Benchmark > measures getHydratedSessions performance with many exercises
+Seeding 2000 exercises...
+
+stdout | tests/unit/components/ExerciseForm.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/estimateGroupDuration.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/workout_activation_performance.test.ts > Workout Activation Performance > measures performance improvement for deactivating many workouts
+Bulk (bulkPut) execution time: 895.95ms
+
+stdout | tests/unit/services/workout_activation_performance.test.ts > Workout Activation Performance > measures performance improvement for deactivating many workouts
+Improvement (Parallel vs Sequential): 15.44%
+Improvement (Bulk vs Sequential): 42.54%
+
+ ✓ tests/unit/services/workout_activation_performance.test.ts (1 test) 4174ms
+   ✓ Workout Activation Performance > measures performance improvement for deactivating many workouts  4053ms
+stdout | tests/performance/benchmark_hydration.test.ts > Hydration Benchmark > measures getHydratedSessions performance with many exercises
+Seeding 50 sessions...
+
+stdout | tests/performance/performance.test.ts > performance benchmark > measures the improvement
+Original load time: 217.78ms
+
+stdout | tests/performance/delete_benchmark.test.ts > Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete
+Starting Sequential Delete Benchmark...
+
+stdout | tests/performance/benchmark_hydration.test.ts > Hydration Benchmark > measures getHydratedSessions performance with many exercises
+Starting measurement...
+
+stdout | tests/performance/bulkUpdateSets.bench.test.ts > SessionRepository.bulkUpdateSets > measures time to update 500 sets sequentially
+Time taken for 500 updates: 1259.8916189999995ms
+
+stdout | tests/integration/session/ActiveSessionSimpleMode.test.tsx > ActiveSession Simple Mode > hides RPE-based suggestions and removes RPE from reasoning in Simple Mode
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mtrue[39m
+
+stdout | tests/integration/session/ActiveSession.test.tsx > ActiveSession Component > renders session name and plan name in the header
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mfalse[39m
+
+stdout | tests/integration/session/ActiveSession.test.tsx > ActiveSession Component > renders upcoming and completed exercises accordions with summaries
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mfalse[39m
+
+stdout | tests/integration/session/ActiveSession.test.tsx > ActiveSession Component > advances through a Superset using round-robin order
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mfalse[39m
+
+stdout | tests/integration/session/ActiveSessionSimpleMode.test.tsx > ActiveSession Simple Mode > shows advanced features when Simple Mode is OFF
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mtrue[39m
+
+stdout | tests/performance/performance.test.ts > performance benchmark > measures the improvement
+Optimized load time: 2933.67ms
+Improvement: -1247.10%
+
+ ✓ tests/performance/performance.test.ts (1 test) 3736ms
+   ✓ performance benchmark > measures the improvement  3621ms
+stdout | tests/performance/bulkUpdateSets.bench.test.ts > Baseline performance measurement for bulkUpdateSets > measures time to update 500 sets sequentially (original code)
+Time taken for 500 sequential updates (baseline code): 1980.2984830000005ms
+
+ ✓ tests/performance/bulkUpdateSets.bench.test.ts (2 tests) 4180ms
+   ✓ SessionRepository.bulkUpdateSets > measures time to update 500 sets sequentially  1699ms
+   ✓ Baseline performance measurement for bulkUpdateSets > measures time to update 500 sets sequentially (original code)  2335ms
+stdout | tests/performance/benchmark_hydration.test.ts > Hydration Benchmark > measures getHydratedSessions performance with many exercises
+getHydratedSessions took 3107.10ms
+
+ ✓ tests/performance/benchmark_hydration.test.ts (1 test) 4299ms
+   ✓ Hydration Benchmark > measures getHydratedSessions performance with many exercises  4181ms
+ ❯ tests/integration/session/ActiveSessionSimpleMode.test.tsx (3 tests | 1 failed) 3212ms
+   × ActiveSession Simple Mode > hides advanced features in Simple Mode 1264ms
+     → Unable to find an element with the text: /Bench Press/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"space-y-4 py-12 text-center"[39m
+    [36m>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-muted-foreground"[39m
+      [36m>[39m
+        [0mNessuna sessione attiva.[0m
+      [36m</p>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+      [36m>[39m
+        [0mVai agli allenamenti[0m
+      [36m</button>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-4 py-12 text-center"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-muted-foreground"[39m
+        [36m>[39m
+          [0mNessuna sessione attiva.[0m
+        [36m</p>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+        [36m>[39m
+          [0mVai agli allenamenti[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   ✓ ActiveSession Simple Mode > hides RPE-based suggestions and removes RPE from reasoning in Simple Mode  1037ms
+   ✓ ActiveSession Simple Mode > shows advanced features when Simple Mode is OFF  785ms
+stdout | tests/performance/estimateGroupDuration.bench.test.ts > estimateGroupDuration benchmark > measures estimateGroupDuration performance
+estimateGroupDuration time: 3193.41ms
+
+ ✓ tests/performance/estimateGroupDuration.bench.test.ts (1 test) 3496ms
+   ✓ estimateGroupDuration benchmark > measures estimateGroupDuration performance  3416ms
+stdout | tests/unit/components/ExerciseHistoryButton.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/components/ExerciseForm.test.tsx (2 tests) 2928ms
+   ✓ ExerciseForm > should not allow creating an exercise with a name longer than 100 characters  1727ms
+   ✓ ExerciseForm > should sanitize input by removing control characters  1099ms
+stdout | tests/performance/delete_benchmark.test.ts > Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete
+Sequential delete time: 4164.24ms
+
+stdout | tests/performance/delete_benchmark.test.ts > Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete
+Starting Bulk Delete Benchmark...
+
+stdout | tests/integration/session/ActiveSession.test.tsx > ActiveSession Component > advances through a Superset using round-robin order
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mfalse[39m
+
+stdout | tests/integration/session/ActiveSession.test.tsx > ActiveSession Component > advances through a Superset using round-robin order
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mfalse[39m
+
+ ✓ tests/integration/session/ActiveSession.test.tsx (4 tests) 3228ms
+   ✓ ActiveSession Component > renders session name and plan name in the header  304ms
+   ✓ ActiveSession Component > renders upcoming and completed exercises accordions with summaries  503ms
+   ✓ ActiveSession Component > advances through a Superset using round-robin order  2273ms
+stdout | tests/unit/components/SettingsPage.tabs.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/durationEstimator.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/dashboard.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/db/fixtures.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/integration/session/sessionActivation_prepop.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/components/RangeStepper.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/components/ExerciseHistoryButton.test.tsx (2 tests) 826ms
+   ✓ ExerciseHistoryButton > loads and displays history for an exercise  495ms
+stdout | src/db/fixtures.test.ts > Fixture Validation > should load fixtures without errors and maintain integrity
+Fixtures loaded successfully
+
+ ✓ src/db/fixtures.test.ts (1 test) 441ms
+   ✓ Fixture Validation > should load fixtures without errors and maintain integrity  350ms
+ ✓ tests/integration/session/sessionActivation_prepop.test.ts (9 tests) 491ms
+stdout | tests/performance/durationEstimator.bench.test.ts > estimateWorkoutDuration benchmark > measures estimateWorkoutDuration performance
+estimateWorkoutDuration time: 545.64ms
+Estimated duration: { minSeconds: [33m46480[39m, maxSeconds: [33m55120[39m }
+
+ ✓ tests/performance/durationEstimator.bench.test.ts (1 test) 818ms
+   ✓ estimateWorkoutDuration benchmark > measures estimateWorkoutDuration performance  725ms
+stdout | tests/performance/dashboard.bench.test.ts > Dashboard Last Session Query Benchmark > compares performance of last session retrieval
+Old method time: 146.24ms
+
+stdout | tests/performance/dashboard.bench.test.ts > Dashboard Last Session Query Benchmark > compares performance of last session retrieval
+New method time: 1.63ms
+Speedup: 89.67x
+
+ ✓ tests/performance/dashboard.bench.test.ts (1 test) 850ms
+   ✓ Dashboard Last Session Query Benchmark > compares performance of last session retrieval  756ms
+stdout | tests/integration/features/ActiveSession.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/components/RangeStepper.test.tsx (4 tests) 603ms
+stdout | tests/performance/MuscleOverlapMatrix.bench.test.tsx > MuscleOverlapMatrix Performance > measures render time with large dataset
+Initial render time: 3447.38ms
+Re-render time (10x): 8664.14ms
+Average re-render time: 866.41ms
+
+ ✓ tests/unit/components/SettingsPage.tabs.test.tsx (1 test) 487ms
+   ✓ SettingsPage Layout > renders Tabs and default content  405ms
+ ✓ tests/performance/MuscleOverlapMatrix.bench.test.tsx (1 test) 12692ms
+   ✓ MuscleOverlapMatrix Performance > measures render time with large dataset  12593ms
+stdout | src/services/sessionExecutionService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/performanceAnalyzer.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/training_calendar_performance.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/components/Stepper.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/integration/session/ActiveSessionPerformance.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/training_calendar_performance.test.ts > TrainingCalendar performance benchmark > measures the improvement
+Original load time: 123.96ms
+
+stdout | tests/unit/services/training_calendar_performance.test.ts > TrainingCalendar performance benchmark > measures the improvement
+Optimized load time: 32.19ms
+Improvement: 74.03%
+
+ ✓ tests/unit/services/training_calendar_performance.test.ts (1 test) 359ms
+ ✓ src/services/sessionExecutionService.test.ts (16 tests) 353ms
+stdout | tests/unit/components/WorkoutCard.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/delete_benchmark.test.ts > Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete
+Bulk delete time: 5228.96ms
+
+stdout | tests/performance/delete_benchmark.test.ts > Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete
+Improvement: -25.57%
+
+ ✓ tests/unit/services/performanceAnalyzer.test.ts (8 tests) 477ms
+ ✓ tests/performance/delete_benchmark.test.ts (1 test) 14446ms
+   ✓ Delete Performance Benchmark > measures the improvement of bulk delete over sequential delete  14327ms
+stdout | tests/integration/session/sessionActivation_substitution.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/components/Stepper.test.tsx (6 tests) 528ms
+stdout | tests/unit/services/backupService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/integration/session/sessionActivation_substitution.test.ts (10 tests) 385ms
+ ✓ tests/integration/features/ActiveSession.test.tsx (1 test) 589ms
+   ✓ ActiveSession Integration > Renders active session and displays exercise name  485ms
+ ✓ tests/unit/components/WorkoutCard.test.tsx (3 tests) 333ms
+stdout | src/pages/ActiveSession/components/SequentialGroupRenderer.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/components/RPESelector.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/db/core.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/components/SessionTemplateCard.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/backupService.test.ts (8 tests) 507ms
+stdout | tests/integration/session/ActiveSessionPerformance.test.tsx > ActiveSession Performance > does NOT re-render children on timer tick
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mfalse[39m
+
+ ✓ src/db/core.test.ts (8 tests) 622ms
+ ✓ tests/integration/session/ActiveSessionPerformance.test.tsx (1 test) 874ms
+   ✓ ActiveSession Performance > does NOT re-render children on timer tick  772ms
+ ✓ src/pages/ActiveSession/components/SequentialGroupRenderer.test.tsx (3 tests) 242ms
+stdout | tests/unit/services/backupValidation.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/components/RPESelector.test.tsx (3 tests) 512ms
+ ✓ tests/unit/services/backupValidation.test.ts (3 tests) 117ms
+stdout | tests/unit/components/SessionVolumeAnalysis.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/integration/smoke/ProfilePage.smoke.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/components/SessionTemplateCard.test.tsx (2 tests) 477ms
+stdout | src/db/repositories/__tests__/ExerciseRepository.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/db/repositories/__tests__/ExerciseRepository.test.ts (5 tests) 243ms
+ ✓ tests/unit/components/SessionVolumeAnalysis.test.tsx (3 tests) 306ms
+stdout | tests/unit/hooks/use-toast.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/hooks/view-models/useActiveSessionViewModel.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/loadSuggestionEngine.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/db/repositories/__tests__/SessionRepository.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/hooks/use-toast.test.tsx (2 tests) 148ms
+stdout | tests/unit/services/exerciseVariants.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/db/repositories/__tests__/SessionRepository.test.ts (3 tests) 178ms
+ ✓ tests/unit/services/loadSuggestionEngine.test.ts (3 tests) 199ms
+ ✓ src/hooks/view-models/useActiveSessionViewModel.test.tsx (5 tests) 132ms
+ ✓ tests/unit/services/exerciseVariants.test.ts (14 tests) 219ms
+stdout | tests/unit/components/PlannedSetCard.tabs.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/integration/smoke/ProfilePage.smoke.test.tsx (1 test) 199ms
+stdout | tests/performance/oneRepMaxEstimator.bench.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/performance/oneRepMaxEstimator.bench.test.ts > 1RM Estimator Performance > measures N+1 vs anyOf optimization
+Original Time: 32.13ms
+Optimized Time: 4.55ms
+Improvement: 85.82%
+
+ ✓ tests/performance/oneRepMaxEstimator.bench.test.ts (1 test) 211ms
+stdout | tests/unit/services/discardSession.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/components/MuscleOverlapMatrix.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/discardSession.test.ts (3 tests) 193ms
+ ✓ tests/unit/components/PlannedSetCard.tabs.test.tsx (4 tests) 287ms
+ ✓ tests/unit/components/MuscleOverlapMatrix.test.tsx (2 tests) 164ms
+stdout | src/db/repositories/__tests__/WorkoutPlanRepository.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/db/repositories/__tests__/WorkoutPlanRepository.test.ts (1 test) 156ms
+stdout | tests/unit/hooks/usePlanEditor.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/hooks/useSessionActivation.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/analyticsService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/exerciseHistoryService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/hooks/usePlanEditor.test.tsx (8 tests) 170ms
+ ✓ tests/unit/services/exerciseHistoryService.test.ts (2 tests) 111ms
+ ✓ tests/unit/hooks/useSessionActivation.test.tsx (5 tests) 247ms
+stdout | tests/unit/services/historyService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/security_limits.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/historyService.test.ts (8 tests) 128ms
+ ✓ tests/unit/services/analyticsService.test.ts (1 test) 234ms
+stdout | tests/unit/services/oneRepMaxService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/db/schema_alignment.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/hooks/useExerciseFilters.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/oneRepMaxService.test.ts (1 test) 188ms
+ ✓ tests/unit/hooks/useExerciseFilters.test.tsx (2 tests) 166ms
+stdout | tests/unit/services/volumeAnalyzer.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/security_limits.test.ts (3 tests) 164ms
+ ✓ tests/unit/db/schema_alignment.test.ts (2 tests) 161ms
+ ✓ tests/unit/services/volumeAnalyzer.test.ts (13 tests) 133ms
+stdout | tests/unit/services/rpePercentageTable.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/pages/ActiveSession/components/ExerciseGroupRenderer.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/rpePercentageTable.test.ts (9 tests) 126ms
+stdout | tests/unit/utils.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/formatting.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/utils.test.ts (3 tests) 103ms
+ ✓ src/pages/ActiveSession/components/ExerciseGroupRenderer.test.tsx (4 tests) 167ms
+ ✓ tests/unit/services/formatting.test.ts (23 tests) 125ms
+stdout | tests/unit/services/sessionExecutionService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/sessionExecutionService.test.ts (2 tests) 127ms
+stdout | tests/unit/services/security_string_limits.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/security_string_limits.test.ts (5 tests) 151ms
+stdout | tests/unit/services/workoutService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/sessionLoaderService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/workoutService.test.ts (5 tests) 128ms
+stdout | tests/unit/services/sessionRotation.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/sessionLoaderService.test.ts > sessionLoaderService > loadActiveSessionData > returns null if session not found
+loadActiveSessionData hydratedSession [33mfalse[39m userRegulation [33mfalse[39m
+
+stdout | tests/unit/services/sessionLoaderService.test.ts > sessionLoaderService > loadActiveSessionData > returns active session data
+loadActiveSessionData hydratedSession [33mtrue[39m userRegulation [33mtrue[39m
+
+ ✓ tests/unit/services/sessionLoaderService.test.ts (3 tests) 93ms
+stdout | src/services/authService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/services/authService.test.ts (5 tests) 105ms
+ ✓ tests/unit/services/sessionRotation.test.ts (2 tests) 182ms
+stdout | tests/integration/smoke/SettingsPage.smoke.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/setCountAdvisor.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/warmupCalculator.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/services/sessionNavigator.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/setCountAdvisor.test.ts (10 tests) 158ms
+ ✓ src/services/sessionNavigator.test.ts (7 tests) 88ms
+stdout | tests/unit/services/traversal.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/warmupCalculator.test.ts (8 tests) 161ms
+ ✓ tests/unit/services/traversal.test.ts (9 tests) 90ms
+stdout | src/db/globalMetaDb.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/db/globalMetaDb.test.ts (2 tests) 91ms
+stdout | tests/unit/services/csp.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/objectiveScoring.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/csp.test.ts (1 test) 113ms
+ ✓ tests/unit/services/objectiveScoring.test.ts (17 tests) 184ms
+stdout | tests/unit/config-sanity.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/fatigueAnalyzer.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/config-sanity.test.ts (3 tests) 61ms
+ ✓ tests/unit/services/fatigueAnalyzer.test.ts (13 tests) 90ms
+ ✓ tests/integration/smoke/SettingsPage.smoke.test.tsx (1 test) 123ms
+stdout | tests/unit/services/templateService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/setExpander.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | tests/unit/services/capacitor-config.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/templateService.test.ts (2 tests) 65ms
+ ✓ tests/unit/services/setExpander.test.ts (3 tests) 61ms
+ ✓ tests/unit/services/capacitor-config.test.ts (1 test) 48ms
+stdout | tests/unit/services/dashboardService.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ tests/unit/services/dashboardService.test.ts (3 tests) 38ms
+stdout | tests/performance/ExercisePicker.bench.test.ts > ExercisePicker filtering benchmark > benchmarks original logic
+Original logic total time (50 iterations): 32015.24ms
+Original logic avg time per search set: 640.30ms
+
+stdout | tests/performance/ExercisePicker.bench.test.ts > ExercisePicker filtering benchmark > benchmarks optimized logic
+Optimized logic total time (50 iterations): 105.31ms
+Optimized logic avg time per search set: 2.11ms
+
+ ✓ tests/performance/ExercisePicker.bench.test.ts (3 tests) 32278ms
+   ✓ ExercisePicker filtering benchmark > benchmarks original logic  32017ms
+
+ Test Files  4 failed | 81 passed (85)
+      Tests  9 failed | 367 passed (376)
+   Start at  23:06:34
+   Duration  35.19s (transform 6.04s, setup 51.00s, collect 45.08s, tests 111.94s, environment 95.84s, prepare 20.72s)
+
