@@ -145,7 +145,7 @@ export default function OnboardingPage({ onComplete }: Props) {
   );
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div style={{ paddingTop: "env(safe-area-inset-top)" }} className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md overflow-hidden border-none shadow-2xl sm:border">
         <CardHeader className="relative space-y-2 border-b bg-muted/20 pb-4 text-center">
           <div className="flex items-start justify-between">

@@ -36,11 +36,10 @@ void initCapacitor();
 // Handle virtual keyboard overlap for mobile/PWA
 if (window.visualViewport) {
   const updateKeyboardOffset = () => {
-    const viewport = window.visualViewport!;
-    const offset = window.innerHeight - viewport.height;
+    const vv = window.visualViewport!;
+    const offset = window.innerHeight - vv.height - vv.offsetTop;
     document.documentElement.style.setProperty('--keyboard-offset', `${Math.max(0, offset)}px`);
-    
-    // Ensure the focused element is visible
+
     if (offset > 0 && document.activeElement instanceof HTMLElement) {
       document.activeElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
