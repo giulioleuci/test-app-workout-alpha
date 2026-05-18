@@ -1,15 +1,12 @@
 import { useState, useMemo } from 'react';
 
-import { AlertTriangle, Trash2, Loader2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { DeleteAccountSection } from '@/components/auth/DeleteAccountSection';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-
-
 
 type DeleteCategory = 'workouts' | 'history' | '1rm' | 'exercises' | 'bodyWeight';
 
@@ -46,80 +43,70 @@ export default function DangerZoneSection({
   };
 
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="danger" className="border-b-0 px-1">
-        <AccordionTrigger className="py-3 hover:no-underline">
-          <span className="flex items-center gap-2 text-sm font-semibold text-destructive">
-            <AlertTriangle className="h-4 w-4" />
-            {t('settings.dangerZone')}
-          </span>
-        </AccordionTrigger>
-        <AccordionContent className="space-y-5 pb-4">
-          <div className="space-y-3">
-            <div>
-              <p className="text-sm font-medium">{t('settings.deleteDataTitle')}</p>
-              <p className="text-body-sm text-muted-foreground">{t('settings.deleteDataDesc')}</p>
-            </div>
-            <div className="space-y-2">
-              {DELETE_CATEGORIES.map(cat => (
-                <label key={cat.id} htmlFor={cat.id} className="flex cursor-pointer select-none items-start gap-3">
-                  <Checkbox
-                    id={cat.id}
-                    checked={selectedCategories.has(cat.id)}
-                    onCheckedChange={() => toggleCategory(cat.id)}
-                    className="mt-0.5"
-                  />
-                  <div>
-                    <p className="text-sm font-medium leading-tight">{cat.label}</p>
-                    <p className="text-caption text-muted-foreground">{cat.desc}</p>
-                  </div>
-                </label>
-              ))}
-            </div>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => {
-                onDeleteSelected(selectedCategories);
-                setSelectedCategories(new Set());
-              }}
-              disabled={isDeleting || selectedCategories.size === 0}
-            >
-              {isDeleting ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Trash2 className="mr-1 h-4 w-4" />}
-              {t('settings.deleteConfirmLabel')}
-            </Button>
-          </div>
+    <div className="space-y-5">
+      <div className="space-y-3">
+        <div>
+          <p className="text-sm font-medium">{t('settings.deleteDataTitle')}</p>
+          <p className="text-body-sm text-muted-foreground">{t('settings.deleteDataDesc')}</p>
+        </div>
+        <div className="space-y-2">
+          {DELETE_CATEGORIES.map(cat => (
+            <label key={cat.id} htmlFor={cat.id} className="flex cursor-pointer select-none items-start gap-3">
+              <Checkbox
+                id={cat.id}
+                checked={selectedCategories.has(cat.id)}
+                onCheckedChange={() => toggleCategory(cat.id)}
+                className="mt-0.5"
+              />
+              <div>
+                <p className="text-sm font-medium leading-tight">{cat.label}</p>
+                <p className="text-caption text-muted-foreground">{cat.desc}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={() => {
+            onDeleteSelected(selectedCategories);
+            setSelectedCategories(new Set());
+          }}
+          disabled={isDeleting || selectedCategories.size === 0}
+        >
+          {isDeleting ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Trash2 className="mr-1 h-4 w-4" />}
+          {t('settings.deleteConfirmLabel')}
+        </Button>
+      </div>
 
-          <Separator />
+      <Separator />
 
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium">{t('settings.resetDatabase')}</p>
-              <p className="text-body-sm text-muted-foreground">{t('settings.resetDatabaseDesc')}</p>
-            </div>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={onResetDatabase}
-              disabled={isResetting}
-              className="shrink-0"
-            >
-              {isResetting ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Trash2 className="mr-1 h-4 w-4" />}
-              {isResetting ? t('settings.resetting') : t('settings.resetDatabase')}
-            </Button>
-          </div>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1">
+          <p className="text-sm font-medium">{t('settings.resetDatabase')}</p>
+          <p className="text-body-sm text-muted-foreground">{t('settings.resetDatabaseDesc')}</p>
+        </div>
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={onResetDatabase}
+          disabled={isResetting}
+          className="shrink-0"
+        >
+          {isResetting ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Trash2 className="mr-1 h-4 w-4" />}
+          {isResetting ? t('settings.resetting') : t('settings.resetDatabase')}
+        </Button>
+      </div>
 
-          <Separator />
+      <Separator />
 
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium">{t('users.deleteAccount')}</p>
-              <p className="text-body-sm text-muted-foreground">{t('users.deleteAccountDesc')}</p>
-            </div>
-            <DeleteAccountSection />
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1">
+          <p className="text-sm font-medium">{t('users.deleteAccount')}</p>
+          <p className="text-body-sm text-muted-foreground">{t('users.deleteAccountDesc')}</p>
+        </div>
+        <DeleteAccountSection />
+      </div>
+    </div>
   );
 }
