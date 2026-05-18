@@ -13,10 +13,13 @@
     --card: 0 0% 100%;
     --card-foreground: 220 20% 10%;
 
+    --elevated: 0 0% 100%;
+    --elevated-foreground: 220 20% 10%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 220 20% 10%;
 
-    --primary: 220 90% 50%;
+    --primary: 220 68% 52%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 15% 93%;
@@ -25,7 +28,7 @@
     --muted: 220 15% 95%;
     --muted-foreground: 220 10% 45%;
 
-    --accent: 150 60% 42%;
+    --accent: 172 55% 42%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -33,13 +36,13 @@
 
     --border: 220 13% 88%;
     --input: 220 13% 88%;
-    --ring: 220 90% 50%;
+    --ring: 220 68% 52%;
 
     --radius: 0.5rem;
 
     --success: 150 60% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 65% 55%;
     --warning-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
@@ -58,8 +61,8 @@
     --trend-stable: 221 83% 53%;
     --trend-stable-foreground: 224 76% 48%;
 
-    --trend-stagnant: 32 95% 44%;
-    --trend-stagnant-foreground: 20 90% 48%;
+    --trend-stagnant: 35 40% 50%;
+    --trend-stagnant-foreground: 0 0% 100%;
 
     --trend-deteriorating: 0 84% 60%;
     --trend-deteriorating-foreground: 0 0% 100%;
@@ -78,10 +81,13 @@
     --card: 222 22% 11%;
     --card-foreground: 210 20% 92%;
 
-    --popover: 222 22% 11%;
+    --elevated: 222 20% 14%;
+    --elevated-foreground: 210 20% 92%;
+
+    --popover: 222 20% 14%;
     --popover-foreground: 210 20% 92%;
 
-    --primary: 220 85% 58%;
+    --primary: 220 65% 60%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 222 18% 16%;
@@ -90,7 +96,7 @@
     --muted: 222 18% 14%;
     --muted-foreground: 215 15% 55%;
 
-    --accent: 150 55% 48%;
+    --accent: 172 50% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 65% 48%;
@@ -98,11 +104,11 @@
 
     --border: 222 18% 18%;
     --input: 222 18% 18%;
-    --ring: 220 85% 58%;
+    --ring: 220 65% 60%;
 
     --success: 150 55% 48%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 80% 55%;
+    --warning: 38 55% 58%;
     --warning-foreground: 0 0% 100%;
 
     --sidebar-background: 240 5.9% 10%;
@@ -121,8 +127,8 @@
     --trend-stable: 217 91% 60%;
     --trend-stable-foreground: 210 100% 96%;
 
-    --trend-stagnant: 32 95% 60%;
-    --trend-stagnant-foreground: 32 100% 96%;
+    --trend-stagnant: 35 35% 60%;
+    --trend-stagnant-foreground: 0 0% 100%;
 
     --trend-deteriorating: 0 84% 65%;
     --trend-deteriorating-foreground: 0 0% 100%;

@@ -2,7 +2,7 @@ import { Suspense, useMemo } from 'react';
 
 import { Dumbbell, LayoutDashboard, BookOpen, BarChart3, Settings, History, HardDrive, Target, UserCircle, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, ScrollRestoration } from 'react-router-dom';
+import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 
 import RestTimer from '@/components/session/RestTimer';
 import { ListPageSkeleton } from '@/components/ui/page-skeleton';
@@ -10,9 +10,9 @@ import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
 import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
 import AppHeader from './AppHeader';
-import { PageBackground } from '../backgrounds/PageBackground';
 import DesktopSidebar from './DesktopSidebar';
 import MobileBottomNav from './MobileBottomNav';
+import { PageBackground } from '../backgrounds/PageBackground';
 
 interface NavItem {
   to: string;
@@ -52,7 +52,6 @@ export function AppLayout() {
     { to: '/history', icon: History, label: t('nav.history') },
   ], [t]);
 
-  const location = useLocation();
   const activeSessionId = useActiveSessionStore((s) => s.activeSessionId);
 
   const { data: userRegulation } = useUserRegulation();
@@ -66,7 +65,6 @@ export function AppLayout() {
     return navItems.filter(i => !bottomSet.has(i.to));
   }, [navItems]);
 
-  const PageIcon = currentPage?.icon ?? Dumbbell;
   const pageLabel = currentPage?.label ?? t('appName');
 
   return (
@@ -78,7 +76,6 @@ export function AppLayout() {
       <div className="relative z-10 flex flex-1 flex-col">
         <AppHeader
           pageLabel={pageLabel}
-          PageIcon={PageIcon}
           activeSessionId={activeSessionId}
         />
 

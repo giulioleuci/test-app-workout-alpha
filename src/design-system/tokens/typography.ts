@@ -23,27 +23,25 @@ export const fontFamily = {
 } as const;
 
 export const fontSize = {
-  '2xs': '0.5625rem', // 9px
-  xs:    '0.6875rem', // 11px
-  sm:    '0.8125rem', // 13px
-  base:  '0.9375rem', // 15px
-  lg:    '1.0625rem', // 17px
-  xl:    '1.1875rem', // 19px
-  '2xl': '1.4375rem', // 23px
-  '3xl': '1.8125rem', // 29px
-  '4xl': '2.1875rem', // 35px
+  xs:    '0.75rem',   // 12px (caption — 12px mobile floor)
+  sm:    '0.875rem',  // 14px (body-sm)
+  base:  '1rem',      // 16px (body)
+  lg:    '1.125rem',  // 18px (title)
+  xl:    '1.125rem',  // 18px (title alias)
+  '2xl': '1.5rem',    // 24px (headline)
+  '3xl': '1.5rem',    // 24px (headline alias)
+  '4xl': '1.5rem',    // 24px (headline alias)
 } as const;
 
 export const fontSizePx = {
-  '2xs': 9,
-  xs:    11,
-  sm:    13,
-  base:  15,
-  lg:    17,
-  xl:    19,
-  '2xl': 23,
-  '3xl': 29,
-  '4xl': 35,
+  xs:    12,
+  sm:    14,
+  base:  16,
+  lg:    18,
+  xl:    18,
+  '2xl': 24,
+  '3xl': 24,
+  '4xl': 24,
 } as const;
 
 export const fontWeight = {
@@ -52,7 +50,6 @@ export const fontWeight = {
   medium:     500,
   semibold:   600,
   bold:       700,
-  extrabold:  800,
 } as const;
 
 export const lineHeight = {
@@ -61,7 +58,6 @@ export const lineHeight = {
   snug:    1.375,
   normal:  1.5,
   relaxed: 1.625,
-  loose:   2,
 } as const;
 
 export const letterSpacing = {

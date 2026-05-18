@@ -46,15 +46,15 @@ export default function PlannedSetCard({
       />
 
       <Tabs defaultValue="basic" className="w-full">
-        <TabsList className={`grid w-full ${simpleMode ? 'grid-cols-2' : 'grid-cols-3'} h-8 p-0.5`}>
-          <TabsTrigger value="basic" className="text-caption h-7 px-2">
+        <TabsList className={`grid w-full ${simpleMode ? 'grid-cols-2' : 'grid-cols-3'} h-10 p-0.5`}>
+          <TabsTrigger value="basic" className="text-caption h-9 px-2">
             {t('common.base', 'Base')}
           </TabsTrigger>
-          <TabsTrigger value="load" className="text-caption h-7 px-2">
+          <TabsTrigger value="load" className="text-caption h-9 px-2">
             {t('planning.load', 'Carico')}
           </TabsTrigger>
           {!simpleMode && (
-            <TabsTrigger value="advanced" className="text-caption h-7 px-2">
+            <TabsTrigger value="advanced" className="text-caption h-9 px-2">
               {t('common.advanced', 'Avanzate')}
             </TabsTrigger>
           )}

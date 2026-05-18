@@ -79,8 +79,8 @@ export default function SetInputValues({
           )}
         </div>
         <div className="flex items-center gap-0.5">
-          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0 rounded-full" onClick={() => updateValue({ actualLoad: Math.max(0, (value.actualLoad ?? 0) - loadIncrement) })} aria-label={t('actions.decrease')}>
-            <Minus className="h-3.5 w-3.5" />
+          <Button variant="outline" size="icon" className="h-10 w-10 shrink-0 rounded-full" onClick={() => updateValue({ actualLoad: Math.max(0, (value.actualLoad ?? 0) - loadIncrement) })} aria-label={t('actions.decrease')}>
+            <Minus className="h-4 w-4" />
           </Button>
           <Input
             type="number"
@@ -91,8 +91,8 @@ export default function SetInputValues({
             step={loadIncrement}
             aria-label={t('activeSession.loadKg')}
           />
-          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0 rounded-full" onClick={() => updateValue({ actualLoad: (value.actualLoad ?? 0) + loadIncrement })} aria-label={t('actions.increase')}>
-            <Plus className="h-3.5 w-3.5" />
+          <Button variant="outline" size="icon" className="h-10 w-10 shrink-0 rounded-full" onClick={() => updateValue({ actualLoad: (value.actualLoad ?? 0) + loadIncrement })} aria-label={t('actions.increase')}>
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -101,8 +101,8 @@ export default function SetInputValues({
       <div className="flex flex-col gap-1">
         <Label className="text-caption text-muted-foreground">{label}</Label>
         <div className="flex items-center gap-0.5">
-          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0 rounded-full" onClick={() => updateValue({ actualCount: Math.max(0, (value.actualCount ?? 0) - counterConfig.step) })} aria-label={t('actions.decrease')}>
-            <Minus className="h-3.5 w-3.5" />
+          <Button variant="outline" size="icon" className="h-10 w-10 shrink-0 rounded-full" onClick={() => updateValue({ actualCount: Math.max(0, (value.actualCount ?? 0) - counterConfig.step) })} aria-label={t('actions.decrease')}>
+            <Minus className="h-4 w-4" />
           </Button>
           <Input
             type="number"
@@ -113,8 +113,8 @@ export default function SetInputValues({
             step={counterConfig.step}
             aria-label={label}
           />
-          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0 rounded-full" onClick={() => updateValue({ actualCount: (value.actualCount ?? 0) + counterConfig.step })} aria-label={t('actions.increase')}>
-            <Plus className="h-3.5 w-3.5" />
+          <Button variant="outline" size="icon" className="h-10 w-10 shrink-0 rounded-full" onClick={() => updateValue({ actualCount: (value.actualCount ?? 0) + counterConfig.step })} aria-label={t('actions.increase')}>
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
       </div>

@@ -22,7 +22,7 @@ export default function PlannedSetHeader({ ps, exerciseId, onUpdate, onRemove }:
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Select value={ps.setType} onValueChange={(v) => onUpdate({ setType: v as SetType })}>
-        <SelectTrigger className="text-body-sm h-7 w-32">
+        <SelectTrigger className="text-body-sm h-9 w-32">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -46,7 +46,7 @@ export default function PlannedSetHeader({ ps, exerciseId, onUpdate, onRemove }:
             <Button
               variant={ps.notes ? "secondary" : "ghost"}
               size="icon"
-              className={`h-7 w-7 shrink-0 ${ps.notes ? 'text-foreground' : 'text-muted-foreground'}`}
+              className={`h-9 w-9 shrink-0 ${ps.notes ? 'text-foreground' : 'text-muted-foreground'}`}
             >
               <MessageSquare className="h-3.5 w-3.5" />
             </Button>
@@ -67,7 +67,7 @@ export default function PlannedSetHeader({ ps, exerciseId, onUpdate, onRemove }:
           </DialogContent>
         </Dialog>
 
-        <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={onRemove}>
+        <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={onRemove}>
           <Trash2 className="h-3.5 w-3.5 text-destructive" />
         </Button>
       </div>

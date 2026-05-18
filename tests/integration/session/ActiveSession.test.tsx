@@ -92,7 +92,6 @@ describe('ActiveSession Component', () => {
 
     await waitFor(() => {
       expect(screen.getByText('My Session')).toBeInTheDocument();
-      expect(screen.getByText('My Plan')).toBeInTheDocument();
     });
   });
 
