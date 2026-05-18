@@ -34,7 +34,7 @@ const ExerciseCard = memo(function ExerciseCard({ exercise, onEdit }: ExerciseCa
         <h3 className="min-w-0 truncate text-sm font-semibold">{exercise.name}</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="-mr-2 -mt-2 h-7 w-7 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" className="-mr-2 -mt-2 h-9 w-9 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-popover">
             <DropdownMenuItem onClick={() => onEdit(exercise)}>

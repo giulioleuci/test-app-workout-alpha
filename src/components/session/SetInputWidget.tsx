@@ -10,9 +10,7 @@ import { formatPlannedSetSummary, getPlannedSetSummaryParts } from '@/lib/format
 import { formatRestSummary } from '@/lib/formatting';
 import { roundToHalf } from '@/lib/math';
 import { cn } from '@/lib/utils';
-import type { LoadSuggestion } from '@/services/loadSuggestionEngine';
 
-import LoadSuggestionDialog from './LoadSuggestionDialog';
 import RPESelector from './RPESelector';
 import SetInputActions from './set-input/SetInputActions';
 import SetInputExtras from './set-input/SetInputExtras';
@@ -111,13 +109,6 @@ export default function SetInputWidget({
             </div>
           )}
 
-          <SetInputExtras
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            simpleMode={simpleMode}
-          />
-
           <SetInputActions
             onComplete={handleComplete}
             onSkip={onSkip}
@@ -127,6 +118,14 @@ export default function SetInputWidget({
             hideActions={hideActions}
             notesValue={!disabled ? value.notes : undefined}
             onNotesChange={!disabled ? (notes) => updateValue({ notes }) : undefined}
+            extrasSlot={
+              <SetInputExtras
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+                simpleMode={simpleMode}
+              />
+            }
           />
         </CardContent>
       </Card>

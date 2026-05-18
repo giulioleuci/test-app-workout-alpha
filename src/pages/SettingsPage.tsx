@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
+import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +16,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { UserRegulationProfile } from '@/domain/entities';
 import { useProfileMutations } from '@/hooks/mutations/profileMutations';
 import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
@@ -124,36 +125,65 @@ export default function SettingsPage() {
   if (isLoading) return <DetailPageSkeleton />;
 
   return (
-    <div className="space-y-6 pb-12">
-      <Tabs defaultValue="preferences" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="preferences">{t('settings.preferences')}</TabsTrigger>
-          <TabsTrigger value="appearance">{t('settings.appearance')}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="preferences" className="space-y-6">
-          {profile && <RegulationSettingsSection profile={profile} onUpdate={update} />}
-        </TabsContent>
-        <TabsContent value="appearance" className="space-y-6">
-          <AppearanceSettingsSection />
-        </TabsContent>
-      </Tabs>
+    <div className="pb-12">
+      <Accordion type="multiple" defaultValue={["preferences"]} className="w-full">
+        <AccordionItem value="preferences">
+          <AccordionTrigger className="text-base font-semibold">{t('settings.preferences')}</AccordionTrigger>
+          <AccordionContent className="space-y-6 pt-2">
+            {profile && <RegulationSettingsSection profile={profile} onUpdate={update} />}
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Danger Zone */}
-      <DangerZoneSection
-        onResetDatabase={handleResetDatabase}
-        onDeleteSelected={handleDeleteSelected}
-        isResetting={isResetting}
-        isDeleting={isDeleting}
-      />
+        <AccordionItem value="appearance">
+          <AccordionTrigger className="text-base font-semibold">{t('settings.appearance')}</AccordionTrigger>
+          <AccordionContent className="space-y-6 pt-2">
+            <AppearanceSettingsSection />
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Developer Tools */}
-      <DeveloperToolsSection
-        onLoadFixtures={handleLoadFixtures}
-        isLoadingFixtures={isLoadingFixtures}
-      />
+        <AccordionItem value="data">
+          <AccordionTrigger className="text-base font-semibold">{t('settings.dataPersistence', { defaultValue: 'Data' })}</AccordionTrigger>
+          <AccordionContent className="space-y-6 pt-2">
+            <DataPersistenceSection />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
-      {/* Data Persistence Info */}
-      <DataPersistenceSection />
+      <div className="mt-8">
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="developer" className="border-destructive/20">
+            <AccordionTrigger className="text-base font-semibold text-destructive/80 hover:no-underline">
+              <span className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                {t('settings.developerTools', { defaultValue: 'Developer Tools' })}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-6 pt-2">
+              <DeveloperToolsSection
+                onLoadFixtures={handleLoadFixtures}
+                isLoadingFixtures={isLoadingFixtures}
+              />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="danger" className="border-destructive/20">
+            <AccordionTrigger className="text-base font-semibold text-destructive hover:no-underline">
+              <span className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                {t('settings.dangerZone', { defaultValue: 'Danger Zone' })}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-6 pt-2">
+              <DangerZoneSection
+                onResetDatabase={handleResetDatabase}
+                onDeleteSelected={handleDeleteSelected}
+                isResetting={isResetting}
+                isDeleting={isDeleting}
+              />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
 
       <AlertDialog open={alertConfig.open} onOpenChange={(open) => setAlertConfig(prev => ({ ...prev, open }))}>
         <AlertDialogContent>

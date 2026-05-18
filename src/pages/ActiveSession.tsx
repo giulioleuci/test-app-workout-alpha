@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { RestTimerStartControl } from '@/components/session/RestTimer';
 import { Note } from '@/components/ui/note';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import { useActiveSessionViewModel } from '@/hooks/view-models/useActiveSessionViewModel';
@@ -76,8 +75,6 @@ export default function ActiveSession() {
         />
 
         {state.plannedSession?.notes && <Note content={state.plannedSession.notes} />}
-
-        <RestTimerStartControl />
 
         {state.allDone && (
           <SessionCompletionCard onEndSession={onEndSessionAction} />

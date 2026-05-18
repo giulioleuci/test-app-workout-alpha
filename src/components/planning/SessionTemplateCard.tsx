@@ -28,7 +28,7 @@ export const SessionTemplateCard = memo(function SessionTemplateCard({ template,
         <h3 className="min-w-0 truncate text-sm font-semibold">{template.name}</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="-mr-2 -mt-2 h-7 w-7 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" className="-mr-2 -mt-2 h-9 w-9 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-popover">
             <DropdownMenuItem className="text-destructive" onClick={() => onDelete(template.id)}>
@@ -45,7 +45,7 @@ export const SessionTemplateCard = memo(function SessionTemplateCard({ template,
         </div>
         {/* Bottom: actions right-aligned */}
         <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="text-body-sm h-7 px-2 sm:px-3" onClick={() => navigate(`/templates/${template.id}/edit`)}>
+          <Button variant="outline" size="sm" className="text-body-sm h-9 px-3" onClick={() => navigate(`/templates/${template.id}/edit`)}>
             <Pencil className="h-3.5 w-3.5 sm:mr-1" />
             <span className="hidden sm:inline">{t('actions.edit')}</span>
           </Button>

@@ -6,20 +6,19 @@ import { NavLink } from '@/components/NavLink';
 
 interface AppHeaderProps {
   pageLabel: string;
-  PageIcon: LucideIcon;
+  PageIcon?: LucideIcon;
   activeSessionId: string | null;
 }
 
 export default function AppHeader({
-  pageLabel, PageIcon, activeSessionId
+  pageLabel, activeSessionId
 }: AppHeaderProps) {
   const { t } = useTranslation();
 
   return (
     <header className="safe-area-top sticky top-0 z-modal border-b bg-card/80 backdrop-blur-lg">
       <div className="flex h-14 items-center gap-3 px-4">
-        <div className="text-h4 flex items-center gap-2 font-bold tracking-tight">
-          <PageIcon className="h-5 w-5 text-primary" />
+        <div className="text-h4 font-semibold tracking-tight">
           <span>{pageLabel}</span>
         </div>
 

@@ -44,7 +44,7 @@ export default function MobileBottomNav({ bottomNavItems, moreItems }: MobileBot
               activeClassName="text-primary font-semibold"
             >
               <item.icon className="h-4.5 w-4.5" style={{ height: '1.125rem', width: '1.125rem' }} />
-              <span className="text-[10px] leading-none">{item.label}</span>
+              <span className="text-[11px] leading-none">{item.label}</span>
             </NavLink>
           ))}
           <button
@@ -71,7 +71,7 @@ export default function MobileBottomNav({ bottomNavItems, moreItems }: MobileBot
               <NavLink
                 key={item.to}
                 to={item.to}
-                className="flex flex-col items-center justify-center gap-1.5 rounded-xl p-3 text-center text-[14px] text-muted-foreground transition-colors hover:bg-accent"
+                className="flex flex-col items-center justify-center gap-1.5 rounded-xl p-3 text-center text-sm text-muted-foreground transition-colors hover:bg-accent"
                 activeClassName="bg-accent text-accent-foreground font-semibold"
                 onClick={() => setMoreSheetOpen(false)}
               >

@@ -55,7 +55,7 @@ const HistorySessionCard = memo(function HistorySessionCard({
           </h3>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-popover">
               <AlertDialog>

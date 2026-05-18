@@ -77,7 +77,7 @@ export const WorkoutCard = memo(function WorkoutCard({
           <h3 className="min-w-0 truncate text-sm font-semibold">{workout.name}</h3>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="-mr-2 -mt-2 h-7 w-7 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
+              <Button variant="ghost" size="icon" className="-mr-2 -mt-2 h-9 w-9 shrink-0"><MoreVertical className="h-4 w-4" /></Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-popover">
               {workout.status !== PlannedWorkoutStatus.Active && <DropdownMenuItem onClick={() => onActivate(workout.id)}><Power className="mr-2 h-4 w-4" />{t('actions.activate')}</DropdownMenuItem>}
@@ -108,7 +108,7 @@ export const WorkoutCard = memo(function WorkoutCard({
             {plannedSessions.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="default" size="sm" className="text-body-sm h-7 px-2 sm:px-3">
+                  <Button variant="default" size="sm" className="text-body-sm h-9 px-3">
                     <Play className="h-3 w-3 sm:mr-1" />
                     <span className="hidden sm:inline">{t('dashboard.launchSession')}</span>
                   </Button>
@@ -124,11 +124,11 @@ export const WorkoutCard = memo(function WorkoutCard({
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <Button variant="ghost" size="sm" className="text-body-sm h-7 px-2 sm:px-3" title={t('workouts.volumeAnalysis')} onClick={() => onVolumeAnalysis(workout.id)}>
+            <Button variant="ghost" size="sm" className="text-body-sm h-9 px-3" title={t('workouts.volumeAnalysis')} onClick={() => onVolumeAnalysis(workout.id)}>
               <BarChart3 className="h-3.5 w-3.5 sm:mr-1" />
               <span className="hidden sm:inline">{t('workouts.volumeAnalysis')}</span>
             </Button>
-            <Button variant="outline" size="sm" className="text-body-sm h-7 px-2 sm:px-3" onClick={() => navigate(`/workouts/${workout.id}`)}>
+            <Button variant="outline" size="sm" className="text-body-sm h-9 px-3" onClick={() => navigate(`/workouts/${workout.id}`)}>
               <Pencil className="h-3.5 w-3.5 sm:mr-1" />
               <span className="hidden sm:inline">{t('actions.edit')}</span>
             </Button>

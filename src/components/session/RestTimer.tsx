@@ -81,27 +81,27 @@ export default function RestTimer() {
 
   if (isActive) {
     return (
-      <div className="text-on-warning fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-4 right-4 z-modal mx-auto max-w-sm rounded-xl border border-warning/50 bg-warning px-4 py-3 shadow-lg backdrop-blur-sm md:bottom-8 md:left-64 md:right-auto md:w-80">
-        <div className="flex items-center gap-3">
-          <span className={`font-mono text-2xl font-bold tabular-nums ${isOvertime ? 'text-destructive' : ''} ${isPaused ? 'opacity-50' : ''}`}>
+      <div className="text-warning fixed bottom-[calc(3.25rem+env(safe-area-inset-bottom))] left-0 right-0 z-overlay border-t border-warning/30 bg-warning/15 px-4 py-2 backdrop-blur-sm md:bottom-0 md:left-64">
+        <div className="mx-auto flex max-w-sm items-center gap-3">
+          <span className={`font-mono text-lg font-semibold tabular-nums ${isOvertime ? 'text-destructive' : ''} ${isPaused ? 'opacity-50' : ''}`}>
             {isOvertime ? `+${formatTime(overtime)}` : formatTime(remaining)}
           </span>
           <Progress
             value={isOvertime ? 0 : progress}
             className="h-1.5 flex-1"
-            indicatorClassName={isOvertime ? 'bg-destructive' : 'bg-primary'}
+            indicatorClassName={isOvertime ? 'bg-destructive' : 'bg-warning'}
           />
           <div className="flex items-center gap-1">
             {isPaused ?
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleResume} title={t('activeSession.resume')}>
-                <Play className="h-3.5 w-3.5" />
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleResume} title={t('activeSession.resume')}>
+                <Play className="h-4 w-4" />
               </Button> :
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handlePause} title={t('activeSession.pause')}>
-                <Pause className="h-3.5 w-3.5" />
+              <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handlePause} title={t('activeSession.pause')}>
+                <Pause className="h-4 w-4" />
               </Button>
             }
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleClear} title={t('actions.close')}>
-              <X className="h-3.5 w-3.5" />
+            <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleClear} title={t('actions.close')}>
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>

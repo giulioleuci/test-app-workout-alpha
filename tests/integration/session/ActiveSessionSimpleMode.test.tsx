@@ -246,13 +246,7 @@ describe('ActiveSession Simple Mode', () => {
       expect(el).toBeInTheDocument();
     });
 
-    // 1. Verify "Extra options" toggle is visible
-    // "Cedimento, Parziali, Forzate, Note"
-    // The button text is constructed dynamically or hardcoded.
-    // Check t('planning.toFailure') (Cedimento)
-    expect(screen.getAllByText(/Failure/i)[0]).toBeInTheDocument();
-
-    // 2. Verify RPE in "Completed Set Info" popover
+    // 1. Verify RPE in "Completed Set Info" popover
     const historyTrigger = screen.getAllByText(/1.*✓/)[0];
     fireEvent.click(historyTrigger);
 
