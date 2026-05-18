@@ -24,7 +24,6 @@ import { SystemMaintenanceService } from '@/services/systemMaintenanceService';
 
 import AppearanceSettingsSection from './Settings/components/AppearanceSettingsSection';
 import DangerZoneSection from './Settings/components/DangerZoneSection';
-import DataPersistenceSection from './Settings/components/DataPersistenceSection';
 import DeveloperToolsSection from './Settings/components/DeveloperToolsSection';
 import RegulationSettingsSection from './Settings/components/RegulationSettingsSection';
 
@@ -141,49 +140,38 @@ export default function SettingsPage() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="data">
-          <AccordionTrigger className="text-base font-semibold">{t('settings.dataPersistence', { defaultValue: 'Data' })}</AccordionTrigger>
-          <AccordionContent className="space-y-6 pt-2">
-            <DataPersistenceSection />
+        <AccordionItem value="developer" className="border-destructive/20">
+          <AccordionTrigger className="text-base font-semibold text-destructive/80 hover:no-underline">
+            <span className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              {t('settings.developerTools')}
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="pt-2">
+            <DeveloperToolsSection
+              onLoadFixtures={handleLoadFixtures}
+              isLoadingFixtures={isLoadingFixtures}
+            />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="danger" className="border-destructive/20">
+          <AccordionTrigger className="text-base font-semibold text-destructive hover:no-underline">
+            <span className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              {t('settings.dangerZone')}
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="pt-2">
+            <DangerZoneSection
+              onResetDatabase={handleResetDatabase}
+              onDeleteSelected={handleDeleteSelected}
+              isResetting={isResetting}
+              isDeleting={isDeleting}
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      <div className="mt-8">
-        <Accordion type="multiple" className="w-full">
-          <AccordionItem value="developer" className="border-destructive/20">
-            <AccordionTrigger className="text-base font-semibold text-destructive/80 hover:no-underline">
-              <span className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                {t('settings.developerTools', { defaultValue: 'Developer Tools' })}
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-6 pt-2">
-              <DeveloperToolsSection
-                onLoadFixtures={handleLoadFixtures}
-                isLoadingFixtures={isLoadingFixtures}
-              />
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="danger" className="border-destructive/20">
-            <AccordionTrigger className="text-base font-semibold text-destructive hover:no-underline">
-              <span className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                {t('settings.dangerZone', { defaultValue: 'Danger Zone' })}
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-6 pt-2">
-              <DangerZoneSection
-                onResetDatabase={handleResetDatabase}
-                onDeleteSelected={handleDeleteSelected}
-                isResetting={isResetting}
-                isDeleting={isDeleting}
-              />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
 
       <AlertDialog open={alertConfig.open} onOpenChange={(open) => setAlertConfig(prev => ({ ...prev, open }))}>
         <AlertDialogContent>

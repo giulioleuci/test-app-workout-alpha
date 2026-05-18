@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 
-import { Download, Upload, FileJson, AlertTriangle, Copy, SkipForward, RefreshCw } from 'lucide-react';
+import { Download, Upload, FileJson, AlertTriangle, Copy, SkipForward, RefreshCw, HardDrive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -174,7 +174,20 @@ export default function BackupPage() {
 
   return (
     <div className="space-y-6">
-      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HardDrive className="h-5 w-5" />
+            {t('settings.dataPersistenceTitle')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 pt-0">
+          <p className="text-body-sm text-muted-foreground">{t('settings.dataPersistenceDesc')}</p>
+          <div className="rounded-md bg-secondary/50 p-3">
+            <p className="text-body-sm text-muted-foreground">{t('settings.dataPersistenceDetail')}</p>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

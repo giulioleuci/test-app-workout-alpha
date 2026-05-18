@@ -34,18 +34,24 @@ export default function SetInputHeader({
   const { t } = useTranslation();
   const hasHistory = completedSets && completedSets.length > 0;
 
-  const planParts = plannedSummaryParts && plannedSummaryParts.length > 0
-    ? plannedSummaryParts.filter(Boolean).join(' · ')
-    : plannedSummary || '';
-  const condensedPlan = [planParts, plannedRestSummary ? `${t('planning.rest')} ${plannedRestSummary}` : null]
-    .filter(Boolean)
-    .join(' · ');
+  const chipParts = [
+    ...(plannedSummaryParts && plannedSummaryParts.length > 0
+      ? plannedSummaryParts.filter(Boolean)
+      : plannedSummary ? [plannedSummary] : []),
+    ...(plannedRestSummary ? [`${t('planning.rest')} ${plannedRestSummary}`] : []),
+  ];
 
   return (
-    <div className="flex items-center gap-2">
-      <Badge className="text-body-sm shrink-0 font-mono">{setNumber}/{totalSets}</Badge>
-      {condensedPlan && (
-        <span className="text-caption min-w-0 flex-1 truncate text-muted-foreground">{condensedPlan}</span>
+    <div className="flex items-start gap-2">
+      <Badge className="text-body-sm mt-0.5 shrink-0 font-mono">{setNumber}/{totalSets}</Badge>
+      {chipParts.length > 0 && (
+        <div className="flex min-w-0 flex-1 flex-wrap gap-1">
+          {chipParts.map((part, i) => (
+            <Badge key={i} variant="outline" className="text-caption shrink-0 px-1.5 py-0 font-normal">
+              {part}
+            </Badge>
+          ))}
+        </div>
       )}
       {isCompleting ? (
         <Badge variant="default" className="ml-auto shrink-0 bg-success text-success-foreground">

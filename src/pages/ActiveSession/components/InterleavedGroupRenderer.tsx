@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { Check, Plus, SkipForward, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, Plus, SkipForward, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselDots, type CarouselApi } from '@/components/ui/carousel';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import type { LoadedItem } from '@/domain/activeSessionTypes';
 import type { SessionSet } from '@/domain/entities';
@@ -279,27 +280,35 @@ export default function InterleavedGroupRenderer(props: Pick<ExerciseGroupRender
                                                         />
                                                     </div>
 
-                                                    {!isViewed && (
-                                                        <div className="mt-3 flex items-center gap-1.5">
-                                                            {onSkipRound && (
-                                                                <Button variant="outline" className="h-9 flex-1 gap-1.5" onClick={onSkipRound} title={t('activeSession.skipRound')}>
-                                                                    <SkipForward className="h-4 w-4 shrink-0" />
-                                                                    <span className="hidden text-sm sm:inline">{t('activeSession.skipRound')}</span>
-                                                                </Button>
-                                                            )}
-                                                            {onSkipRemainingRounds && (
-                                                                <Button variant="outline" className="h-9 flex-1 gap-1.5" onClick={onSkipRemainingRounds} title={t('activeSession.skipRoundRemaining')}>
-                                                                    <SkipForward className="h-4 w-4 shrink-0 opacity-60" />
-                                                                    <SkipForward className="-ml-3 h-4 w-4 shrink-0" />
-                                                                    <span className="hidden text-sm sm:inline">{t('activeSession.skipRoundRemaining')}</span>
-                                                                </Button>
-                                                            )}
-                                                            {onAddRound && (
-                                                                <Button variant="outline" className="h-9 flex-1 gap-1.5" onClick={() => onAddRound(lg)} title={t('activeSession.addAnotherRound')}>
-                                                                    <Plus className="h-4 w-4 shrink-0" />
-                                                                    <span className="hidden text-sm sm:inline">{t('activeSession.addAnotherSetShort')}</span>
-                                                                </Button>
-                                                            )}
+                                                    {!isViewed && (onSkipRound || onSkipRemainingRounds || onAddRound) && (
+                                                        <div className="mt-3 flex justify-end">
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button variant="outline" size="icon" className="h-9 w-9 shrink-0">
+                                                                        <MoreHorizontal className="h-4 w-4" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    {onSkipRound && (
+                                                                        <DropdownMenuItem onClick={onSkipRound}>
+                                                                            <SkipForward className="mr-2 h-4 w-4" />
+                                                                            {t('activeSession.skipRound')}
+                                                                        </DropdownMenuItem>
+                                                                    )}
+                                                                    {onSkipRemainingRounds && (
+                                                                        <DropdownMenuItem onClick={onSkipRemainingRounds}>
+                                                                            <SkipForward className="mr-2 h-4 w-4 opacity-60" />
+                                                                            {t('activeSession.skipRoundRemaining')}
+                                                                        </DropdownMenuItem>
+                                                                    )}
+                                                                    {onAddRound && (
+                                                                        <DropdownMenuItem onClick={() => onAddRound(lg)}>
+                                                                            <Plus className="mr-2 h-4 w-4" />
+                                                                            {t('activeSession.addAnotherRound')}
+                                                                        </DropdownMenuItem>
+                                                                    )}
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
                                                         </div>
                                                     )}
                                                 </div>
@@ -367,24 +376,34 @@ export default function InterleavedGroupRenderer(props: Pick<ExerciseGroupRender
                                                                 <Check className="h-4 w-4 shrink-0" />
                                                                 <span className="hidden text-sm sm:inline">{t('activeSession.completeSetShort')}</span>
                                                             </Button>
-                                                            {onSkipRound && (
-                                                                <Button variant="outline" className="h-9 gap-1.5 px-2 sm:px-3" onClick={onSkipRound} title={t('activeSession.skipRound')}>
-                                                                    <SkipForward className="h-4 w-4 shrink-0" />
-                                                                    <span className="hidden text-sm sm:inline">{t('activeSession.skipRound')}</span>
-                                                                </Button>
-                                                            )}
-                                                            {onSkipRemainingRounds && (
-                                                                <Button variant="outline" className="h-9 gap-1.5 px-2 sm:px-3" onClick={onSkipRemainingRounds} title={t('activeSession.skipRoundRemaining')}>
-                                                                    <SkipForward className="h-4 w-4 shrink-0 opacity-60" />
-                                                                    <SkipForward className="-ml-3 h-4 w-4 shrink-0" />
-                                                                    <span className="hidden text-sm sm:inline">{t('activeSession.skipRoundRemaining')}</span>
-                                                                </Button>
-                                                            )}
-                                                            {onAddRound && (
-                                                                <Button variant="outline" className="h-9 gap-1.5 px-2 sm:px-3" onClick={() => onAddRound(lg)} title={t('activeSession.addAnotherRound')}>
-                                                                    <Plus className="h-4 w-4 shrink-0" />
-                                                                    <span className="hidden text-sm sm:inline">{t('activeSession.addAnotherSetShort')}</span>
-                                                                </Button>
+                                                            {(onSkipRound || onSkipRemainingRounds || onAddRound) && (
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild>
+                                                                        <Button variant="outline" size="icon" className="h-9 w-9 shrink-0">
+                                                                            <MoreHorizontal className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent align="end">
+                                                                        {onSkipRound && (
+                                                                            <DropdownMenuItem onClick={onSkipRound}>
+                                                                                <SkipForward className="mr-2 h-4 w-4" />
+                                                                                {t('activeSession.skipRound')}
+                                                                            </DropdownMenuItem>
+                                                                        )}
+                                                                        {onSkipRemainingRounds && (
+                                                                            <DropdownMenuItem onClick={onSkipRemainingRounds}>
+                                                                                <SkipForward className="mr-2 h-4 w-4 opacity-60" />
+                                                                                {t('activeSession.skipRoundRemaining')}
+                                                                            </DropdownMenuItem>
+                                                                        )}
+                                                                        {onAddRound && (
+                                                                            <DropdownMenuItem onClick={() => onAddRound(lg)}>
+                                                                                <Plus className="mr-2 h-4 w-4" />
+                                                                                {t('activeSession.addAnotherRound')}
+                                                                            </DropdownMenuItem>
+                                                                        )}
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
                                                             )}
                                                         </div>
                                                     </div>
