@@ -1,50 +1,3 @@
-import { LexoRank } from 'lexorank';
-function generateTestRank(index: number) { let rank = LexoRank.min().between(LexoRank.middle()); for(let i=0; i<index; i++) rank = rank.genNext(); return rank.toString(); }
-import 'fake-indexeddb/auto';
-import { nanoid } from 'nanoid';
-import { describe, it, expect, beforeEach } from 'vitest';
-
-import type { PlannedWorkout } from '@/domain/entities';
-import {
-  PlannedWorkoutStatus,
-  ObjectiveType,
-  WorkType,
-  PlannedSessionStatus,
-  ExerciseGroupType,
-  CounterType,
-  SetType,
-  ToFailureIndicator
-} from '@/domain/enums';
-import dayjs from '@/lib/dayjs';
-import { estimateWorkoutDuration, bulkEstimateWorkoutDurations, type DurationRange } from '@/services/durationEstimator';
-
-import { testDb as db } from '../utils/testHelpers';
-
-// Mimic WorkoutList.tsx load function logic (the N+1 part)
-async function originalLoad(workouts: PlannedWorkout[]) {
-  const counts: Record<string, number> = {};
-  const durs: Record<string, DurationRange> = {};
-  for (const w of workouts) {
-    counts[w.id] = await db.plannedSessions.where('plannedWorkoutId').equals(w.id).count();
-    durs[w.id] = await estimateWorkoutDuration(w.id);
-  }
-  return { counts, durs };
-}
-
-async function optimizedLoad(workouts: PlannedWorkout[]) {
-  // Count sessions
-  const workoutIds = workouts.map(w => w.id);
-  const sessions = await db.plannedSessions.where('plannedWorkoutId').anyOf(workoutIds).toArray();
-  const counts: Record<string, number> = {};
-  for (const s of sessions) {
-    counts[s.plannedWorkoutId] = (counts[s.plannedWorkoutId] || 0) + 1;
-  }
-
-  // Calculate durations
-  const durs = await bulkEstimateWorkoutDurations(workouts);
-  return { counts, durs };
-}
-
 describe('WorkoutList performance benchmark', () => {
   beforeEach(async () => {
     await Promise.all(db.tables.map(t => t.clear()));
@@ -169,3 +122,50 @@ describe('WorkoutList performance benchmark', () => {
     }
   }, 20000); // 20s timeout
 });
+
+function generateTestRank(index: number) { let rank = LexoRank.min().between(LexoRank.middle()); for(let i=0; i<index; i++) rank = rank.genNext(); return rank.toString(); }
+import 'fake-indexeddb/auto';
+import { LexoRank } from 'lexorank';
+import { nanoid } from 'nanoid';
+import { describe, it, expect, beforeEach } from 'vitest';
+
+import type { PlannedWorkout } from '@/domain/entities';
+import {
+  PlannedWorkoutStatus,
+  ObjectiveType,
+  WorkType,
+  PlannedSessionStatus,
+  ExerciseGroupType,
+  CounterType,
+  SetType,
+  ToFailureIndicator
+} from '@/domain/enums';
+import dayjs from '@/lib/dayjs';
+import { estimateWorkoutDuration, bulkEstimateWorkoutDurations, type DurationRange } from '@/services/durationEstimator';
+
+import { testDb as db } from '../utils/testHelpers';
+
+// Mimic WorkoutList.tsx load function logic (the N+1 part)
+async function originalLoad(workouts: PlannedWorkout[]) {
+  const counts: Record<string, number> = {};
+  const durs: Record<string, DurationRange> = {};
+  for (const w of workouts) {
+    counts[w.id] = await db.plannedSessions.where('plannedWorkoutId').equals(w.id).count();
+    durs[w.id] = await estimateWorkoutDuration(w.id);
+  }
+  return { counts, durs };
+}
+
+async function optimizedLoad(workouts: PlannedWorkout[]) {
+  // Count sessions
+  const workoutIds = workouts.map(w => w.id);
+  const sessions = await db.plannedSessions.where('plannedWorkoutId').anyOf(workoutIds).toArray();
+  const counts: Record<string, number> = {};
+  for (const s of sessions) {
+    counts[s.plannedWorkoutId] = (counts[s.plannedWorkoutId] || 0) + 1;
+  }
+
+  // Calculate durations
+  const durs = await bulkEstimateWorkoutDurations(workouts);
+  return { counts, durs };
+}

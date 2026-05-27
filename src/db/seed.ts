@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for (let i = 0; i < index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import { nanoid } from 'nanoid';
 
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
@@ -1140,4 +1132,10 @@ export async function seedCalisthenics(
       await createStandardGroup(sessionId, ex.key, i, ex.config, language);
     }
   }
+}
+
+function generateRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for (let i = 0; i < index; i++) rank = rank.genNext();
+  return rank.toString();
 }

@@ -1,16 +1,7 @@
-import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
- 
 import 'fake-indexeddb/auto';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { LexoRank } from 'lexorank';
 import { nanoid } from 'nanoid';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -206,3 +197,9 @@ describe('ExerciseHistoryButton', () => {
     });
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

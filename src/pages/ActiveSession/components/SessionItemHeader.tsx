@@ -5,7 +5,6 @@ import ExerciseHistoryButton from '@/components/session/ExerciseHistoryButton';
 import { ExerciseInfoButton } from '@/components/session/ExerciseInfoModal';
 import PerformanceBadge, { type PerformanceTrendStatus } from '@/components/session/PerformanceBadge';
 import WarmupCalculator from '@/components/session/WarmupCalculator';
-import { NoteViewerButton } from '@/components/ui/note';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -13,6 +12,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { NoteViewerButton } from '@/components/ui/note';
 import type { LoadedItem } from '@/domain/activeSessionTypes';
 import type { SessionSet, PlannedSet } from '@/domain/entities';
 import { getInitialSetValues } from '@/hooks/activeSession/utils';

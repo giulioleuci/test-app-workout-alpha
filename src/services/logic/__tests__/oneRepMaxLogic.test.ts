@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import {
   estimateBrzycki, estimateEpley, estimateOConner,
   estimateLombardi, computeWeighted1RM,

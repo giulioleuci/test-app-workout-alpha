@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import { describe, it, expect } from 'vitest';
 
 import type { SessionSet, PlannedSet } from '@/domain/entities';
@@ -233,3 +225,9 @@ describe('adviseOnSetCount', () => {
   });
 
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

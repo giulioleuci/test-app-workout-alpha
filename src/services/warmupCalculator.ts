@@ -4,6 +4,7 @@ import { UserProfileRepository } from '@/db/repositories/UserProfileRepository';
 import type { Exercise, WarmupSetConfiguration } from '@/domain/entities';
 import { ExerciseType, MuscleGroup, MuscleGroupMuscles } from '@/domain/enums';
 import { roundToHalf } from '@/lib/math';
+
 import { buildWarmupScheme } from './logic/warmupLogic';
 
 export type WarmupExerciseType = "compound_upper" | "compound_lower" | "isolation";

@@ -33,7 +33,7 @@ export function useExerciseHistory(exerciseId: string, currentSessionId: string,
 export function useActiveSessionData(activeSessionId: string | null) {
   const { data, isLoading } = useQuery({
     queryKey: sessionKeys.active(activeSessionId),
-    queryFn: () => loadActiveSessionData(activeSessionId!),
+    queryFn: () => loadActiveSessionData(activeSessionId),
     enabled: !!activeSessionId,
     staleTime: 0,
   });

@@ -1,6 +1,9 @@
+import { nanoid } from 'nanoid';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-// Mock systemService BEFORE importing activeSessionStore
+import { useActiveSessionStore } from '@/stores/activeSessionStore';
+
+// vi.mock calls are hoisted, so they run before the imports above are evaluated.
 vi.mock('@/services/systemService', () => ({
   systemService: {
     isInitialized: () => true,
@@ -8,11 +11,6 @@ vi.mock('@/services/systemService', () => ({
   }
 }));
 
-import { useActiveSessionStore } from '@/stores/activeSessionStore';
-
-import { nanoid } from 'nanoid';
-
-// Mock dependencies
 vi.mock('@/db/repositories/SessionRepository', () => ({
   SessionRepository: {
     saveFullSession: vi.fn().mockResolvedValue('session-id'),
@@ -26,7 +24,7 @@ describe('SessionExecutionService', () => {
   });
 
   describe('Session Lifecycle', () => {
-    it('should initialize a session correctly', async () => {
+    it('should initialize a session correctly', () => {
       const sessionId = nanoid();
 
       useActiveSessionStore.getState().setActiveSession(sessionId);
@@ -35,7 +33,7 @@ describe('SessionExecutionService', () => {
       expect(currentState.activeSessionId).toBe(sessionId);
     });
 
-    it('should discard a session and clear the store', async () => {
+    it('should discard a session and clear the store', () => {
         const sessionId = nanoid();
 
         useActiveSessionStore.getState().setActiveSession(sessionId);

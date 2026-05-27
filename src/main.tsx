@@ -12,11 +12,12 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 
 import { queryClient } from "@/lib/queryClient";
-import { applyPalette, type PaletteId } from "./hooks/useColorPalette";
-import { initCapacitor } from "./services/capacitorInit";
 
 import App from "./App.tsx";
 import { UserGate } from "./components/UserGate";
+import { applyPalette, type PaletteId } from "./hooks/useColorPalette";
+import { initCapacitor } from "./services/capacitorInit";
+
 
 import "./index.css";
 import "./i18n/config";

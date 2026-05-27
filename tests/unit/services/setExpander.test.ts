@@ -1,13 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
-
 import { describe, it, expect } from 'vitest';
 
 import { PlannedSet, SessionSet } from '@/domain/entities';
@@ -87,3 +78,9 @@ describe('setExpander', () => {
     expect(expanded[0].setType).toBe(SetType.Working);
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

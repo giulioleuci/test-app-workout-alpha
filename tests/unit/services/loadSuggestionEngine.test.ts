@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import { nanoid } from 'nanoid';
 import { describe, it, expect, beforeEach } from 'vitest';
 
@@ -205,3 +197,9 @@ describe('Load Suggestion Engine', () => {
     expect(suggestion?.suggestedLoad).toBe(100);
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

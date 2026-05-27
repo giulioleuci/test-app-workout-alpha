@@ -1,4 +1,5 @@
 import { roundToHalf, roundTo01 } from '@/lib/math';
+
 import {
   estimateBrzycki, estimateEpley, estimateOConner, estimateLombardi,
 } from './logic/oneRepMaxLogic';

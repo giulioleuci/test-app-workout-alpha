@@ -1,12 +1,12 @@
 import 'fake-indexeddb/auto';
+import '@testing-library/jest-dom';
+import { beforeAll, afterAll } from 'vitest';
+
+import '@/i18n/config';
 import { systemService } from '@/services/systemService';
 import { userService } from '@/services/userService';
 
 import { setupBrowserMocks } from '../mocks/browser';
-
-import '@testing-library/jest-dom';
-import '@/i18n/config';
-import { beforeAll, afterAll } from 'vitest';
 
 setupBrowserMocks();
 

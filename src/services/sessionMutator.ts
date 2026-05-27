@@ -6,6 +6,7 @@ import type {
   SessionExerciseGroup, SessionExerciseItem, SessionSet, ExerciseSubstitution,
 } from '@/domain/entities';
 import { ExerciseGroupType, SetType, ToFailureIndicator } from '@/domain/enums';
+import { getRankBetween, getInitialRank, generateSequentialRanks } from '@/lib/lexorank';
 
 /** Number of fallback working sets created when adding/swapping exercises. */
 const DEFAULT_WORKING_SETS = 3;
@@ -13,8 +14,6 @@ const DEFAULT_WORKING_SETS = 3;
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-import { getRankBetween, getInitialRank, generateSequentialRanks } from '@/lib/lexorank';
 
 function createFallbackSet(sessionExerciseItemId: string, orderIndex: string): SessionSet {
   return {

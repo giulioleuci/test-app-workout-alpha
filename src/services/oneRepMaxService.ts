@@ -1,3 +1,4 @@
+import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { OneRepMaxRepository } from '@/db/repositories/OneRepMaxRepository';
 import { UserProfileRepository } from '@/db/repositories/UserProfileRepository';
@@ -54,8 +55,6 @@ export async function getLatestOneRepMax(exerciseId: string): Promise<OneRepMaxR
 }
 
 // ===== Prioritized 1RM Service =====
-
-import { db } from '@/db/database';
 
 export type OneRepMaxMethod = 'direct' | 'indirect' | 'calculated';
 

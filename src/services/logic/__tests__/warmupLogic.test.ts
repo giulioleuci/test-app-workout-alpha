@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { buildWarmupScheme, type WarmupInput } from '../warmupLogic';
 
 describe('buildWarmupScheme', () => {

@@ -1,13 +1,5 @@
-import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { LexoRank } from 'lexorank';
 import { describe, it, expect, vi } from 'vitest';
 
 import PlannedSetCard from '@/components/planning/PlannedSetCard';
@@ -146,3 +138,9 @@ describe('PlannedSetCard Tabs', () => {
     expect(screen.queryByText('planning.targetXRM')).toBeNull();
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}
