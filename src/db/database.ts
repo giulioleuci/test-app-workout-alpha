@@ -285,7 +285,7 @@ export class WorkoutTrackerDB extends Dexie {
               currentExVersion.counterType !== item.exerciseSnapshot.counterType)) {
 
             const historicalVersionId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
-            tx.table('exerciseVersions').add({
+            void tx.table('exerciseVersions').add({
               id: historicalVersionId,
               exerciseId: item.exerciseId,
               name: item.exerciseSnapshot.name,

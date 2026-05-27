@@ -92,7 +92,7 @@ describe('PlannedSetCard Tabs', () => {
     expect(screen.queryByText('Avanzate')).toBeNull();
   });
 
-  it('shows target XRM in Load tab when not in simple mode', async () => {
+  it('shows target XRM in Load tab when not in simple mode', () => {
     render(
       <PlannedSetCard
         plannedSet={mockPlannedSet}

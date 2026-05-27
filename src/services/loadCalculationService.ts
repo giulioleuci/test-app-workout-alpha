@@ -13,7 +13,7 @@ export class LoadCalculationService {
   /**
    * Generates a list of load options based on RPE (10 down to 6).
    */
-  static getRPEOptions(oneRepMax: number, reps: number, t: any): LoadOption[] {
+  static getRPEOptions(oneRepMax: number, reps: number, t: (key: string) => string): LoadOption[] {
     const options: LoadOption[] = [];
     for (let rpe = 10; rpe >= 6; rpe -= 0.5) {
       const loadResult = suggestLoad(oneRepMax, reps, rpe);
@@ -31,7 +31,7 @@ export class LoadCalculationService {
   /**
    * Generates a list of load options based on %1RM.
    */
-  static getPercentageOptions(oneRepMax: number, t: any): LoadOption[] {
+  static getPercentageOptions(oneRepMax: number, t: (key: string) => string): LoadOption[] {
     const options: LoadOption[] = [];
     for (const pct of LOAD_PERCENTAGE_OPTIONS) {
       options.push({
@@ -70,7 +70,7 @@ export class LoadCalculationService {
   /**
    * Generates a list of load options based on XRM (1 to 12 reps at RPE 10).
    */
-  static getXRMOptions(oneRepMax: number, t: any): LoadOption[] {
+  static getXRMOptions(oneRepMax: number, t: (key: string) => string): LoadOption[] {
     const options: LoadOption[] = [];
     for (const r of XRM_REP_OPTIONS) {
       const loadResult = suggestLoad(oneRepMax, r, 10);

@@ -29,13 +29,9 @@ interface Props {
   onGoBack?: () => void;
 }
 
-export default function UserSelectionPage({
-  users, pinTarget, onSelectUser, onPinSuccess, onPinCancel, onUserCreated, onGoBack,
-}: Props) {
+function AppInfoModal() {
   const { t } = useTranslation();
-  const [createOpen, setCreateOpen] = useState(false);
-
-  const AppInfoModal = () => (
+  return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
@@ -54,7 +50,7 @@ export default function UserSelectionPage({
             Workout Tracker 2
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6 pt-4">
           <div className="rounded-xl border-2 border-primary/20 bg-muted/30 p-4 shadow-sm">
             <div className="mb-2 flex items-center gap-3">
@@ -91,6 +87,13 @@ export default function UserSelectionPage({
       </DialogContent>
     </Dialog>
   );
+}
+
+export default function UserSelectionPage({
+  users, pinTarget, onSelectUser, onPinSuccess, onPinCancel, onUserCreated, onGoBack,
+}: Props) {
+  const { t } = useTranslation();
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-6">

@@ -1,7 +1,7 @@
 // src/hooks/mutations/workoutPlanMutations.ts
 import { useMutation } from '@tanstack/react-query';
 
-import type { PlannedWorkout } from '@/domain/entities';
+import type { PlannedWorkout, PlannedSession, SessionTemplateContent } from '@/domain/entities';
 import { ObjectiveType, WorkType, PlannedWorkoutStatus } from '@/domain/enums';
 import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import { deleteTemplate, updateTemplate } from '@/services/templateService';
@@ -56,8 +56,7 @@ export function useWorkoutPlanMutations() {
   });
 
   const saveWorkoutSessionsMutation = useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: ({ workoutId, sessions, originalSessions }: { workoutId: string; sessions: any[]; originalSessions: any[] }) =>
+    mutationFn: ({ workoutId, sessions, originalSessions }: { workoutId: string; sessions: PlannedSession[]; originalSessions: PlannedSession[] }) =>
       saveWorkoutSessions(workoutId, sessions, originalSessions),
     onSuccess: invalidateWorkoutContext,
   });
@@ -68,8 +67,7 @@ export function useWorkoutPlanMutations() {
   });
 
   const updateTemplateMutation = useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: ({ id, name, description, content }: { id: string; name: string; description?: string; content: any }) =>
+    mutationFn: ({ id, name, description, content }: { id: string; name: string; description?: string; content: SessionTemplateContent }) =>
       updateTemplate(id, { name, description, content }),
     onSuccess: invalidateTemplateContext,
   });

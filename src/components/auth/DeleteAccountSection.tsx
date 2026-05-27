@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/useToast';
 import { userService } from '@/services/userService';
+import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
 export function DeleteAccountSection() {
   const { t } = useTranslation();
@@ -16,6 +17,8 @@ export function DeleteAccountSection() {
   const handleDelete = async () => {
     setLoading(true);
     try {
+      // Reset the in-memory active session before tearing down the user's data.
+      useActiveSessionStore.getState().reset();
       await userService.deleteCurrentUser();
       toast({ title: t('users.deleteAccountSuccess') });
       window.location.reload();

@@ -81,7 +81,7 @@ export default tseslint.config(
       ],
       
       "react-hooks/exhaustive-deps": "error",
-      "react/no-unstable-nested-components": "error",
+      "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
       
       // Internationalization (i18n)
       "react/jsx-no-literals": ["warn", { 

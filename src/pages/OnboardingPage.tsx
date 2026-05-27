@@ -25,6 +25,66 @@ interface Props {
   onComplete: () => void;
 }
 
+function AppInfoModal() {
+  const { t } = useTranslation();
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+          <Info className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Dumbbell className="h-6 w-6 text-primary" />
+          </div>
+          <DialogTitle className="text-h4 text-center font-black">
+            {t('onboarding.welcome')}
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Workout Tracker 2
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 pt-4">
+          <div className="rounded-xl border-2 border-primary/20 bg-muted/30 p-4 shadow-sm">
+            <div className="mb-2 flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold tracking-tight text-foreground">
+                {t('onboarding.privacyTitle')}
+              </h3>
+            </div>
+            <p className="text-body-sm leading-relaxed text-muted-foreground">
+              {t('onboarding.appOfflineInfo')}
+            </p>
+            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-primary/70">
+              <CloudOff className="h-3.5 w-3.5" />
+              <span>{t('users.noServersBadge')}</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 px-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-foreground">
+              {t('onboarding.featuresTitle')}
+            </p>
+            <ul className="flex flex-col gap-2">
+              {[1, 2, 3].map((i) => (
+                <li key={i} className="text-body-sm flex items-start gap-3 text-muted-foreground">
+                  <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary/40" />
+                  <span>{t(`onboarding.feature${i}`)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function OnboardingPage({ onComplete }: Props) {
   const { t, i18n } = useTranslation();
   const language = i18n.language as 'en' | 'it' | 'es' | 'fr' | 'zh';
@@ -86,63 +146,6 @@ export default function OnboardingPage({ onComplete }: Props) {
       setIsLoading(false);
     }
   };
-
-  const AppInfoModal = () => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-          <Info className="h-4 w-4 text-muted-foreground" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <Dumbbell className="h-6 w-6 text-primary" />
-          </div>
-          <DialogTitle className="text-h4 text-center font-black">
-            {t('onboarding.welcome')}
-          </DialogTitle>
-          <DialogDescription className="text-center">
-            Workout Tracker 2
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-6 pt-4">
-          <div className="rounded-xl border-2 border-primary/20 bg-muted/30 p-4 shadow-sm">
-            <div className="mb-2 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <h3 className="text-base font-bold tracking-tight text-foreground">
-                {t('onboarding.privacyTitle')}
-              </h3>
-            </div>
-            <p className="text-body-sm leading-relaxed text-muted-foreground">
-              {t('onboarding.appOfflineInfo')}
-            </p>
-            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-primary/70">
-              <CloudOff className="h-3.5 w-3.5" />
-              <span>{t('users.noServersBadge')}</span>
-            </div>
-          </div>
-
-          <div className="space-y-3 px-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-foreground">
-              {t('onboarding.featuresTitle')}
-            </p>
-            <ul className="flex flex-col gap-2">
-              {[1, 2, 3].map((i) => (
-                <li key={i} className="text-body-sm flex items-start gap-3 text-muted-foreground">
-                  <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary/40" />
-                  <span>{t(`onboarding.feature${i}`)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
 
   return (
     <div style={{ paddingTop: "env(safe-area-inset-top)" }} className="flex min-h-screen items-center justify-center bg-background p-4">

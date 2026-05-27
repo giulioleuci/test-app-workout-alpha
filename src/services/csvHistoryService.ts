@@ -272,7 +272,9 @@ export async function detectHistoryCsvConflicts(
     try {
         const dt = new Date(row.started_at);
         if (!isNaN(dt.getTime())) dtStr = dt.toISOString();
-    } catch {}
+    } catch {
+      // ignore invalid date — fall back to the raw string
+    }
 
     const key = dtStr;
     if (!key || seen.has(key)) continue;
@@ -312,7 +314,9 @@ export async function importHistoryCsv(
     try {
         const dt = new Date(row.started_at);
         if (!isNaN(dt.getTime())) dtStr = dt.toISOString();
-    } catch {}
+    } catch {
+      // ignore invalid date — fall back to the raw string
+    }
 
     const key = dtStr;
     if (!key) continue;

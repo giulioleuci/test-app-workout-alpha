@@ -61,6 +61,7 @@ export default function PlannedSetHeader({ ps, exerciseId, onUpdate, onRemove }:
                 onChange={(e) => onUpdate({ notes: e.target.value || undefined })}
                 className="h-9 text-sm"
                 placeholder={t('planning.notesPlaceholder', 'Notes')}
+                // eslint-disable-next-line jsx-a11y/no-autofocus -- notes input only mounts on explicit user action, focus is expected
                 autoFocus
               />
             </div>

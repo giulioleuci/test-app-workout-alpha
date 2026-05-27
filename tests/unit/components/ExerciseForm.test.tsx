@@ -24,7 +24,7 @@ vi.mock('@/db/database', () => ({
       get: vi.fn(),
       where: vi.fn().mockReturnValue({ reverse: vi.fn().mockReturnValue({ sortBy: vi.fn().mockResolvedValue([]) }) }),
     },
-    transaction: vi.fn(async (mode, tables, cb) => cb()),
+    transaction: vi.fn((mode, tables, cb) => cb()),
   },
 }));
 

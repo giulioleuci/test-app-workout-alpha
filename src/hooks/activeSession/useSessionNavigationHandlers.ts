@@ -53,7 +53,7 @@ export function useSessionNavigationHandlers(
         loadData();
     };
 
-    const handleUndoUnitLastSets = async (unit: DisplayUnit, setViewedSetParams: (val: any) => void) => {
+    const handleUndoUnitLastSets = async (unit: DisplayUnit, setViewedSetParams: (val: null) => void) => {
         if (unit.type === 'group') {
             await SessionExecutionService.uncompleteLastRound(unit.group);
         } else {

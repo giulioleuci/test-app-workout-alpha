@@ -19,7 +19,6 @@ export function useSessionActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const activeSessionId = useActiveSessionStore(s => s.activeSessionId);
   const setActiveSession = useActiveSessionStore(s => s.setActiveSession);
 
   const [launching, setLaunching] = useState(false);
@@ -88,7 +87,7 @@ export function useSessionActivation() {
     } else {
       await doActivate(plannedSessionId, plannedWorkoutId);
     }
-  }, [activeSessionId, doActivate]);
+  }, [doActivate]);
 
   const handlePendingResolved = useCallback(() => {
     setPendingDialogOpen(false);

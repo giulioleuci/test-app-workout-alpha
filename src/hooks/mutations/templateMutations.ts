@@ -1,6 +1,7 @@
 // src/hooks/mutations/templateMutations.ts
 import { useMutation } from '@tanstack/react-query';
 
+import type { SessionTemplateContent } from '@/domain/entities';
 import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import { deleteTemplate, updateTemplate } from '@/services/templateService';
 
@@ -13,8 +14,7 @@ export function useTemplateMutations() {
   });
 
   const updateTemplateMutation = useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: ({ id, name, description, content }: { id: string; name: string; description?: string; content: any }) =>
+    mutationFn: ({ id, name, description, content }: { id: string; name: string; description?: string; content: SessionTemplateContent }) =>
       updateTemplate(id, { name, description, content }),
     onSuccess: invalidateTemplateContext,
   });

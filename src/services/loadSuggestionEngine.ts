@@ -153,6 +153,7 @@ async function suggestFromPlannedRPE(ctx: LoadSuggestionContext): Promise<LoadSu
 }
 
 /** Method 4: Target XRM (e.g. 5RM) */
+// eslint-disable-next-line @typescript-eslint/require-await -- kept async to match the uniform suggestion-method strategy signature
 async function suggestFromXRM(ctx: LoadSuggestionContext): Promise<LoadSuggestion | null> {
   if (!ctx.plannedExerciseItem?.targetXRM) return null;
 

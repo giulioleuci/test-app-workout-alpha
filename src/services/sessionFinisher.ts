@@ -1,7 +1,7 @@
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
-import { CounterType } from '@/domain/enums';
-import { ExercisePerformanceService } from '@/services/ExercisePerformanceService';
+import { CounterType, Muscle } from '@/domain/enums';
+import { ExercisePerformanceService } from '@/services/exercisePerformanceService';
 import { computeSetEstimates, filterCompleted } from '@/services/logic/setStats';
 import { profileService } from '@/services/profileService';
 
@@ -18,8 +18,8 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
   let totalLoad = 0;
   let totalReps = 0;
   let totalDuration = 0;
-  const primaryMuscles = new Set<string>();
-  const secondaryMuscles = new Set<string>();
+  const primaryMuscles = new Set<Muscle>();
+  const secondaryMuscles = new Set<Muscle>();
 
   for (const group of groups) {
     const groupItems = await SessionRepository.getItemsByGroup(group.id);
@@ -41,8 +41,8 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
         let itemCounterType = CounterType.Reps;
 
         if (currentVersion) {
-          currentVersion.primaryMuscles.forEach(m => primaryMuscles.add(m as string));
-          currentVersion.secondaryMuscles.forEach(m => secondaryMuscles.add(m as string));
+          currentVersion.primaryMuscles.forEach(m => primaryMuscles.add(m));
+          currentVersion.secondaryMuscles.forEach(m => secondaryMuscles.add(m));
           itemCounterType = currentVersion.counterType;
         }
 
@@ -95,8 +95,8 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
     totalLoad: Math.round(totalLoad),
     totalReps,
     totalDuration,
-    primaryMusclesSnapshot: Array.from(primaryMuscles) as any[],
-    secondaryMusclesSnapshot: Array.from(secondaryMuscles) as any[],
+    primaryMusclesSnapshot: Array.from(primaryMuscles),
+    secondaryMusclesSnapshot: Array.from(secondaryMuscles),
   });
 
   await SessionRepository.completeSession(sessionId, completedAt);

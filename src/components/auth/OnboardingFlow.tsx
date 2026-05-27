@@ -117,13 +117,13 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                   <p className="px-4 text-sm text-muted-foreground">{t('settings.languageDisclaimer')}</p>
                 </div>
                 <div className="grid grid-cols-1 gap-2.5 px-2">
-                  {[
+                  {([
                     { code: 'en', label: 'English' },
                     { code: 'it', label: 'Italiano' },
                     { code: 'es', label: 'Español' },
                     { code: 'fr', label: 'Français' },
                     { code: 'zh', label: '中文' }
-                  ].map((lang) => (
+                  ] as const).map((lang) => (
                     <Button
                       key={lang.code}
                       variant={selectedLanguage === lang.code ? "default" : "outline"}
@@ -131,7 +131,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                         "h-14 text-lg font-bold border-2 transition-all",
                         selectedLanguage === lang.code ? "border-primary" : "border-transparent bg-muted/30"
                       )}
-                      onClick={() => handleLanguageSelect(lang.code as any)}
+                      onClick={() => handleLanguageSelect(lang.code)}
                     >
                       {lang.label}
                       {selectedLanguage === lang.code && <Check className="ml-2 h-5 w-5" />}

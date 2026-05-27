@@ -18,7 +18,7 @@ export function applyPalette(paletteId: PaletteId, isDark: boolean) {
   if (!palette) return;
   const colors = isDark ? palette.dark : palette.light;
   const root = document.documentElement;
-  for (const [key, value] of Object.entries(colors)) {
+  for (const [key, value] of Object.entries(colors) as [string, string][]) {
     root.style.setProperty(`--${key}`, value);
   }
   // Keep borders neutral — low saturation for a clean, palette-agnostic look

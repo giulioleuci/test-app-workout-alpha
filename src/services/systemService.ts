@@ -10,8 +10,9 @@ export const systemService = {
     await databaseLifecycle.mountUser(userId);
   },
 
-  unmountUser: async (): Promise<void> => {
-    await databaseLifecycle.unmountUser();
+  unmountUser: (): Promise<void> => {
+    databaseLifecycle.unmountUser();
+    return Promise.resolve();
   },
 
   getUserId: (): string => {

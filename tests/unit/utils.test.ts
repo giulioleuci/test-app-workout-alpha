@@ -29,7 +29,7 @@ describe('sortByLocaleName', () => {
         { exercise: { name: 'Squat' } },
         { exercise: { name: 'Bench Press' } }
     ];
-    // @ts-ignore
+    // @ts-expect-error -- passing partial test objects to sortByLocaleName
     const sorted = [...exercises].sort((a, b) => sortByLocaleName(a, b, 'it', 'asc'));
     expect(sorted[0].exercise.name).toBe('Bench Press');
     expect(sorted[1].exercise.name).toBe('Squat');

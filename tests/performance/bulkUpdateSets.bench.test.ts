@@ -11,8 +11,8 @@ beforeAll(async () => {
   await db.open();
 });
 
-afterAll(async () => {
-  await db.close();
+afterAll(() => {
+  db.close();
 });
 
 describe('SessionRepository.bulkUpdateSets', () => {

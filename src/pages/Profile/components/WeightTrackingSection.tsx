@@ -68,7 +68,7 @@ export default function WeightTrackingSection({
 
   const handleSubmit = (data: WeightEntryFormValues) => {
     onAddWeight(data.weight);
-    weightForm.reset({ weight: '' as any });
+    weightForm.reset({ weight: '' as unknown as number });
   };
 
   return (

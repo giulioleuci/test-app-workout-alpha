@@ -158,11 +158,11 @@ export class SessionExecutionService {
     const ranks: string[] = [];
 
     // Calculate ranks backwards to insert at the beginning
-    for (let i = 0; i < warmupSets.length; i++) {
+    warmupSets.forEach(() => {
       const rank = getRankBetween(null, currentNext);
       ranks.unshift(rank);
       currentNext = rank;
-    }
+    });
 
     for (let i = 0; i < warmupSets.length; i++) {
       const ws = warmupSets[i];

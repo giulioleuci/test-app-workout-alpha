@@ -4,7 +4,7 @@ import type { HydratedSessionGroup } from '@/db/repositories/types';
 import { UserProfileRepository } from '@/db/repositories/UserProfileRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { WorkoutSession, PlannedWorkout, PlannedSession, SessionExerciseGroup, SessionExerciseItem, SessionSet } from '@/domain/entities';
-import { ExercisePerformanceService } from '@/services/ExercisePerformanceService';
+import { ExercisePerformanceService } from '@/services/exercisePerformanceService';
 import { filterCompleted } from '@/services/logic/setStats';
 
 export interface EnrichedHistorySession {

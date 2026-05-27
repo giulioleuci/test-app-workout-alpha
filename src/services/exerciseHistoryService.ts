@@ -2,7 +2,7 @@ import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { SessionExerciseItem, SessionSet, WorkoutSession } from '@/domain/entities';
 import dayjs from '@/lib/dayjs';
-import type { PerformanceTrendStatus } from '@/services/ExercisePerformanceService';
+import type { PerformanceTrendStatus } from '@/services/exercisePerformanceService';
 import { filterCompleted } from '@/services/logic/setStats';
 
 export interface HistoryEntry {
@@ -112,7 +112,7 @@ export async function getGroupedHistory(
       session,
       sessionName: ps?.name,
       sets,
-      performanceStatus: (sessionItem?.performanceStatus!) || 'insufficient_data',
+      performanceStatus: sessionItem?.performanceStatus || 'insufficient_data',
     });
   }
   result.sort((a, b) => dayjs(b.session.startedAt).diff(dayjs(a.session.startedAt)));

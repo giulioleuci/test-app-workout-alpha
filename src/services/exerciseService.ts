@@ -20,7 +20,7 @@ export async function createExercise(exercise: Exercise): Promise<string> {
 }
 
 export async function upsertExercise(exerciseData: Omit<Exercise, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }): Promise<string> {
-  return ExerciseRepository.put(exerciseData as any);
+  return ExerciseRepository.put(exerciseData as Omit<Exercise, 'createdAt' | 'updatedAt'> & { id?: string });
 }
 
 export async function updateExercise(id: string, changes: Partial<Exercise>): Promise<number> {
