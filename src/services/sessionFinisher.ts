@@ -1,9 +1,9 @@
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
-import { CounterType } from '@/domain/enums';
-import { ExercisePerformanceService } from '@/services/ExercisePerformanceService';
+import { CounterType, Muscle } from '@/domain/enums';
+import { ExercisePerformanceService } from '@/services/exercisePerformanceService';
+import { computeSetEstimates, filterCompleted } from '@/services/logic/setStats';
 import { profileService } from '@/services/profileService';
-import { calculateWeighted1RM } from '@/services/rpePercentageTable';
 
 /**
  * Cleans up empty exercises (0 completed sets) and empty groups,
@@ -18,8 +18,8 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
   let totalLoad = 0;
   let totalReps = 0;
   let totalDuration = 0;
-  const primaryMuscles = new Set<string>();
-  const secondaryMuscles = new Set<string>();
+  const primaryMuscles = new Set<Muscle>();
+  const secondaryMuscles = new Set<Muscle>();
 
   for (const group of groups) {
     const groupItems = await SessionRepository.getItemsByGroup(group.id);
@@ -27,7 +27,7 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
     for (const item of groupItems) {
       const sets = await SessionRepository.getSetsByItem(item.id);
 
-      const completedSets = sets.filter(s => s.isCompleted);
+      const completedSets = filterCompleted(sets);
 
       if (completedSets.length === 0) {
         // Delete item and its sets
@@ -41,26 +41,17 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
         let itemCounterType = CounterType.Reps;
 
         if (currentVersion) {
-          currentVersion.primaryMuscles.forEach(m => primaryMuscles.add(m as string));
-          currentVersion.secondaryMuscles.forEach(m => secondaryMuscles.add(m as string));
+          currentVersion.primaryMuscles.forEach(m => primaryMuscles.add(m));
+          currentVersion.secondaryMuscles.forEach(m => secondaryMuscles.add(m));
           itemCounterType = currentVersion.counterType;
         }
 
         const counterType = itemCounterType;
 
         for (const set of completedSets) {
-          if (set.actualLoad != null && set.actualLoad > 0 &&
-            set.actualCount != null && set.actualCount > 0 &&
-            set.actualRPE != null && set.actualRPE > 0) {
-            const estResult = calculateWeighted1RM(set.actualLoad, set.actualCount, set.actualRPE);
-            const estimated = estResult.media;
-            if (estimated && estimated > 0) {
-              set.e1rm = estimated;
-              if (bodyWeight && bodyWeight > 0) {
-                set.relativeIntensity = Math.round((estimated / bodyWeight) * 100) / 100;
-              }
-            }
-          }
+          const estimates = computeSetEstimates(set.actualLoad, set.actualCount, set.actualRPE, bodyWeight);
+          if (estimates.e1rm != null) set.e1rm = estimates.e1rm;
+          if (estimates.relativeIntensity != null) set.relativeIntensity = estimates.relativeIntensity;
           if (set.e1rm || set.relativeIntensity) {
             await SessionRepository.updateSet(set.id, {
               e1rm: set.e1rm,
@@ -104,8 +95,8 @@ export async function finishSession(sessionId: string, completedAt: Date): Promi
     totalLoad: Math.round(totalLoad),
     totalReps,
     totalDuration,
-    primaryMusclesSnapshot: Array.from(primaryMuscles) as any[],
-    secondaryMusclesSnapshot: Array.from(secondaryMuscles) as any[],
+    primaryMusclesSnapshot: Array.from(primaryMuscles),
+    secondaryMusclesSnapshot: Array.from(secondaryMuscles),
   });
 
   await SessionRepository.completeSession(sessionId, completedAt);

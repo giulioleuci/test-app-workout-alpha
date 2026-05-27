@@ -3,7 +3,8 @@ import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { PlannedSession, PlannedWorkout } from '@/domain/entities';
 import { t } from '@/i18n/t';
-import { estimateSessionDuration, formatDurationRange } from '@/services/durationEstimator';
+import { formatDurationRange } from '@/lib/formatting';
+import { estimateSessionDuration } from '@/services/durationEstimator';
 import { analyzeSessionVolume, type SessionVolumeAnalysis } from '@/services/volumeAnalyzer';
 
 export interface NextSessionSuggestion {

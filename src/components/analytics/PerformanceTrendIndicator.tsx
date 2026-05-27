@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import dayjs from '@/lib/dayjs';
+import { formatShortDate } from '@/lib/formatting';
 import { cn } from '@/lib/utils';
 import type { PerformanceAnalysis } from '@/services/performanceAnalyzer';
 
@@ -118,7 +118,7 @@ export function PerformanceTrendIndicator({ analysis, className }: PerformanceTr
           <div className="flex flex-col gap-1">
             {history.slice(0, 3).map((h, _i) => (
               <div key={h.sessionId} className="text-body-sm flex items-center justify-between rounded p-1.5 transition-colors hover:bg-muted/50">
-                <span className="w-20 text-muted-foreground">{dayjs(h.completedAt).format('DD/MM/YY')}</span>
+                <span className="w-20 text-muted-foreground">{formatShortDate(h.completedAt)}</span>
                 <div className="flex flex-1 justify-end gap-3 font-mono">
                   <span>{h.totalSets}{t('units.S')}</span>
                   <span>{h.totalReps}{t('units.R')}</span>

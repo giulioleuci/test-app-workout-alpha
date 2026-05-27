@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import { globalUserRepository } from '@/db/core';
 import { AVATAR_COLORS, type GlobalUser } from '@/domain/global-entities';
 import { systemService } from '@/services/systemService';
-import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
 export const userService = {
   listUsers: async (): Promise<GlobalUser[]> => {
@@ -30,13 +29,11 @@ export const userService = {
 
   deleteCurrentUser: async (): Promise<void> => {
     const userId = systemService.getUserId();
-    
-    // 1. Reset in-memory active session store
-    useActiveSessionStore.getState().reset();
-    
-    // 2. Clear persisted state for this specific user if possible
-    // We try multiple keys because systemService.getCurrentUserId() 
+
+    // Clear persisted active-session state for this specific user.
+    // We try multiple keys because systemService.getUserId()
     // might evaluate to 'default' or the actual userId depending on the mount state.
+    // (The in-memory store is reset by the caller in the presentation layer.)
     localStorage.removeItem(`active-session-store-${userId}`);
     localStorage.removeItem('active-session-store-default');
     

@@ -1,15 +1,8 @@
-import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
 
 import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
+import { LexoRank } from 'lexorank';
 import { nanoid } from 'nanoid';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -119,3 +112,9 @@ describe('ActiveSession Integration', () => {
     }, { timeout: 8000 });
   }, 10000); // Set test-level timeout
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

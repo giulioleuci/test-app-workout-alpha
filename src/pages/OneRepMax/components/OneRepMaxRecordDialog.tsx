@@ -188,7 +188,7 @@ export default function OneRepMaxRecordDialog({
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 pt-2 text-sm">
-                        <span className="text-muted-foreground">O'Conner:</span>
+                        <span className="text-muted-foreground">O&apos;Conner:</span>
                         <span className="font-medium">{indirectPreview.oconner ?? '-'} {formUnit}</span>
                         <span className="text-muted-foreground">Lombardi:</span>
                         <span className="font-medium">{indirectPreview.lombardi ?? '-'} {formUnit}</span>

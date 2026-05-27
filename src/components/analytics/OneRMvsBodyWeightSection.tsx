@@ -12,7 +12,8 @@ import { Switch } from '@/components/ui/switch';
 import type { HistoryEstimate } from '@/domain/analytics-types';
 import type { OneRepMaxRecord, BodyWeightRecord } from '@/domain/entities';
 import dayjs from '@/lib/dayjs';
-import { findClosestWeight } from '@/services/bodyWeightUtils';
+import { formatChartDate } from '@/lib/formatting';
+import { findClosestWeight, strengthToWeightRatio } from '@/services/bodyWeightUtils';
 
 interface ChartPoint {
   date: string;
@@ -49,10 +50,10 @@ export default function OneRMvsBodyWeightSection({
     for (const rec of records) {
       const bw = findClosestWeight(bodyWeightRecords, rec.recordedAt);
       if (!bw) continue;
-      const xbw = Math.round((rec.value / bw.weight) * 100) / 100;
+      const xbw = strengthToWeightRatio(rec.value, bw.weight);
       const d = dayjs(rec.recordedAt);
       const point: ChartPoint = {
-        date: d.format('DD/MM'),
+        date: formatChartDate(rec.recordedAt),
         timestamp: d.valueOf(),
       };
       if (rec.method === 'direct') point.directXBW = xbw;
@@ -65,10 +66,10 @@ export default function OneRMvsBodyWeightSection({
     if (estimate) {
       const bw = findClosestWeight(bodyWeightRecords, estimate.date);
       if (bw) {
-        const xbw = Math.round((estimate.value / bw.weight) * 100) / 100;
+        const xbw = strengthToWeightRatio(estimate.value, bw.weight);
         const d = dayjs(estimate.date);
         points.push({
-          date: d.format('DD/MM'),
+          date: formatChartDate(estimate.date),
           timestamp: d.valueOf(),
           estimatedXBW: xbw,
         });

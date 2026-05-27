@@ -1,5 +1,4 @@
 import { LexoRank } from 'lexorank';
-function generateTestRank(index: number) { let rank = LexoRank.min().between(LexoRank.middle()); for(let i=0; i<index; i++) rank = rank.genNext(); return rank.toString(); }
 import { describe, bench, it, expect, vi, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { databaseLifecycle } from '../../src/db/core';
@@ -12,8 +11,8 @@ beforeAll(async () => {
   await db.open();
 });
 
-afterAll(async () => {
-  await db.close();
+afterAll(() => {
+  db.close();
 });
 
 describe('SessionRepository.bulkUpdateSets', () => {
@@ -98,3 +97,5 @@ describe('Baseline performance measurement for bulkUpdateSets', () => {
     expect(updatedSets[499].reps).toBe(499);
   });
 });
+
+function generateTestRank(index: number) { let rank = LexoRank.min().between(LexoRank.middle()); for(let i=0; i<index; i++) rank = rank.genNext(); return rank.toString(); }

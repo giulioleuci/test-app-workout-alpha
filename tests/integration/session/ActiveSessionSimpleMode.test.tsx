@@ -1,18 +1,9 @@
-import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for (let i = 0; i < index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
-
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import 'fake-indexeddb/auto';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { LexoRank } from 'lexorank';
 import { nanoid } from 'nanoid';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -24,8 +15,6 @@ import { analyzeExercisePerformance } from '@/services/performanceAnalyzer';
 import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
 import { testDb as db } from '../../utils/testHelpers';
-
-
 
 // Mock scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
@@ -255,3 +244,9 @@ describe('ActiveSession Simple Mode', () => {
     });
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for (let i = 0; i < index; i++) rank = rank.genNext();
+  return rank.toString();
+}

@@ -10,8 +10,9 @@ import { CounterType } from '@/domain/enums';
 import type { ClusterSetParams } from '@/domain/value-objects';
 import { getClusterConfig } from '@/domain/value-objects';
 import { useSessionVolume } from '@/hooks/queries/workoutQueries';
-import { estimateSessionDurationFromData, formatDurationRange } from '@/services/durationEstimator';
-import { analyzeItemsFromData, type ItemWithContext } from '@/services/volumeAnalyzer';
+import { formatDurationRange } from '@/lib/formatting';
+import { estimateSessionDurationFromData } from '@/services/durationEstimator';
+import { analyzeItemsFromData, flattenPlannedItems } from '@/services/volumeAnalyzer';
 
 import { SessionVolumeAnalysis } from './SessionVolumeAnalysis';
 
@@ -58,17 +59,7 @@ export default function SessionVolumeDialog({
   // --- Props Mode (Sync) ---
   const propAnalysis = useMemo(() => {
     if (sessionId || !groups || !items || !sets || !exercises) return null;
-    const exerciseMap = Object.fromEntries(exercises.map(e => [e.id, e]));
-    const allItems: ItemWithContext[] = [];
-    for (const group of groups) {
-      const groupItems = items[group.id] || [];
-      for (const item of groupItems) {
-        const exercise = exerciseMap[item.exerciseId];
-        if (!exercise) continue;
-        const itemSets = sets[item.id] || [];
-        allItems.push({ item, exercise, sets: itemSets });
-      }
-    }
+    const allItems = flattenPlannedItems(groups, items, sets, exercises);
     return analyzeItemsFromData(
       allItems,
       // @ts-expect-error String key type mismatches with translation mapping

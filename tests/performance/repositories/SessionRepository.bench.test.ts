@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-    let rank = LexoRank.min().between(LexoRank.middle());
-    for (let i = 0; i < index; i++) rank = rank.genNext();
-    return rank.toString();
-}
-
-
 import { nanoid } from 'nanoid';
 import { describe, it, expect, beforeEach } from 'vitest';
 
@@ -83,3 +75,9 @@ describe('SessionRepository - reorderGroups Performance Benchmark', () => {
         expect(typeof updatedGroups.find(g => g.id === shuffledIds[0])?.orderIndex).toBe('string');
     });
 });
+
+function generateTestRank(index: number) {
+    let rank = LexoRank.min().between(LexoRank.middle());
+    for (let i = 0; i < index; i++) rank = rank.genNext();
+    return rank.toString();
+}

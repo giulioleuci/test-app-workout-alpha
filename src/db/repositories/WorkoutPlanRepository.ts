@@ -11,6 +11,7 @@ import {
     PlannedWorkoutSchema, PlannedSessionSchema, PlannedExerciseGroupSchema,
     PlannedExerciseItemSchema, PlannedSetSchema,
 } from '@/domain/schemas';
+import { byOrderIndex } from '@/lib/lexorank';
 
 import { db } from '../database';
 import { BaseRepository } from './BaseRepository';
@@ -95,6 +96,10 @@ export class WorkoutPlanRepository extends BaseRepository {
 
     static async getSession(id: string): Promise<PlannedSession | undefined> {
         return db.plannedSessions.get(id);
+    }
+
+    static async getAllSessions(): Promise<PlannedSession[]> {
+        return db.plannedSessions.toArray();
     }
 
     static async getSessionsByWorkout(workoutId: string): Promise<PlannedSession[]> {
@@ -362,7 +367,7 @@ export class WorkoutPlanRepository extends BaseRepository {
             if (!setsByItem.has(s.plannedExerciseItemId)) setsByItem.set(s.plannedExerciseItemId, []);
             setsByItem.get(s.plannedExerciseItemId)!.push(s);
         }
-        for (const list of setsByItem.values()) list.sort((a, b) => a.orderIndex.localeCompare(b.orderIndex));
+        for (const list of setsByItem.values()) list.sort(byOrderIndex);
 
         const itemsByGroup = new Map<string, HydratedPlannedItem[]>();
         for (const i of items) {
@@ -373,7 +378,7 @@ export class WorkoutPlanRepository extends BaseRepository {
                 sets: setsByItem.get(i.id) ?? []
             });
         }
-        for (const list of itemsByGroup.values()) list.sort((a, b) => a.item.orderIndex.localeCompare(b.item.orderIndex));
+        for (const list of itemsByGroup.values()) list.sort((a, b) => byOrderIndex(a.item, b.item));
 
         const groupsBySession = new Map<string, HydratedPlannedGroup[]>();
         for (const g of groups) {
@@ -383,7 +388,7 @@ export class WorkoutPlanRepository extends BaseRepository {
                 items: itemsByGroup.get(g.id) ?? []
             });
         }
-        for (const list of groupsBySession.values()) list.sort((a, b) => a.group.orderIndex.localeCompare(b.group.orderIndex));
+        for (const list of groupsBySession.values()) list.sort((a, b) => byOrderIndex(a.group, b.group));
 
         return sessions.map(session => ({
             session,
@@ -403,7 +408,7 @@ export class WorkoutPlanRepository extends BaseRepository {
 
         const workoutIds = workouts.map(w => w.id);
         const sessions = await db.plannedSessions.where('plannedWorkoutId').anyOf(workoutIds).toArray();
-        sessions.sort((a, b) => a.orderIndex.localeCompare(b.orderIndex));
+        sessions.sort(byOrderIndex);
 
         const hydratedSessions = await this.getHydratedPlannedSessions(sessions);
         const sessionsByWorkout = new Map<string, HydratedPlannedSession[]>();

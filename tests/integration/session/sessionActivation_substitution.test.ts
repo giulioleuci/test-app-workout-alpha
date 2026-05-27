@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import 'fake-indexeddb/auto';
 import { nanoid } from 'nanoid';
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -352,3 +344,9 @@ describe('Two-phase session activation with substitution support', () => {
     });
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

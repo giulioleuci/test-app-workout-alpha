@@ -99,7 +99,7 @@ export default function OneRepMaxHistoryRow({
             <>
               {rec.estimateBrzycki != null && <p>{t('oneRepMax.formulaBrzycki')}: {rec.estimateBrzycki} {rec.unit}</p>}
               {rec.estimateEpley != null && <p>{t('oneRepMax.formulaEpley')}: {rec.estimateEpley} {rec.unit}</p>}
-              {rec.estimateOConner != null && <p>O'Conner: {rec.estimateOConner} {rec.unit}</p>}
+              {rec.estimateOConner != null && <p>O&apos;Conner: {rec.estimateOConner} {rec.unit}</p>}
               {rec.estimateLombardi != null && <p>Lombardi: {rec.estimateLombardi} {rec.unit}</p>}
               {rec.estimateLander != null && <p>{t('oneRepMax.formulaLander')}: {rec.estimateLander} {rec.unit}</p>}
             </>

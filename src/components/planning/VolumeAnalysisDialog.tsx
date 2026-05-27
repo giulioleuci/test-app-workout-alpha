@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { estimateSessionDuration, estimateWorkoutDuration, formatDurationRange, type DurationRange } from '@/services/durationEstimator';
+import { formatDurationRange } from '@/lib/formatting';
+import { estimateSessionDuration, estimateWorkoutDuration, type DurationRange } from '@/services/durationEstimator';
 import { analyzeWorkoutVolume, type WorkoutVolumeAnalysis, type VolumeEntry } from '@/services/volumeAnalyzer';
 
 import { MuscleOverlapMatrix } from './MuscleOverlapMatrix';

@@ -12,6 +12,7 @@ export const sessionKeys = {
   exerciseHistory: (exerciseId: string, sessionId: string, plannedExerciseItemId?: string, occurrenceIndex?: number, filterSameWorkout?: boolean) =>
     [...sessionKeys.all, 'exerciseHistory', exerciseId, sessionId, plannedExerciseItemId, occurrenceIndex, filterSameWorkout] as const,
   suggestions: (exerciseId: string, context: LoadSuggestionContext) => [...sessionKeys.all, 'suggestions', exerciseId, context] as const,
+  loadSuggestionInputs: (exerciseId: string, plannedSetId?: string) => [...sessionKeys.all, 'loadSuggestionInputs', exerciseId, plannedSetId] as const,
   performanceTrend: (exerciseId: string, sessionId: string) => [...sessionKeys.all, 'performance', exerciseId, sessionId] as const,
   historyPage: (page: number, pageSize: number) => [...sessionKeys.all, 'history', page, pageSize] as const,
   detail: (id: string) => [...sessionKeys.all, 'detail', id] as const,
@@ -32,7 +33,7 @@ export function useExerciseHistory(exerciseId: string, currentSessionId: string,
 export function useActiveSessionData(activeSessionId: string | null) {
   const { data, isLoading } = useQuery({
     queryKey: sessionKeys.active(activeSessionId),
-    queryFn: () => loadActiveSessionData(activeSessionId!),
+    queryFn: () => loadActiveSessionData(activeSessionId),
     enabled: !!activeSessionId,
     staleTime: 0,
   });

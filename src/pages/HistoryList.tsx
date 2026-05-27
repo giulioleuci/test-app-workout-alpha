@@ -39,7 +39,7 @@ export default function HistoryList() {
       <div className="flex items-center justify-between">
         <Badge variant="secondary">{totalCount} {t('history.sessionsCount')}</Badge>
         <div className="flex items-center gap-2">
-          <HistoryCsvToolbar onImported={() => {}} />
+          <HistoryCsvToolbar />
         </div>
       </div>
 

@@ -8,12 +8,6 @@ import type { Exercise } from '@/domain/entities';
 import { ExerciseType, Muscle, Equipment, MovementPattern, CounterType, ExerciseGroupType, SetType, ToFailureIndicator } from '@/domain/enums';
 import dayjs from '@/lib/dayjs';
 
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for (let i = 0; i < index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
 import { testDb as db } from '../utils/testHelpers';
 
 describe('Hydration Benchmark', () => {
@@ -123,3 +117,9 @@ describe('Hydration Benchmark', () => {
     expect(result[0].groups.length).toBe(3);
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for (let i = 0; i < index; i++) rank = rank.genNext();
+  return rank.toString();
+}

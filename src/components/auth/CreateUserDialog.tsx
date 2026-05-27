@@ -45,11 +45,8 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { INPUT_STEPS } from '@/domain/enums';
 import { AVATAR_COLORS } from '@/domain/global-entities';
-import { useOnboardingMutations } from '@/hooks/mutations/onboardingMutations';
+import { useCreateUser } from '@/hooks/mutations/userMutations';
 import { cn } from '@/lib/utils';
-import { hashPin } from '@/services/authService';
-import { systemService } from '@/services/systemService';
-import { userService } from '@/services/userService';
 
 const schema = z.object({
   // Global Profile Info
@@ -95,7 +92,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
   const language = i18n.language as 'en' | 'it' | 'es' | 'fr' | 'zh';
   const [loading, setLoading] = useState(false);
   const [isNameSynced, setIsNameSynced] = useState(true);
-  const onboarding = useOnboardingMutations();
+  const { createUser } = useCreateUser();
 
   const form = useForm<Values>({
     resolver: zodResolver(schema),
@@ -128,16 +125,11 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
   const onSubmit = async (values: Values) => {
     setLoading(true);
     try {
-      // 1. Create Global User
-      const pinHash = values.pin ? await hashPin(values.pin) : null;
-      const globalUser = await userService.createUser(values.profileName, pinHash, values.avatarColor);
-      
-      // 2. Mount User Database
-      await systemService.mountUser(globalUser.id);
-      
-      // 3. Perform Onboarding
-      await onboarding.onboardUser({
-        name: values.athleteName,
+      const userId = await createUser({
+        profileName: values.profileName,
+        pin: values.pin,
+        avatarColor: values.avatarColor,
+        athleteName: values.athleteName,
         gender: values.gender,
         weight: parseFloat(values.weight || '0') || 0,
         seedOptions: {
@@ -151,8 +143,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
         language,
       });
 
-      // 4. Success
-      onUserCreated(globalUser.id);
+      onUserCreated(userId);
       form.reset();
       setIsNameSynced(true);
     } catch (error) {
@@ -182,12 +173,12 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
         }
       }
     }}>
-      <DialogContent className="max-w-md overflow-hidden p-0 max-h-[90vh] flex flex-col">
-        <DialogHeader className="px-6 pt-6 shrink-0">
+      <DialogContent className="flex max-h-[90vh] max-w-md flex-col overflow-hidden p-0">
+        <DialogHeader className="shrink-0 px-6 pt-6">
           <div className="flex items-center justify-between">
             <LanguageSwitcher showLabel={false} iconOnly={true} />
           </div>
-          <DialogTitle className="mt-2 text-h4 font-black">
+          <DialogTitle className="text-h4 mt-2 font-black">
             {t('users.createUser')}
           </DialogTitle>
           <DialogDescription>
@@ -202,20 +193,20 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <Card className="p-4 flex items-center gap-4 bg-muted/30 border-2 border-dashed border-border/50">
+            <Card className="flex items-center gap-4 border-2 border-dashed border-border/50 bg-muted/30 p-4">
               <Avatar className="h-16 w-16 border-2 border-white shadow-xl transition-colors duration-300" style={{ backgroundColor: avatarColor }}>
-                <AvatarFallback className="bg-transparent text-white text-xl font-black">
+                <AvatarFallback className="bg-transparent text-xl font-black text-white">
                   {getInitials(athleteName)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+              <div className="min-w-0 flex-1">
+                <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   {t('common.preview')}
                 </p>
-                <h3 className="text-xl font-black truncate leading-tight">
+                <h3 className="truncate text-xl font-black leading-tight">
                   {athleteName || t('profile.athlete')}
                 </h3>
-                <p className="text-sm text-muted-foreground truncate">
+                <p className="truncate text-sm text-muted-foreground">
                   {form.watch('profileName') || t('users.title')}
                 </p>
               </div>
@@ -227,7 +218,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
               {/* Identity Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                  <div className="h-4 w-1 bg-primary rounded-full" />
+                  <div className="h-4 w-1 rounded-full bg-primary" />
                   <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                     {t('profile.nameAndGender')}
                   </h3>
@@ -263,7 +254,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                       <FormControl>
                         <Input 
                           {...field} 
-                          className="h-12 border-2 font-bold text-lg focus-visible:ring-primary" 
+                          className="h-12 border-2 text-lg font-bold focus-visible:ring-primary" 
                           placeholder={t('users.namePlaceholder')}
                         />
                       </FormControl>
@@ -319,13 +310,13 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                             onValueChange={(val) => val && field.onChange(val)}
                             className="justify-start gap-2"
                           >
-                            <ToggleGroupItem value="male" className="flex-1 h-11 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                            <ToggleGroupItem value="male" className="h-11 flex-1 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
                               {t('profile.genderOptions.male')}
                             </ToggleGroupItem>
-                            <ToggleGroupItem value="female" className="flex-1 h-11 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                            <ToggleGroupItem value="female" className="h-11 flex-1 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
                               {t('profile.genderOptions.female')}
                             </ToggleGroupItem>
-                            <ToggleGroupItem value="undisclosed" className="flex-1 h-11 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                            <ToggleGroupItem value="undisclosed" className="h-11 flex-1 border-2 font-bold data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
                               {t('profile.genderOptions.undisclosedShort')}
                             </ToggleGroupItem>
                           </ToggleGroup>
@@ -345,7 +336,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                             <Input 
                               {...field} 
                               type="number" 
-                              className="h-11 border-2 font-bold pr-10" 
+                              className="h-11 border-2 pr-10 font-bold" 
                               step={INPUT_STEPS.bodyWeight} 
                               placeholder={t('users.weightPlaceholder')}
                             />
@@ -364,7 +355,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
               {/* Visual Customization */}
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-4 w-1 bg-primary rounded-full" />
+                  <div className="h-4 w-1 rounded-full bg-primary" />
                   <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                     {t('users.color')}
                   </h3>
@@ -384,7 +375,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                           style={{ backgroundColor: color }}
                           onClick={() => field.onChange(color)}
                         >
-                          {field.value === color && <Check className="h-5 w-5 text-white stroke-[3px]" />}
+                          {field.value === color && <Check className="h-5 w-5 stroke-[3px] text-white" />}
                         </button>
                       ))}
                     </div>
@@ -395,20 +386,20 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
               {/* Seeding Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-4 w-1 bg-primary rounded-full" />
+                  <div className="h-4 w-1 rounded-full bg-primary" />
                   <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                     {t('users.seedData')}
                   </h3>
                 </div>
 
-                <Card className="p-4 border-2">
+                <Card className="border-2 p-4">
                   <FormField control={form.control} name="seedExercises" render={({ field }) => (
                     <FormItem className="flex items-center justify-between space-y-0">
                       <div className="space-y-0.5">
                         <FormLabel className="text-sm font-bold">
                           {t('onboarding.seedExercises')}
                         </FormLabel>
-                        <p className="text-[12px] text-muted-foreground leading-tight">
+                        <p className="text-[12px] leading-tight text-muted-foreground">
                           {t('users.seedDataDescription')}
                         </p>
                       </div>
@@ -436,7 +427,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                       exit={{ opacity: 0, height: 0 }}
                       className="space-y-4 pt-2"
                     >
-                      <p className="text-[13px] text-muted-foreground font-medium leading-snug">
+                      <p className="text-[13px] font-medium leading-snug text-muted-foreground">
                         {t('onboarding.selectLibraryPlans')}
                       </p>
 
@@ -464,8 +455,8 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                               {t(plan.label)}
                             </span>
                             {form.watch(plan.id) && (
-                              <div className="absolute top-2 right-2 h-4 w-4 bg-primary rounded-full flex items-center justify-center">
-                                <Check className="h-2.5 w-2.5 text-white stroke-[4px]" />
+                              <div className="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                                <Check className="h-2.5 w-2.5 stroke-[4px] text-white" />
                               </div>
                             )}
                           </button>
@@ -476,11 +467,11 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                 </AnimatePresence>
               </div>
 
-              <div className="pt-4 shrink-0">
+              <div className="shrink-0 pt-4">
                 <Button 
                   type="submit" 
                   disabled={loading} 
-                  className="h-16 w-full text-lg font-black shadow-xl rounded-2xl group"
+                  className="group h-16 w-full rounded-2xl text-lg font-black shadow-xl"
                 >
                   {loading ? (
                     <>

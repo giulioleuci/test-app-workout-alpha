@@ -3,7 +3,7 @@
  * Counts planned sets per muscle/group/pattern with primary=1, secondary=0.5 weighting.
  */
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
-import type { Exercise, PlannedExerciseItem, PlannedSet } from '@/domain/entities';
+import type { Exercise, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet } from '@/domain/entities';
 import { MuscleGroupMuscles } from '@/domain/enums';
 import { estimateSessionDuration } from '@/services/durationEstimator';
 
@@ -79,6 +79,30 @@ function mapToSortedEntries(
 }
 
 /** Pure analysis from in-memory data — no DB access */
+/**
+ * Flatten the grouped planning structure (groups + items-by-group + sets-by-item)
+ * into the flat ItemWithContext list the analyzers consume. Items whose exercise
+ * is missing from the map are skipped.
+ */
+export function flattenPlannedItems(
+  groups: PlannedExerciseGroup[],
+  itemsByGroup: Record<string, PlannedExerciseItem[]>,
+  setsByItem: Record<string, PlannedSet[]>,
+  exercises: Exercise[],
+): ItemWithContext[] {
+  const exerciseMap = Object.fromEntries(exercises.map(e => [e.id, e]));
+  const result: ItemWithContext[] = [];
+  for (const group of groups) {
+    const groupItems = itemsByGroup[group.id] || [];
+    for (const item of groupItems) {
+      const exercise = exerciseMap[item.exerciseId];
+      if (!exercise) continue;
+      result.push({ item, exercise, sets: setsByItem[item.id] || [] });
+    }
+  }
+  return result;
+}
+
 export function analyzeItemsFromData(
   items: ItemWithContext[],
   muscleLabelFn: (k: string) => string,

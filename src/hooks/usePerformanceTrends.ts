@@ -25,7 +25,7 @@ export function usePerformanceTrends(
 
     const { data: oneRepMaxData, isLoading: isOneRepMaxLoading } = useQuery({
         queryKey: sessionKeys.oneRepMax(exerciseId ?? ''),
-        queryFn: () => getLatestOneRepMax(exerciseId!),
+        queryFn: async () => (await getLatestOneRepMax(exerciseId!)) ?? null,
         enabled: !!exerciseId,
         staleTime: 0,
     });

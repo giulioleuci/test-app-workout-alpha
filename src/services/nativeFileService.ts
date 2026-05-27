@@ -4,7 +4,7 @@ import { Share } from '@capacitor/share';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 import { t } from '@/i18n/t';
-import dayjs from '@/lib/dayjs';
+import { formatIsoDate } from '@/lib/formatting';
 
 import { type BackupSchema, MAX_BACKUP_SIZE } from './backupService';
 
@@ -47,7 +47,7 @@ export async function nativeDownloadFile(
  * Falls back to web blob download if not native.
  */
 export async function nativeDownloadBackup(backup: BackupSchema): Promise<void> {
-  const filename = `workout-backup-${dayjs().format('YYYY-MM-DD')}.json`;
+  const filename = `workout-backup-${formatIsoDate()}.json`;
   const json = JSON.stringify(backup, null, 2);
   await nativeDownloadFile(json, filename, 'application/json');
 }

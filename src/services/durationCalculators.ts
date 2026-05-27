@@ -1,11 +1,9 @@
+import { DEFAULT_REST_SECONDS } from '@/domain/constants';
 import type { PlannedSet } from '@/domain/entities';
 import { CounterType } from '@/domain/enums';
-import type { ClusterSetParams } from '@/domain/value-objects';
+import type { ClusterSetParams, DurationRange } from '@/domain/value-objects';
 
-export interface DurationRange {
-    minSeconds: number;
-    maxSeconds: number;
-}
+export type { DurationRange };
 
 /** Estimate duration of a single set execution (not counting rest) */
 export function estimateSetExecutionSeconds(set: PlannedSet, counterType: CounterType): DurationRange {
@@ -45,7 +43,7 @@ export function estimateSetBlockSeconds(
         const miniRest = clusterParams.interMiniSetRestSeconds;
         const setsMin = set.setCountRange.min;
         const setsMax = set.setCountRange.max ?? setsMin;
-        const restMin = set.restSecondsRange?.min ?? 90;
+        const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
         const restMax = set.restSecondsRange?.max ?? restMin;
 
         const oneCluster = miniSetCount * miniSetExec + Math.max(0, miniSetCount - 1) * miniRest;
@@ -58,7 +56,7 @@ export function estimateSetBlockSeconds(
     const exec = estimateSetExecutionSeconds(set, counterType);
     const setsMin = set.setCountRange.min;
     const setsMax = set.setCountRange.max ?? setsMin;
-    const restMin = set.restSecondsRange?.min ?? 90;
+    const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
     const restMax = set.restSecondsRange?.max ?? restMin;
 
     return {

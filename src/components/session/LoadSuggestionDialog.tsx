@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
 import { Sparkles, Copy, Info, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,13 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { PlannedSet, PlannedExerciseItem } from '@/domain/entities';
-import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
+import { useLoadSuggestion, type LoadRecommendation } from '@/hooks/view-models/useLoadSuggestion';
 import { cn } from '@/lib/utils';
-import { LoadCalculationService, type LoadOption } from '@/services/loadCalculationService';
-import { OneRepMaxService } from '@/services/oneRepMaxService';
-import { suggestLoad } from '@/services/rpePercentageTable';
 
 interface LoadSuggestionDialogProps {
   exerciseId: string;
@@ -27,12 +22,10 @@ interface LoadSuggestionDialogProps {
   hidePlanTab?: boolean;
 }
 
-const ITEMS_PER_PAGE = 4;
-
-export default function LoadSuggestionDialog({ 
-  exerciseId, 
-  plannedSet, 
-  plannedExerciseItem, 
+export default function LoadSuggestionDialog({
+  exerciseId,
+  plannedSet,
+  plannedExerciseItem,
   onApply,
   variant = 'icon',
   hidePlanTab = false
@@ -40,162 +33,25 @@ export default function LoadSuggestionDialog({
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
-  const { data: profile } = useUserRegulation();
-  const [manualMode, setManualMode] = useState<string>('rpe');
-  const [manualReps, setManualReps] = useState<number>(8);
-  
-  const [planPage, setPlanPage] = useState(0);
-  const [manualPage, setManualPage] = useState(0);
-
-  // Initialize manual reps from plan if available
-  useEffect(() => {
-    if (plannedSet?.countRange?.min) {
-      setManualReps(plannedSet.countRange.min);
-    }
-  }, [plannedSet, open]);
-
-  // Reset pagination when mode or open state changes
-  useEffect(() => {
-    setPlanPage(0);
-    setManualPage(0);
-  }, [manualMode, open]);
-
-  const { data: historicalData, isLoading } = useQuery({
-    queryKey: ['sessions', 'loadSuggestionHistorical', exerciseId, plannedSet?.id],
-    queryFn: async () => {
-      const [p1RM, lastSetPerf, lastGeneralPerf] = await Promise.all([
-        OneRepMaxService.getPrioritized1RM(exerciseId),
-        plannedSet?.id ? SessionRepository.getLastSetPerformance(plannedSet.id) : null,
-        SessionRepository.getLastPerformance(exerciseId),
-      ]);
-      return { p1RM, lastSetPerf, lastGeneralPerf };
-    },
-    enabled: open,
-    staleTime: 0,
-  });
-
-  const planRecommendations = useMemo(() => {
-    if (!historicalData || hidePlanTab) return [];
-
-    const { p1RM, lastSetPerf, lastGeneralPerf } = historicalData;
-    const items: any[] = [];
-
-    if (lastSetPerf) {
-      items.push({
-        id: 'lastSessionSpecific',
-        type: 'lastSession',
-        label: t('activeSession.last'),
-        load: lastSetPerf.actualLoad,
-        description: profile?.simpleMode
-          ? t('loadSuggestion.reasonLastSessionSimple', { load: lastSetPerf.actualLoad, reps: lastSetPerf.actualCount })
-          : t('loadSuggestion.reasonLastSession', {
-              load: lastSetPerf.actualLoad,
-              reps: lastSetPerf.actualCount,
-              rpe: lastSetPerf.actualRPE
-            }),
-        priority: 1
-      });
-    }
-
-    if (lastGeneralPerf && (!lastSetPerf || lastGeneralPerf.load !== lastSetPerf.actualLoad)) {
-      items.push({
-        id: 'lastSessionGeneral',
-        type: 'lastSession',
-        label: t('loadSuggestion.methodLastSession'),
-        load: lastGeneralPerf.load,
-        description: profile?.simpleMode
-          ? t('loadSuggestion.reasonLastSessionSimple', { load: lastGeneralPerf.load, reps: lastGeneralPerf.reps })
-          : t('loadSuggestion.reasonLastSession', {
-              load: lastGeneralPerf.load,
-              reps: lastGeneralPerf.reps,
-              rpe: lastGeneralPerf.rpe
-            }),
-        priority: 2
-      });
-    }
-
-    if (p1RM) {
-      const methodLabel = t(`analytics.${p1RM.method}`) || p1RM.method;
-
-      if (plannedSet?.percentage1RMRange?.min) {
-        const pct = plannedSet.percentage1RMRange.min / 100;
-        items.push({
-          id: 'percentage1RM',
-          type: 'percentage1RM',
-          label: `${(pct * 100).toFixed(0)}%`,
-          load: Math.round(p1RM.value * pct * 2) / 2,
-          description: `${t('loadSuggestion.methodPercentage1RM')} (${p1RM.value} ${t('units.kg')}, ${methodLabel})`,
-          priority: 3
-        });
-      }
-
-      if (plannedSet?.rpeRange?.min && plannedSet?.countRange?.min) {
-        const targetReps = plannedSet.countRange.min;
-        const targetRPE = plannedSet.rpeRange.min;
-        const loadResult = suggestLoad(p1RM.value, targetReps, targetRPE);
-        if (loadResult) {
-          items.push({
-            id: 'plannedRPE',
-            type: 'plannedRPE',
-            label: `RPE ${targetRPE}`,
-            load: Math.round(loadResult.media * 2) / 2,
-            description: `${t('loadSuggestion.methodPlannedRPE')} (${targetReps} ${t('enums.counterType.reps')}, ${methodLabel})`,
-            priority: 4
-          });
-        }
-      }
-
-      if (plannedExerciseItem?.targetXRM) {
-        const x = plannedExerciseItem.targetXRM;
-        const loadResult = suggestLoad(p1RM.value, x, 10);
-        if (loadResult) {
-          items.push({
-            id: 'xrm',
-            type: 'xrm',
-            label: `${x}RM`,
-            load: Math.round(loadResult.media * 2) / 2,
-            description: `${x} reps max (${methodLabel})`,
-            priority: 5
-          });
-        }
-      }
-    }
-
-    const preferredMethod = profile?.preferredSuggestionMethod || 'lastSession';
-    return items.sort((a, b) => {
-      if (a.type === preferredMethod && b.type !== preferredMethod) return -1;
-      if (a.type !== preferredMethod && b.type === preferredMethod) return 1;
-      return a.priority - b.priority;
-    });
-  }, [historicalData, plannedSet, plannedExerciseItem, profile, t, hidePlanTab]);
-
-  const manualRecommendations = useMemo(() => {
-    if (!historicalData?.p1RM) return [];
-    
-    const p1RM = historicalData.p1RM.value;
-
-    switch (manualMode) {
-      case 'rpe':
-        return LoadCalculationService.getRPEOptions(p1RM, manualReps, t);
-      case 'percentage':
-        return LoadCalculationService.getPercentageOptions(p1RM, t);
-      case 'xrm':
-        return LoadCalculationService.getXRMOptions(p1RM, t);
-      default:
-        return [];
-    }
-  }, [historicalData?.p1RM, manualMode, manualReps, t]);
+  const {
+    isLoading,
+    profile,
+    manualMode, setManualMode,
+    manualReps, setManualReps,
+    planPage, setPlanPage,
+    manualPage, setManualPage,
+    planRecommendations,
+    manualRecommendations,
+    paginatedPlan,
+    totalPlanPages,
+    paginatedManual,
+    totalManualPages,
+  } = useLoadSuggestion({ exerciseId, plannedSet, plannedExerciseItem, hidePlanTab, open });
 
   const handleApply = (load: number) => {
     onApply(load);
     setOpen(false);
   };
-
-  const paginatedPlan = planRecommendations.slice(planPage * ITEMS_PER_PAGE, (planPage + 1) * ITEMS_PER_PAGE);
-  const totalPlanPages = Math.ceil(planRecommendations.length / ITEMS_PER_PAGE);
-
-  const paginatedManual = manualRecommendations.slice(manualPage * ITEMS_PER_PAGE, (manualPage + 1) * ITEMS_PER_PAGE);
-  const totalManualPages = Math.ceil(manualRecommendations.length / ITEMS_PER_PAGE);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -237,11 +93,11 @@ export default function LoadSuggestionDialog({
                 ) : (
                   <>
                     <div className="min-h-[340px] space-y-3">
-                      {paginatedPlan.map((rec: any) => (
-                        <RecommendationCard 
-                          key={rec.id} 
-                          recommendation={rec} 
-                          onApply={handleApply} 
+                      {paginatedPlan.map((rec) => (
+                        <RecommendationCard
+                          key={rec.id}
+                          recommendation={rec}
+                          onApply={handleApply}
                           isPreferred={profile?.preferredSuggestionMethod === rec.type}
                         />
                       ))}
@@ -316,11 +172,11 @@ export default function LoadSuggestionDialog({
               ) : (
                 <>
                   <div className="min-h-[340px] space-y-3">
-                    {paginatedManual.map((rec: any, i: number) => (
-                      <RecommendationCard 
-                        key={i} 
-                        recommendation={rec} 
-                        onApply={handleApply} 
+                    {paginatedManual.map((rec, i: number) => (
+                      <RecommendationCard
+                        key={i}
+                        recommendation={rec}
+                        onApply={handleApply}
                         isPreferred={false}
                       />
                     ))}
@@ -351,8 +207,8 @@ export default function LoadSuggestionDialog({
   );
 }
 
-function RecommendationCard({ recommendation, onApply, isPreferred }: { 
-  recommendation: any, 
+function RecommendationCard({ recommendation, onApply, isPreferred }: {
+  recommendation: Pick<LoadRecommendation, 'label' | 'load' | 'description'>,
   onApply: (load: number) => void,
   isPreferred: boolean
 }) {

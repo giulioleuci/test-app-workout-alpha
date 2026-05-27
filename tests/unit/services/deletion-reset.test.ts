@@ -34,7 +34,9 @@ describe('Account Deletion and App Reset', () => {
     localStorage.setItem(sessionKey, 'some-data');
     localStorage.setItem(userSpecificKey, 'some-data');
 
-    // 2. Delete current user
+    // 2. Delete current user. The presentation layer (DeleteAccountSection) owns
+    //    resetting the in-memory store; the service clears persisted data.
+    useActiveSessionStore.getState().reset();
     await userService.deleteCurrentUser();
 
     // 3. Verify user is gone from global repo

@@ -49,6 +49,13 @@ export function getRankBetween(prev?: string | null, next?: string | null): stri
 }
 
 /**
+ * Comparator for sorting entities by their string `orderIndex` (LexoRank).
+ * Usage: `items.sort(byOrderIndex)`.
+ */
+export const byOrderIndex = <T extends { orderIndex: string }>(a: T, b: T): number =>
+    a.orderIndex.localeCompare(b.orderIndex);
+
+/**
  * Helper to generate an array of sequential lexoranks.
  * Useful for seeding or migrating arrays of items.
  */

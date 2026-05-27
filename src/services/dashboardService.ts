@@ -7,7 +7,9 @@ import type { WorkoutSession, PlannedSession } from '@/domain/entities';
 import { Muscle } from '@/domain/enums';
 import { t } from '@/i18n/t';
 import dayjs from '@/lib/dayjs';
+import { formatIsoDate, formatTime } from '@/lib/formatting';
 
+import { filterCompleted, totalVolume as sumVolume } from './logic/setStats';
 import { deduceMusclesFromExercises } from './muscleDeducer';
 
 
@@ -69,7 +71,7 @@ export async function getConsistencyHeatmap(days = 365): Promise<ConsistencyDay[
   const map = new Map<string, number>();
 
   for (const s of completedSessions) {
-    const key = dayjs(s.completedAt).format('YYYY-MM-DD');
+    const key = formatIsoDate(s.completedAt);
     map.set(key, (map.get(key) || 0) + 1);
   }
 
@@ -166,10 +168,10 @@ export async function getLastWorkoutSummary(): Promise<LastWorkoutSummary | null
   const allExercises = await ExerciseRepository.getByIds(exerciseIds);
   const exMap = Object.fromEntries(allExercises.map(e => [e.id, e]));
 
-  const completedSets = allSets.filter(s => s.isCompleted);
+  const completedSets = filterCompleted(allSets);
   const rpeValues = completedSets.filter(s => s.actualRPE != null).map(s => s.actualRPE!);
   const avgRPE = rpeValues.length > 0 ? rpeValues.reduce((a, b) => a + b, 0) / rpeValues.length : null;
-  const totalVolume = completedSets.map(s => (s.actualLoad ?? 0) * (s.actualCount ?? 0)).reduce((a, b) => a + b, 0);
+  const totalVolume = sumVolume(completedSets);
 
   const duration = last.completedAt && last.startedAt
     ? Math.round(dayjs(last.completedAt).diff(dayjs(last.startedAt), 'minute'))
@@ -177,7 +179,7 @@ export async function getLastWorkoutSummary(): Promise<LastWorkoutSummary | null
 
   const exerciseDetails = sessionItems.map(item => {
     const ex = exMap[item.exerciseId];
-    const itemSets = allSets.filter(s => s.sessionExerciseItemId === item.id && s.isCompleted);
+    const itemSets = filterCompleted(allSets).filter(s => s.sessionExerciseItemId === item.id);
     const maxVal = max(itemSets.map(s => s.actualLoad ?? 0));
     const bestLoad = maxVal != null && maxVal > 0 ? maxVal : null;
     return {
@@ -223,7 +225,7 @@ export async function buildTrainingCalendar(month: Date): Promise<Map<string, Ca
 
   for (const s of sessions) {
     const d = dayjs(s.completedAt);
-    const key = d.format('YYYY-MM-DD');
+    const key = formatIsoDate(d.toDate());
 
     let sessionName = '';
     if (s.plannedSessionId) {
@@ -231,7 +233,7 @@ export async function buildTrainingCalendar(month: Date): Promise<Map<string, Ca
       sessionName = planned?.name ?? '';
     }
     if (!sessionName) {
-      sessionName = dayjs(s.startedAt).format('HH:mm');
+      sessionName = formatTime(s.startedAt);
     }
 
     const entry: CalendarEntry = {

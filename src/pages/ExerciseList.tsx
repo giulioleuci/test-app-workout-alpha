@@ -65,7 +65,7 @@ export default function ExerciseList() {
 
       {/* CSV toolbar */}
       <div className="flex justify-end gap-2">
-        <ExerciseCsvToolbar onImported={() => {}} />
+        <ExerciseCsvToolbar />
       </div>
 
       {/* Search, sort & filter */}

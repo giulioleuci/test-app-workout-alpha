@@ -1,15 +1,7 @@
-import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import 'fake-indexeddb/auto';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, act } from '@testing-library/react';
+import { LexoRank } from 'lexorank';
 import { nanoid } from 'nanoid';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -19,7 +11,6 @@ import ActiveSession from '@/pages/ActiveSession';
 import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
 import { testDb as db } from '../../utils/testHelpers';
-
 
 // Mock timer components to avoid complexity
 vi.mock('@/pages/ActiveSession/components/TimerDisplay', () => ({
@@ -110,3 +101,9 @@ describe('ActiveSession Performance', () => {
     expect(screen.getByTestId('timer-display')).toBeInTheDocument();
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

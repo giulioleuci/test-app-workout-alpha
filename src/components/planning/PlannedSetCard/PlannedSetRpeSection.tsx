@@ -60,7 +60,6 @@ export default function PlannedSetRpeSection({
                   fatigueProgressionProfile: {
                     expectedRPEIncrementPerSet: v,
                     tolerance: ps.fatigueProgressionProfile?.tolerance ?? 0.5,
-                    description: ps.fatigueProgressionProfile?.description ?? '',
                   },
                 });
               } else {

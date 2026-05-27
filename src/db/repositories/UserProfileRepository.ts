@@ -35,13 +35,13 @@ export class UserProfileRepository {
 
     // Dexie ranges are inclusive by default
     if (fromDate && toDate) {
-      // @ts-expect-error
+      // @ts-expect-error -- Dexie Collection/Table union narrowing is too loose for .filter here
       query = query.filter(r => r.recordedAt >= fromDate && r.recordedAt <= toDate);
     } else if (fromDate) {
-      // @ts-expect-error
+      // @ts-expect-error -- Dexie Collection/Table union narrowing is too loose for .filter here
       query = query.filter(r => r.recordedAt >= fromDate);
     } else if (toDate) {
-      // @ts-expect-error
+      // @ts-expect-error -- Dexie Collection/Table union narrowing is too loose for .filter here
       query = query.filter(r => r.recordedAt <= toDate);
     }
 

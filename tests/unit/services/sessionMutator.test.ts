@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for (let i = 0; i < index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import 'fake-indexeddb/auto';
 import { describe, it, expect, beforeEach } from 'vitest';
 
@@ -618,3 +610,9 @@ describe('SessionMutator', () => {
     });
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for (let i = 0; i < index; i++) rank = rank.genNext();
+  return rank.toString();
+}

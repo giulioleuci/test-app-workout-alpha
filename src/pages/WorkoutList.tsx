@@ -153,7 +153,7 @@ export default function WorkoutList() {
       {/* Sort + CSV toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex gap-2">
-          <WorkoutCsvToolbar onImported={() => {}} />
+          <WorkoutCsvToolbar />
         </div>
         <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
           <SelectTrigger className="h-9 w-44">

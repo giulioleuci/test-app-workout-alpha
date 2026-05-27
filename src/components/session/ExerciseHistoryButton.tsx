@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useExerciseHistory } from '@/hooks/queries/sessionQueries';
-import dayjs from '@/lib/dayjs';
+import { formatDayMonthYear, formatTime } from '@/lib/formatting';
 
 interface ExerciseHistoryButtonProps {
   exerciseId: string;
@@ -79,8 +79,8 @@ export default function ExerciseHistoryButton({
               <div key={sg.session.id} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="text-caption font-semibold uppercase tracking-wider text-muted-foreground">
-                    {dayjs(sg.session.startedAt).format('DD MMM YYYY')}
-                    {sg.sessionName ? ` · ${sg.sessionName}` : ` · ${dayjs(sg.session.startedAt).format('HH:mm')}`}
+                    {formatDayMonthYear(sg.session.startedAt)}
+                    {sg.sessionName ? ` · ${sg.sessionName}` : ` · ${formatTime(sg.session.startedAt)}`}
                   </div>
                   {sg.performanceStatus && sg.performanceStatus !== 'insufficient_data' && (
                     <PerformanceBadge status={sg.performanceStatus} showLabel={false} />

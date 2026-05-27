@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import { nanoid } from 'nanoid';
 import { describe, it, expect, beforeEach } from 'vitest';
 
@@ -169,3 +161,9 @@ describe('Performance Analyzer', () => {
     expect(result?.estimatedRecords?.rm12).toBe(72.1);
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

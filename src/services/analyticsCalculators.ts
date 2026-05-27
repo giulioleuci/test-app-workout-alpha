@@ -19,8 +19,10 @@ import type { WorkoutSession } from '@/domain/entities';
 import type { Exercise } from '@/domain/entities';
 import { MuscleGroupMuscles, ComplianceStatus } from '@/domain/enums';
 import dayjs from '@/lib/dayjs';
+import { formatChartDate } from '@/lib/formatting';
 import { roundToHalf } from '@/lib/math';
 
+import { totalVolume } from './logic/setStats';
 import { OBJECTIVE_KEYS, scoreAllObjectives } from './objectiveScoring';
 
 interface FlatGroup {
@@ -43,8 +45,18 @@ interface FlatSet {
 
 // ===== Helpers =====
 
-function formatDate(d: Date): string {
-    return dayjs(d).format('DD/MM');
+const formatDate = formatChartDate;
+
+/**
+ * Percentage change in average load from the first to the last progression point.
+ * Returns null when there are fewer than two points or the baseline is non-positive.
+ */
+export function loadProgressionChangePct(points: { avgLoad: number }[]): number | null {
+    if (points.length < 2) return null;
+    const first = points[0].avgLoad;
+    const last = points[points.length - 1].avgLoad;
+    if (first <= 0) return null;
+    return Math.round(((last - first) / first) * 100);
 }
 
 export function calculateComplianceDistribution(relevantSets: RelevantSetItem[]): ComplianceDistribution[] {
@@ -204,7 +216,7 @@ export function calculateWeeklyFrequency(
         });
 
         return {
-            weekLabel: weekStart.format('DD/MM'),
+            weekLabel: formatChartDate(weekStart.toDate()),
             weekStart: weekStart.toDate(),
             actual: sessionsInWeek.length,
             target: targetSessionsPerWeek,
@@ -229,7 +241,7 @@ export function buildSessionHistoryFromFlatData(
 
         const completedSets = sessionSets.filter((s: FlatSet) => s.isCompleted);
         const rpes = completedSets.filter((s: FlatSet) => s.actualRPE !== null).map((s: FlatSet) => s.actualRPE!);
-        const totalVol = completedSets.reduce((sum: number, s: FlatSet) => sum + (s.actualLoad ?? 0) * (s.actualCount ?? 0), 0);
+        const totalVol = totalVolume(completedSets);
 
         return {
             id: session.id,
@@ -253,7 +265,7 @@ export function buildSessionHistory(hydratedSessions: { session: WorkoutSession,
         );
 
         const rpes = completedSets.filter((s: FlatSet) => s.actualRPE !== null).map((s: FlatSet) => s.actualRPE!);
-        const totalVol = completedSets.reduce((sum: number, s: FlatSet) => sum + (s.actualLoad ?? 0) * (s.actualCount ?? 0), 0);
+        const totalVol = totalVolume(completedSets);
 
         return {
             id: hs.session.id,

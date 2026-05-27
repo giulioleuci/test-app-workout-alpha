@@ -37,7 +37,7 @@ export function usePlanEditor({
     setItems(prev => ({ ...prev, [newGroup.id]: [] }));
     // No need to init sets as there are no items yet
     return newGroup;
-  }, [groups.length, plannedSessionId]);
+  }, [groups, plannedSessionId]);
 
   const removeGroup = useCallback((groupId: string) => {
     // We need to know which items are being removed to cleanup sets

@@ -1,12 +1,4 @@
 import { LexoRank } from 'lexorank';
-
-function generateTestRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for(let i=0; i<index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 import 'fake-indexeddb/auto';
 import { nanoid } from 'nanoid';
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -16,7 +8,6 @@ import type { WorkoutSession, SessionExerciseGroup, SessionExerciseItem, Session
 import { ExerciseGroupType, SetType, ToFailureIndicator } from '@/domain/enums';
 
 import { SessionRepository } from '../SessionRepository';
-
 
 describe('SessionRepository', () => {
   beforeEach(async () => {
@@ -115,3 +106,9 @@ describe('SessionRepository', () => {
     ).rejects.toThrow('Repository validation failed');
   });
 });
+
+function generateTestRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for(let i=0; i<index; i++) rank = rank.genNext();
+  return rank.toString();
+}

@@ -37,6 +37,11 @@ export interface SetCountRange {
   stopCriteria?: 'maxSets' | 'rpeCeiling' | 'velocityLoss' | 'technicalBreakdown';
 }
 
+export interface DurationRange {
+  minSeconds: number;
+  maxSeconds: number;
+}
+
 export interface FatigueProgressionProfile {
   expectedRPEIncrementPerSet: number; // Typically 0.5 or 1.0
   tolerance: number;                  // Acceptable deviation

@@ -10,10 +10,11 @@ import {
   WorkoutSessionSchema, SessionExerciseGroupSchema,
   SessionExerciseItemSchema, SessionSetSchema,
 } from '@/domain/schemas';
-import { generateSequentialRanks } from '@/lib/lexorank';
+import { byOrderIndex } from '@/lib/lexorank';
 
 import { BaseRepository } from './BaseRepository';
 import { db } from '../database';
+import { reorderByIds } from '../reorder';
 import { ExerciseRepository } from './ExerciseRepository';
 import { WorkoutPlanRepository } from './WorkoutPlanRepository';
 
@@ -267,14 +268,7 @@ export class SessionRepository extends BaseRepository {
     }
 
     static async reorderGroups(_sessionId: string, orderedIds: string[]): Promise<void> {
-        const ranks = generateSequentialRanks(orderedIds.length);
-        await db.transaction('rw', db.sessionExerciseGroups, async () => {
-            await Promise.all(
-                orderedIds.map((id, index) =>
-                    db.sessionExerciseGroups.update(id, { orderIndex: ranks[index] })
-                )
-            );
-        });
+        await reorderByIds(db.sessionExerciseGroups, orderedIds);
     }
 
     // --- Item Operations ---
@@ -429,6 +423,23 @@ export class SessionRepository extends BaseRepository {
 
     // --- Hydration Methods ---
 
+    /**
+     * Fetch the raw group→item→set triad for the given sessions in one place,
+     * so services don't re-implement the fetch sequence. Returns flat arrays;
+     * callers build whatever grouping they need.
+     */
+    static async getSessionEntities(sessionIds: string[]): Promise<{
+        groups: SessionExerciseGroup[];
+        items: SessionExerciseItem[];
+        sets: SessionSet[];
+    }> {
+        if (sessionIds.length === 0) return { groups: [], items: [], sets: [] };
+        const groups = await this.getGroupsBySessionIds(sessionIds);
+        const items = await this.getItemsByGroups(groups.map(g => g.id));
+        const sets = await this.getSetsByItems(items.map(i => i.id));
+        return { groups, items, sets };
+    }
+
     static async getHydratedSession(sessionId: string): Promise<HydratedSession | null> {
         const session = await db.workoutSessions.get(sessionId);
         if (!session) return null;
@@ -480,7 +491,7 @@ export class SessionRepository extends BaseRepository {
             if (!setsByItem.has(s.sessionExerciseItemId)) setsByItem.set(s.sessionExerciseItemId, []);
             setsByItem.get(s.sessionExerciseItemId)!.push(s);
         }
-        for (const acts of setsByItem.values()) acts.sort((a, b) => a.orderIndex.localeCompare(b.orderIndex));
+        for (const acts of setsByItem.values()) acts.sort(byOrderIndex);
 
         const itemsByGroup = new Map<string, HydratedSessionItem[]>();
         for (const i of items) {
@@ -545,7 +556,7 @@ export class SessionRepository extends BaseRepository {
                 sets: setsByItem.get(i.id) ?? []
             });
         }
-        for (const list of itemsByGroup.values()) list.sort((a, b) => a.item.orderIndex.localeCompare(b.item.orderIndex));
+        for (const list of itemsByGroup.values()) list.sort((a, b) => byOrderIndex(a.item, b.item));
 
         const groupsBySession = new Map<string, HydratedSessionGroup[]>();
         for (const g of groups) {
@@ -555,7 +566,7 @@ export class SessionRepository extends BaseRepository {
                 items: itemsByGroup.get(g.id) ?? []
             });
         }
-        for (const list of groupsBySession.values()) list.sort((a, b) => a.group.orderIndex.localeCompare(b.group.orderIndex));
+        for (const list of groupsBySession.values()) list.sort((a, b) => byOrderIndex(a.group, b.group));
 
         return sessions.map(session => ({
             session,
@@ -695,7 +706,7 @@ export class SessionRepository extends BaseRepository {
 
         const lastSet = lastSets
             .filter(s => s.isCompleted && !s.isSkipped && (s.actualLoad ?? 0) > 0)
-            .sort((a, b) => b.orderIndex.localeCompare(a.orderIndex))[0];
+            .sort((a, b) => byOrderIndex(b, a))[0];
 
         if (!lastSet) {
             // If the very last item has no valid sets, try the one before it
@@ -707,7 +718,7 @@ export class SessionRepository extends BaseRepository {
                         .toArray();
                     const prevSet = prevSets
                         .filter(s => s.isCompleted && !s.isSkipped && (s.actualLoad ?? 0) > 0)
-                        .sort((a, b) => b.orderIndex.localeCompare(a.orderIndex))[0];
+                        .sort((a, b) => byOrderIndex(b, a))[0];
                     if (prevSet) {
                         return {
                             load: prevSet.actualLoad ?? 0,

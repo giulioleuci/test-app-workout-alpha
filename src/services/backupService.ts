@@ -1,13 +1,12 @@
 import { isPlainObject, isArray, mapValues, cloneDeep, uniq } from 'lodash-es';
 import { nanoid } from 'nanoid';
 
-import { db } from '@/db/database';
+import { BackupRepository } from '@/db/repositories/BackupRepository';
 import { t } from '@/i18n/t';
 import dayjs from '@/lib/dayjs';
+import { formatIsoDate } from '@/lib/formatting';
 
 import { validateRecord } from './backupValidation';
-
-import type { Table } from 'dexie';
 
 // ===== Types =====
 
@@ -87,10 +86,6 @@ const FK_FIELDS: Record<string, TableName> = {
 
 // ===== Helpers =====
 
-function getTable(name: TableName): Table {
-  return (db as unknown as Record<string, Table>)[name];
-}
-
 function serializeDates(obj: unknown): unknown {
   if (obj === null || obj === undefined) return obj;
   if (obj instanceof Date) return obj.toISOString();
@@ -122,7 +117,7 @@ function deserializeDates(obj: unknown): unknown {
 export async function exportTables(tableNames: TableName[]): Promise<BackupSchema> {
   const data: Partial<Record<TableName, unknown[]>> = {};
   for (const name of tableNames) {
-    const records = await getTable(name).toArray();
+    const records = await BackupRepository.getAll(name);
     data[name] = serializeDates(records) as unknown[];
   }
   return {
@@ -138,7 +133,7 @@ export async function exportAll(): Promise<BackupSchema> {
 }
 
 export async function exportEntities(tableName: TableName, ids: string[]): Promise<BackupSchema> {
-  const records = await getTable(tableName).where('id').anyOf(ids).toArray();
+  const records = await BackupRepository.getByIds(tableName, ids);
   return {
     version: 1,
     exportedAt: dayjs().toISOString(),
@@ -154,7 +149,6 @@ export async function detectConflicts(backup: BackupSchema): Promise<ConflictRep
 
   for (const [tableName, records] of Object.entries(backup.data)) {
     if (!records || records.length === 0) continue;
-    const table = getTable(tableName as TableName);
     const ids = uniq(records
       .filter((r): r is Record<string, unknown> => isPlainObject(r))
       .map((r) => (r).id)
@@ -162,11 +156,11 @@ export async function detectConflicts(backup: BackupSchema): Promise<ConflictRep
 
     if (ids.length === 0) continue;
 
-    const existing = await table.where('id').anyOf(ids).primaryKeys();
+    const existing = await BackupRepository.getExistingIds(tableName, ids);
     if (existing.length > 0) {
       report.byTable[tableName as TableName] = {
         count: existing.length,
-        ids: existing as string[],
+        ids: existing,
       };
       report.totalConflicts += existing.length;
     }
@@ -221,12 +215,11 @@ export async function importData(
     'sessionTemplates',
   ];
 
-  await db.transaction('rw', db.tables, async () => {
+  await BackupRepository.writeAll(async (put) => {
     for (const tableName of orderedTables) {
       const records = backup.data[tableName];
       if (!records || records.length === 0) continue;
 
-      const table = getTable(tableName);
       const conflictInfo = conflicts.byTable[tableName];
       const conflictIds = new Set(conflictInfo?.ids ?? []);
 
@@ -252,7 +245,7 @@ export async function importData(
         if (!isConflicting) {
           // No conflict — but still remap FKs if copy strategy
           const finalRecord = strategy === 'copy' ? remapRecord(record) : record;
-          await table.put(finalRecord);
+          await put(tableName, finalRecord);
           result.inserted++;
         } else {
           switch (strategy) {
@@ -260,12 +253,12 @@ export async function importData(
               result.skipped++;
               break;
             case 'overwrite':
-              await table.put(record);
+              await put(tableName, record);
               result.overwritten++;
               break;
             case 'copy': {
               const remapped = remapRecord(record);
-              await table.put(remapped);
+              await put(tableName, remapped);
               result.copied++;
               break;
             }
@@ -283,7 +276,7 @@ export async function importData(
 export function prepareBackupDownload(backup: BackupSchema, filename?: string): { blob: Blob; filename: string } {
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
-  const suggestedFilename = filename ?? `workout-backup-${dayjs().format('YYYY-MM-DD')}.json`;
+  const suggestedFilename = filename ?? `workout-backup-${formatIsoDate()}.json`;
   return { blob, filename: suggestedFilename };
 }
 

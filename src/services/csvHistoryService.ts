@@ -5,7 +5,6 @@
 import { nanoid } from 'nanoid';
 import Papa from 'papaparse';
 
-import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
@@ -15,7 +14,7 @@ import type {
 import {
   ExerciseGroupType, SetType, ToFailureIndicator,
 } from '@/domain/enums';
-import dayjs from '@/lib/dayjs';
+import { formatIsoDate } from '@/lib/formatting';
 
 import { generateCsvBlob, type CsvConflictStrategy } from './csvExerciseService';
 
@@ -119,7 +118,7 @@ export async function exportAllHistoryCsv(): Promise<{ blob: Blob, filename: str
   // Try to find workout and session names
   const allWorkouts = await WorkoutPlanRepository.getAllWorkouts();
   const workoutMap = new Map(allWorkouts.map(w => [w.id, w.name]));
-  const allPlannedSessions = await db.plannedSessions.toArray();
+  const allPlannedSessions = await WorkoutPlanRepository.getAllSessions();
   const plannedSessionMap = new Map(allPlannedSessions.map(s => [s.id, s.name]));
 
   const rows: (string | number | undefined)[][] = [];
@@ -203,7 +202,7 @@ export async function exportAllHistoryCsv(): Promise<{ blob: Blob, filename: str
     data: rows
   }, { newline: '\n' });
 
-  const filename = `history-${dayjs().format('YYYY-MM-DD')}.csv`;
+  const filename = `history-${formatIsoDate()}.csv`;
   return { blob: generateCsvBlob(csv), filename };
 }
 
@@ -273,7 +272,9 @@ export async function detectHistoryCsvConflicts(
     try {
         const dt = new Date(row.started_at);
         if (!isNaN(dt.getTime())) dtStr = dt.toISOString();
-    } catch {}
+    } catch {
+      // ignore invalid date — fall back to the raw string
+    }
 
     const key = dtStr;
     if (!key || seen.has(key)) continue;
@@ -299,7 +300,7 @@ export async function importHistoryCsv(
 
   const allWorkouts = await WorkoutPlanRepository.getAllWorkouts();
   const workoutMap = new Map(allWorkouts.map(w => [w.name.toLowerCase(), w.id]));
-  const allPlannedSessions = await db.plannedSessions.toArray();
+  const allPlannedSessions = await WorkoutPlanRepository.getAllSessions();
   const plannedSessionMap = new Map(allPlannedSessions.map(s => [`${s.plannedWorkoutId}_${s.name.toLowerCase()}`, s.id]));
 
   const allExercises = await ExerciseRepository.getAll();
@@ -313,7 +314,9 @@ export async function importHistoryCsv(
     try {
         const dt = new Date(row.started_at);
         if (!isNaN(dt.getTime())) dtStr = dt.toISOString();
-    } catch {}
+    } catch {
+      // ignore invalid date — fall back to the raw string
+    }
 
     const key = dtStr;
     if (!key) continue;

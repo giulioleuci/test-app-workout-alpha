@@ -1,8 +1,7 @@
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 import { Plus } from 'lucide-react';
-import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -13,15 +12,13 @@ import SubstitutionConfirmDialog from '@/components/session/SubstitutionConfirmD
 import { Button } from '@/components/ui/button';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import type { PlannedSession, SessionTemplate } from '@/domain/entities';
-import { PlannedSessionStatus, ObjectiveType, WorkType } from '@/domain/enums';
-import { useWorkoutPlanMutations } from '@/hooks/mutations/workoutPlanMutations';
+import { ObjectiveType, WorkType } from '@/domain/enums';
 import { useWorkoutDetail, useSessionTemplates } from '@/hooks/queries/workoutQueries';
 import { useDialogManager } from '@/hooks/useDialogManager';
 import { useSessionActivation } from '@/hooks/useSessionActivation';
 import { useToast } from '@/hooks/useToast';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
-import dayjs from '@/lib/dayjs';
-import { getRankBetween, getInitialRank } from '@/lib/lexorank';
+import { useWorkoutEditor } from '@/hooks/useWorkoutEditor';
 import { serializeSessionToTemplate, importTemplateToWorkout, cloneSession } from '@/services/sessionCloner';
 import { createTemplate } from '@/services/templateService';
 import { getWorkoutSessions } from '@/services/workoutService';
@@ -41,7 +38,6 @@ export default function WorkoutDetail() {
 
   const { data, isLoading } = useWorkoutDetail(id);
   const { data: templatesData } = useSessionTemplates();
-  const mutations = useWorkoutPlanMutations();
 
   const {
     handleStartSession,
@@ -62,13 +58,18 @@ export default function WorkoutDetail() {
   const workoutDuration = data?.workoutDuration ?? null;
   const templates = templatesData ?? [];
 
-  const [sessions, setSessions] = useState<PlannedSession[]>([]);
-
-  useEffect(() => {
-    if (data?.sessions) {
-      setSessions(data.sessions);
-    }
-  }, [data?.sessions]);
+  const {
+    mutations,
+    sessions,
+    setSessions,
+    isDirty,
+    addSession,
+    removeSession,
+    updateSession,
+    moveSession,
+    saveAll,
+    discardAll,
+  } = useWorkoutEditor(id, originalSessions);
 
   const dialogs = useDialogManager<'template' | 'saveTemplate' | 'volume' | 'editWorkout' | 'editSession'>();
 
@@ -92,11 +93,6 @@ export default function WorkoutDetail() {
     setEditingSession(null);
   };
 
-  const isDirty = useMemo(
-    () => JSON.stringify(sessions) !== JSON.stringify(originalSessions),
-    [sessions, originalSessions]
-  );
-
   const handleUpdateWorkout = async (updates: { name: string; description?: string; objectiveType: ObjectiveType; workType: WorkType }) => {
     if (!id || !updates.name.trim()) return;
     await mutations.updateWorkout({
@@ -111,62 +107,6 @@ export default function WorkoutDetail() {
     dialogs.close('editWorkout');
     toast({ title: t('sessions.saved') });
   };
-
-  // === In-memory CRUD (no DB writes) ===
-  const addSession = () => {
-    if (!id) return;
-    const now = dayjs().toDate();
-    const newSession: PlannedSession = {
-      id: nanoid(),
-      plannedWorkoutId: id,
-      name: `Sessione ${sessions.length + 1}`,
-      dayNumber: sessions.length + 1,
-      focusMuscleGroups: [],
-      status: PlannedSessionStatus.Pending,
-      orderIndex: sessions.length === 0 ? getInitialRank() : getRankBetween(sessions[sessions.length - 1].orderIndex, null),
-      createdAt: now,
-      updatedAt: now,
-    };
-    setSessions(prev => [...prev, newSession]);
-  };
-
-  const removeSession = (sessionId: string) => {
-    setSessions(prev => prev.filter(s => s.id !== sessionId));
-  };
-
-  const updateSession = (sessionId: string, updates: Partial<PlannedSession>) => {
-    setSessions(prev => prev.map(s =>
-      s.id === sessionId ? { ...s, ...updates, updatedAt: dayjs().toDate() } : s
-    ));
-  };
-
-  const moveSession = (index: number, direction: -1 | 1) => {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= sessions.length) return;
-    const next = [...sessions];
-    const a = next[index];
-    const b = next[targetIndex];
-    // Swap orderIndex and dayNumber
-    next[index] = { ...b, orderIndex: a.orderIndex, dayNumber: a.dayNumber, updatedAt: dayjs().toDate() };
-    next[targetIndex] = { ...a, orderIndex: b.orderIndex, dayNumber: b.dayNumber, updatedAt: dayjs().toDate() };
-    setSessions(next.sort((x, y) => x.orderIndex.localeCompare(y.orderIndex)));
-  };
-
-  // === Save / Discard ===
-  const saveAll = useCallback(async () => {
-    if (!id) return;
-    await mutations.saveWorkoutSessions({
-      workoutId: id,
-      sessions,
-      originalSessions
-    });
-    toast({ title: t('unsavedChanges.saved') });
-  }, [id, sessions, originalSessions, mutations, t, toast]);
-
-  const discardAll = useCallback(() => {
-    setSessions(originalSessions);
-    toast({ title: t('unsavedChanges.discarded') });
-  }, [originalSessions, toast, t]);
 
   const { isNavigationBlocked, confirmSaveAndLeave, confirmLeaveWithout, cancelNavigation } =
     useUnsavedChanges({ isDirty, onSave: saveAll, onDiscard: discardAll });

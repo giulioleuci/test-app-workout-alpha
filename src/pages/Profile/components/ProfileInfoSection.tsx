@@ -91,7 +91,7 @@ export default function ProfileInfoSection({ userProfile, onUpdate }: ProfileInf
                   <FormLabel>{t('profile.gender')}</FormLabel>
                   <Select onValueChange={(val) => {
                       field.onChange(val);
-                      onUpdate({ ...profileForm.getValues(), gender: val as any });
+                      onUpdate({ ...profileForm.getValues(), gender: val as 'male' | 'female' | 'undisclosed' });
                   }} defaultValue={field.value} value={field.value}>
                     <FormControl>
                       <SelectTrigger>

@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { PlannedWorkout } from '@/domain/entities';
-import { formatDurationRange, type DurationRange } from '@/services/durationEstimator';
+import { formatDurationRange } from '@/lib/formatting';
+import { type DurationRange } from '@/services/durationEstimator';
 
 interface WorkoutHeaderProps {
   workout: PlannedWorkout;

@@ -1,12 +1,3 @@
-import { LexoRank } from 'lexorank';
-
-function generateRank(index: number) {
-  let rank = LexoRank.min().between(LexoRank.middle());
-  for (let i = 0; i < index; i++) rank = rank.genNext();
-  return rank.toString();
-}
-
-
 /**
  * Comprehensive test fixtures covering ALL app features and variants.
  * Isolated from the rest of the app — only imported from settings.
@@ -15,6 +6,7 @@ function generateRank(index: number) {
  * Fixture-specific data (advanced group types, completed sessions,
  * 1RM records, templates) is defined here.
  */
+import { LexoRank } from 'lexorank';
 import { nanoid } from 'nanoid';
 
 import type {
@@ -908,3 +900,8 @@ export async function loadFixtures(lang: Language = 'en') {
   console.log('Fixtures loaded successfully');
 }
 
+function generateRank(index: number) {
+  let rank = LexoRank.min().between(LexoRank.middle());
+  for (let i = 0; i < index; i++) rank = rank.genNext();
+  return rank.toString();
+}

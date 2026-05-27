@@ -95,7 +95,7 @@ export function useUserRegulation() {
 
 export function useTrainingCalendar(month: Date) {
   return useQuery({
-    queryKey: [...dashboardKeys.all, 'calendar', month.toISOString()],
+    queryKey: [...dashboardKeys.all, 'calendar', month],
     queryFn: () => buildTrainingCalendar(month),
     staleTime: Infinity,
   });
