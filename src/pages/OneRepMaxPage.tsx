@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import ListPagination from '@/components/ListPagination';
+import ListPagination, { paginate } from '@/components/ListPagination';
 import { Button } from '@/components/ui/button';
 import { ListPageSkeleton } from '@/components/ui/page-skeleton';
 import { useOneRepMaxPageViewModel } from '@/hooks/view-models/useOneRepMaxPageViewModel';
@@ -18,7 +18,6 @@ export default function OneRepMaxPage() {
     latestBodyWeight,
     allExercisesList,
     filtered,
-    paged,
     page, setPage,
     search, setSearch,
     sortKey, setSortKey,
@@ -35,6 +34,8 @@ export default function OneRepMaxPage() {
     handleSave,
     handleDelete,
   } = useOneRepMaxPageViewModel();
+
+  const paged = paginate(filtered, page);
 
   if (isLoading) return <ListPageSkeleton />;
 

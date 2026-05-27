@@ -3,11 +3,11 @@ import { describe, it, expect } from 'vitest';
 import type { SessionSet } from '@/domain/entities';
 import { ToFailureIndicator, SetType } from '@/domain/enums';
 
+import { calculateWeighted1RM } from '../../rpePercentageTable';
 import {
   isCompletedSet, isEffectiveSet, filterCompleted, filterEffective,
   setVolume, totalVolume, computeSetEstimates,
 } from '../setStats';
-import { calculateWeighted1RM } from '../../rpePercentageTable';
 
 function makeSet(overrides: Partial<SessionSet> = {}): SessionSet {
   return {

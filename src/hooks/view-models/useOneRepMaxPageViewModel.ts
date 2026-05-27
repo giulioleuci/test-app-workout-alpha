@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 
-import { paginate } from '@/components/ListPagination';
 import type { HistoryEstimate } from '@/domain/analytics-types';
 import type { OneRepMaxRecord, Exercise } from '@/domain/entities';
 import { useOneRepMaxMutations } from '@/hooks/mutations/oneRepMaxMutations';
@@ -100,7 +99,6 @@ export function useOneRepMaxPageViewModel() {
 
   useEffect(() => { setPage(1); }, [search, sortKey, filterMethod]);
 
-  const paged = paginate(filtered, page);
   const allExercisesList = useMemo(() => allGrouped.map((e) => e.exercise), [allGrouped]);
 
   const openAdd = useCallback((exerciseId?: string) => {
@@ -130,7 +128,6 @@ export function useOneRepMaxPageViewModel() {
     latestBodyWeight,
     allExercisesList,
     filtered,
-    paged,
     page, setPage,
     search, setSearch,
     sortKey, setSortKey,

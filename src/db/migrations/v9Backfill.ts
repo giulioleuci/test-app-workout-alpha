@@ -5,6 +5,7 @@
  * the domain math lives here so it is unit-testable with plain inputs.
  */
 import { RPE_MIN, RPE_MAX, SECONDS_PER_MINUTE } from '@/domain/constants';
+// eslint-disable-next-line no-restricted-imports -- one-off migration backfill needs the 1RM formula; isolated here rather than in schema code
 import { calculateWeighted1RM } from '@/services/rpePercentageTable';
 
 interface BackfillSet {

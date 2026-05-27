@@ -7,9 +7,7 @@
 
 import type { ReactNode } from 'react';
 
-interface ToastFn {
-  (props: { title?: ReactNode; description?: ReactNode; variant?: 'default' | 'destructive' }): unknown;
-}
+type ToastFn = (props: { title?: ReactNode; description?: ReactNode; variant?: 'default' | 'destructive' }) => unknown;
 
 export function showErrorToast(toast: ToastFn, title: ReactNode, description?: ReactNode) {
   return toast({ title, description, variant: 'destructive' });
