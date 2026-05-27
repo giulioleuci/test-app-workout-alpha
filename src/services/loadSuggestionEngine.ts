@@ -8,8 +8,31 @@ import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { PlannedSet, SessionSet } from '@/domain/entities';
 import { t } from '@/i18n/t';
 import { formatRPE } from '@/lib/formatting';
+import { OneRepMaxService, type Prioritized1RM } from '@/services/oneRepMaxService';
 
 import { suggestLoad } from './rpePercentageTable';
+
+export interface LoadSuggestionInputs {
+  p1RM: Prioritized1RM | null;
+  lastSetPerf: SessionSet | null;
+  lastGeneralPerf: { load: number; reps: number; rpe: number } | null;
+}
+
+/**
+ * Fetch the raw historical inputs needed to build load suggestions.
+ * Centralizes the repository/service access so UI never touches repositories.
+ */
+export async function getSuggestionInputs(
+  exerciseId: string,
+  plannedSetId?: string,
+): Promise<LoadSuggestionInputs> {
+  const [p1RM, lastSetPerf, lastGeneralPerf] = await Promise.all([
+    OneRepMaxService.getPrioritized1RM(exerciseId),
+    plannedSetId ? SessionRepository.getLastSetPerformance(plannedSetId) : Promise.resolve(null),
+    SessionRepository.getLastPerformance(exerciseId),
+  ]);
+  return { p1RM, lastSetPerf, lastGeneralPerf };
+}
 
 export type SuggestionMethod = 'percentage1RM' | 'lastSession' | 'plannedRPE' | 'targetXRM';
 
