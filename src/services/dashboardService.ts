@@ -7,6 +7,7 @@ import type { WorkoutSession, PlannedSession } from '@/domain/entities';
 import { Muscle } from '@/domain/enums';
 import { t } from '@/i18n/t';
 import dayjs from '@/lib/dayjs';
+import { formatIsoDate, formatTime } from '@/lib/formatting';
 
 import { filterCompleted, totalVolume as sumVolume } from './logic/setStats';
 import { deduceMusclesFromExercises } from './muscleDeducer';
@@ -70,7 +71,7 @@ export async function getConsistencyHeatmap(days = 365): Promise<ConsistencyDay[
   const map = new Map<string, number>();
 
   for (const s of completedSessions) {
-    const key = dayjs(s.completedAt).format('YYYY-MM-DD');
+    const key = formatIsoDate(s.completedAt);
     map.set(key, (map.get(key) || 0) + 1);
   }
 
@@ -224,7 +225,7 @@ export async function buildTrainingCalendar(month: Date): Promise<Map<string, Ca
 
   for (const s of sessions) {
     const d = dayjs(s.completedAt);
-    const key = d.format('YYYY-MM-DD');
+    const key = formatIsoDate(d.toDate());
 
     let sessionName = '';
     if (s.plannedSessionId) {
@@ -232,7 +233,7 @@ export async function buildTrainingCalendar(month: Date): Promise<Map<string, Ca
       sessionName = planned?.name ?? '';
     }
     if (!sessionName) {
-      sessionName = dayjs(s.startedAt).format('HH:mm');
+      sessionName = formatTime(s.startedAt);
     }
 
     const entry: CalendarEntry = {

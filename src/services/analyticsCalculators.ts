@@ -47,6 +47,18 @@ interface FlatSet {
 
 const formatDate = formatChartDate;
 
+/**
+ * Percentage change in average load from the first to the last progression point.
+ * Returns null when there are fewer than two points or the baseline is non-positive.
+ */
+export function loadProgressionChangePct(points: { avgLoad: number }[]): number | null {
+    if (points.length < 2) return null;
+    const first = points[0].avgLoad;
+    const last = points[points.length - 1].avgLoad;
+    if (first <= 0) return null;
+    return Math.round(((last - first) / first) * 100);
+}
+
 export function calculateComplianceDistribution(relevantSets: RelevantSetItem[]): ComplianceDistribution[] {
     const complianceCounts = countBy(relevantSets, ({ set }) => set.complianceStatus ?? 'unknown');
     const totalWithCompliance = relevantSets.length;

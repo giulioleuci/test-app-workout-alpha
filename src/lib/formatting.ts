@@ -1,5 +1,6 @@
 import type { PlannedSet } from '@/domain/entities';
 import { FormattingService } from '@/domain/services/FormattingService';
+import type { DurationRange } from '@/domain/value-objects';
 import dayjs from '@/lib/dayjs';
 
 // Re-export domain formatting logic using arrow functions to preserve 'this' and satisfy ESLint
@@ -64,6 +65,25 @@ export function formatDurationMMSS(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
   const s = totalSeconds % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+/** Human-readable seconds (e.g. "45s", "5 min", "1h 20min"). */
+export function formatSeconds(s: number): string {
+  const dur = dayjs.duration(s, 'seconds');
+  if (s < 60) return `${Math.round(s)}s`;
+  const mins = Math.round(s / 60);
+  if (mins < 60) return `${mins} min`;
+  const h = Math.floor(dur.asHours());
+  const m = dur.minutes();
+  return m > 0 ? `${h}h ${m}min` : `${h}h`;
+}
+
+/** Human-readable duration range (e.g. "30 – 45 min"). */
+export function formatDurationRange(d: DurationRange): string {
+  const fmtMin = formatSeconds(d.minSeconds);
+  const fmtMax = formatSeconds(d.maxSeconds);
+  if (fmtMin === fmtMax) return fmtMin;
+  return `${fmtMin} – ${fmtMax}`;
 }
 
 export function formatDurationHHMMSS(totalSeconds: number): string {

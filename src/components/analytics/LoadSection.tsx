@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { LoadProgressionAnalytics, BodyWeightAnalytics } from '@/domain/analytics-types';
 import { cn } from '@/lib/utils';
+import { loadProgressionChangePct } from '@/services/analyticsCalculators';
 
 import IntensityCalculator from './IntensityCalculator';
 import OneRMvsBodyWeightSection from './OneRMvsBodyWeightSection';
@@ -33,15 +34,8 @@ export default function LoadSection({ loadData, bodyWeightData, selectedExercise
     ? exerciseIds.length > 0 ? loadProgression[exerciseIds[0]] ?? [] : []
     : loadProgression[selectedExercise] ?? [];
 
-  let avgLoadChange: string | null = null;
-  if (loadPoints.length >= 2) {
-    const first = loadPoints[0].avgLoad;
-    const last = loadPoints[loadPoints.length - 1].avgLoad;
-    if (first > 0) {
-      const change = Math.round(((last - first) / first) * 100);
-      avgLoadChange = `${change > 0 ? '+' : ''}${change}%`;
-    }
-  }
+  const loadChangePct = loadProgressionChangePct(loadPoints);
+  const avgLoadChange = loadChangePct != null ? `${loadChangePct > 0 ? '+' : ''}${loadChangePct}%` : null;
 
   return (
     <div className="flex flex-col gap-4">

@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { PlannedSession } from '@/domain/entities';
-import { formatDurationRange, type DurationRange } from '@/services/durationEstimator';
+import { formatDurationRange } from '@/lib/formatting';
+import { type DurationRange } from '@/services/durationEstimator';
 import { type DeducedMuscles } from '@/services/muscleDeducer';
 
 interface SessionListProps {

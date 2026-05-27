@@ -16,8 +16,9 @@ import type { PlannedWorkout, PlannedSession } from '@/domain/entities';
 import { PlannedWorkoutStatus } from '@/domain/enums';
 import { useToast } from '@/hooks/useToast';
 import { triggerDownload } from '@/lib/download';
+import { formatDurationRange } from '@/lib/formatting';
 import { exportWorkoutCsv } from '@/services/csvWorkoutService';
-import { formatDurationRange, type DurationRange } from '@/services/durationEstimator';
+import { type DurationRange } from '@/services/durationEstimator';
 
 interface WorkoutCardProps {
   workout: PlannedWorkout;

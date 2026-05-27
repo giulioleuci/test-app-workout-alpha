@@ -5,7 +5,6 @@ import type { PlannedSet, PlannedExerciseGroup, PlannedWorkout } from '@/domain/
 import { CounterType, ExerciseGroupType, SetType } from '@/domain/enums';
 import type { ClusterSetParams } from '@/domain/value-objects';
 import { getClusterConfig } from '@/domain/value-objects';
-import dayjs from '@/lib/dayjs';
 
 import { estimateSetBlockSeconds, estimateSetExecutionSeconds, type DurationRange } from './durationCalculators';
 import { computeTraversalOrder } from './traversal';
@@ -222,20 +221,3 @@ export async function bulkEstimateWorkoutDurations(workouts: PlannedWorkout[]): 
   return results;
 }
 
-/** Format a DurationRange to a human-readable string */
-export function formatDurationRange(d: DurationRange): string {
-  const fmtMin = formatSeconds(d.minSeconds);
-  const fmtMax = formatSeconds(d.maxSeconds);
-  if (fmtMin === fmtMax) return fmtMin;
-  return `${fmtMin} – ${fmtMax}`;
-}
-
-function formatSeconds(s: number): string {
-  const dur = dayjs.duration(s, 'seconds');
-  if (s < 60) return `${Math.round(s)}s`;
-  const mins = Math.round(s / 60);
-  if (mins < 60) return `${mins} min`;
-  const h = Math.floor(dur.asHours());
-  const m = dur.minutes();
-  return m > 0 ? `${h}h ${m}min` : `${h}h`;
-}
