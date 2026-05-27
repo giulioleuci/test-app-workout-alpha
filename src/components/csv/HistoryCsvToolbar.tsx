@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 
 import { useToast } from '@/hooks/useToast';
 import { triggerDownload } from '@/lib/download';
+import { extractErrorMessage } from '@/lib/errors';
+import { showErrorToast } from '@/lib/toast-helpers';
 import type { CsvConflictStrategy } from '@/services/csvExerciseService';
 import type { FlatHistoryRow, CsvHistoryConflict } from '@/services/csvHistoryService';
 import {
@@ -45,7 +47,7 @@ export function HistoryCsvToolbar({ onImported }: Props) {
       }
       toast({ title: t('csv.exported'), description: t('csv.exportedHistoryDesc', 'Storico esportato con successo') });
     } catch (e) {
-      toast({ title: t('csv.exportError'), description: String(e), variant: 'destructive' });
+      showErrorToast(toast, t('csv.exportError'), extractErrorMessage(e));
     } finally {
       setExporting(false);
     }
@@ -57,9 +59,9 @@ export function HistoryCsvToolbar({ onImported }: Props) {
         const { data } = await nativePickAndReadFile({ accept: ['.csv'] });
         await processImportText(data);
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
+        const message = extractErrorMessage(err);
         if (message !== t('backup.errors.noFileSelected')) {
-          toast({ title: t('csv.readError'), description: message, variant: 'destructive' });
+          showErrorToast(toast, t('csv.readError'), message);
         }
       }
     } else {
@@ -76,14 +78,14 @@ export function HistoryCsvToolbar({ onImported }: Props) {
       const text = await file.text();
       await processImportText(text);
     } catch (err) {
-      toast({ title: t('csv.readError'), description: String(err), variant: 'destructive' });
+      showErrorToast(toast, t('csv.readError'), extractErrorMessage(err));
     }
   }
 
   async function processImportText(text: string) {
     const parsed = parseHistoryCsv(text);
     if (parsed.length === 0) {
-      toast({ title: t('csv.emptyFile'), description: t('csv.noHistoryFound', 'Nessuna sessione trovata'), variant: 'destructive' });
+      showErrorToast(toast, t('csv.emptyFile'), t('csv.noHistoryFound', 'Nessuna sessione trovata'));
       return;
     }
     const detected = await detectHistoryCsvConflicts(parsed);
@@ -113,7 +115,7 @@ export function HistoryCsvToolbar({ onImported }: Props) {
       toast({ title: t('csv.importComplete'), description: parts.join(', ') || t('csv.noDataImported') });
       onImported?.();
     } catch (err) {
-      toast({ title: t('csv.importError'), description: String(err), variant: 'destructive' });
+      showErrorToast(toast, t('csv.importError'), extractErrorMessage(err));
     } finally {
       setImporting(false);
       setPendingParsed(null);

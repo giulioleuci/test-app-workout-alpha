@@ -45,11 +45,8 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { INPUT_STEPS } from '@/domain/enums';
 import { AVATAR_COLORS } from '@/domain/global-entities';
-import { useOnboardingMutations } from '@/hooks/mutations/onboardingMutations';
+import { useCreateUser } from '@/hooks/mutations/userMutations';
 import { cn } from '@/lib/utils';
-import { hashPin } from '@/services/authService';
-import { systemService } from '@/services/systemService';
-import { userService } from '@/services/userService';
 
 const schema = z.object({
   // Global Profile Info
@@ -95,7 +92,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
   const language = i18n.language as 'en' | 'it' | 'es' | 'fr' | 'zh';
   const [loading, setLoading] = useState(false);
   const [isNameSynced, setIsNameSynced] = useState(true);
-  const onboarding = useOnboardingMutations();
+  const { createUser } = useCreateUser();
 
   const form = useForm<Values>({
     resolver: zodResolver(schema),
@@ -128,16 +125,11 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
   const onSubmit = async (values: Values) => {
     setLoading(true);
     try {
-      // 1. Create Global User
-      const pinHash = values.pin ? await hashPin(values.pin) : null;
-      const globalUser = await userService.createUser(values.profileName, pinHash, values.avatarColor);
-      
-      // 2. Mount User Database
-      await systemService.mountUser(globalUser.id);
-      
-      // 3. Perform Onboarding
-      await onboarding.onboardUser({
-        name: values.athleteName,
+      const userId = await createUser({
+        profileName: values.profileName,
+        pin: values.pin,
+        avatarColor: values.avatarColor,
+        athleteName: values.athleteName,
         gender: values.gender,
         weight: parseFloat(values.weight || '0') || 0,
         seedOptions: {
@@ -151,8 +143,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
         language,
       });
 
-      // 4. Success
-      onUserCreated(globalUser.id);
+      onUserCreated(userId);
       form.reset();
       setIsNameSynced(true);
     } catch (error) {

@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/useToast';
 import dayjs from '@/lib/dayjs';
 import { triggerDownload } from '@/lib/download';
+import { extractErrorMessage } from '@/lib/errors';
+import { showErrorToast } from '@/lib/toast-helpers';
 import type { CsvConflictStrategy, CsvExerciseRow, CsvExerciseConflict } from '@/services/csvExerciseService';
 import {
   exportExercisesCsv, generateCsvBlob, parseExerciseCsv,
@@ -48,7 +50,7 @@ export function ExerciseCsvToolbar({ onImported }: Props) {
       }
       toast({ title: t('csv.exported'), description: t('csv.exportedExercisesDesc') });
     } catch (e) {
-      toast({ title: t('csv.exportError'), description: String(e), variant: 'destructive' });
+      showErrorToast(toast, t('csv.exportError'), extractErrorMessage(e));
     } finally {
       setExporting(false);
     }
@@ -60,9 +62,9 @@ export function ExerciseCsvToolbar({ onImported }: Props) {
         const { data } = await nativePickAndReadFile({ accept: ['.csv'] });
         await processImportText(data);
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
+        const message = extractErrorMessage(err);
         if (message !== t('backup.errors.noFileSelected')) {
-          toast({ title: t('csv.readError'), description: message, variant: 'destructive' });
+          showErrorToast(toast, t('csv.readError'), message);
         }
       }
     } else {
@@ -79,14 +81,14 @@ export function ExerciseCsvToolbar({ onImported }: Props) {
       const text = await file.text();
       await processImportText(text);
     } catch (err) {
-      toast({ title: t('csv.readError'), description: String(err), variant: 'destructive' });
+      showErrorToast(toast, t('csv.readError'), extractErrorMessage(err));
     }
   }
 
   async function processImportText(text: string) {
     const rows = parseExerciseCsv(text);
     if (rows.length === 0) {
-      toast({ title: t('csv.emptyFile'), description: t('csv.noExercisesFound'), variant: 'destructive' });
+      showErrorToast(toast, t('csv.emptyFile'), t('csv.noExercisesFound'));
       return;
     }
     const detected = await detectExerciseCsvConflicts(rows);
@@ -117,7 +119,7 @@ export function ExerciseCsvToolbar({ onImported }: Props) {
       toast({ title: t('csv.importComplete'), description: parts.join(', ') || t('csv.noDataImported') });
       onImported?.();
     } catch (err) {
-      toast({ title: t('csv.importError'), description: String(err), variant: 'destructive' });
+      showErrorToast(toast, t('csv.importError'), extractErrorMessage(err));
     } finally {
       setImporting(false);
       setPendingRows(null);

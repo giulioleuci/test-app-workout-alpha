@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Download, Upload, FileJson, AlertTriangle, Copy, SkipForward, RefreshCw, HardDrive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -17,160 +17,41 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/useToast';
-import { triggerDownload } from '@/lib/download';
-import {
-  EXPORT_CATEGORIES, type TableName, type BackupSchema, type ConflictReport, type ConflictStrategy,
-  exportTables, exportAll, prepareBackupDownload, parseBackupFile, detectConflicts, importData,
-} from '@/services/backupService';
-import { isNative, nativeDownloadBackup, nativePickAndReadFile } from '@/services/nativeFileService';
+import { useBackup } from '@/hooks/useBackup';
+import type { TableName } from '@/services/backupService';
 
 export default function BackupPage() {
   const { t } = useTranslation();
 
-  const TABLE_LABELS: Record<TableName, string> = useMemo(() => 
-    t('backup.tableLabels', { returnObjects: true }), 
+  const TABLE_LABELS: Record<TableName, string> = useMemo(() =>
+    t('backup.tableLabels', { returnObjects: true }),
     [t]
   );
 
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(new Set());
-  const [exporting, setExporting] = useState(false);
-
-  const [importedBackup, setImportedBackup] = useState<BackupSchema | null>(null);
-  const [importFileName, setImportFileName] = useState('');
-  const [conflicts, setConflicts] = useState<ConflictReport | null>(null);
-  const [conflictDialogOpen, setConflictDialogOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
-
-  const allSelected = selectedCategories.size === EXPORT_CATEGORIES.length;
-
-  function toggleCategory(index: number) {
-    setSelectedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(index)) next.delete(index); else next.add(index);
-      return next;
-    });
-  }
-
-  function toggleAll() {
-    if (allSelected) {
-      setSelectedCategories(new Set());
-    } else {
-      setSelectedCategories(new Set(EXPORT_CATEGORIES.map((_, i) => i)));
-    }
-  }
-
-  async function handleExport() {
-    setExporting(true);
-    try {
-      let backup: BackupSchema;
-      if (allSelected || selectedCategories.size === 0) {
-        backup = await exportAll();
-      } else {
-        const tables: TableName[] = [];
-        selectedCategories.forEach(i => tables.push(...EXPORT_CATEGORIES[i].tables));
-        backup = await exportTables(tables);
-      }
-      if (isNative()) {
-        await nativeDownloadBackup(backup);
-      } else {
-        const { blob, filename } = prepareBackupDownload(backup);
-        triggerDownload(blob, filename);
-      }
-      toast({ title: t('backup.exported'), description: t('backup.exportedDesc') });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : t('common.unknown');
-      toast({ title: t('backup.exportError'), description: message, variant: 'destructive' });
-    } finally {
-      setExporting(false);
-    }
-  }
-
-  async function handleNativeImport() {
-    try {
-      const { data, name } = await nativePickAndReadFile({ accept: ['.json'] });
-      const backup = JSON.parse(data) as BackupSchema;
-      setImportedBackup(backup);
-      setImportFileName(name);
-      const report = await detectConflicts(backup);
-      setConflicts(report);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('common.unknown');
-      if (message !== t('backup.errors.noFileSelected')) {
-        toast({ title: t('backup.invalidFile'), description: message, variant: 'destructive' });
-      }
-      setImportedBackup(null);
-    }
-  }
-
-  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const backup = await parseBackupFile(file);
-      setImportedBackup(backup);
-      setImportFileName(file.name);
-      const report = await detectConflicts(backup);
-      setConflicts(report);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('common.unknown');
-      toast({ title: t('backup.invalidFile'), description: message, variant: 'destructive' });
-      setImportedBackup(null);
-    }
-    e.target.value = '';
-  }
-
-  function getRecordCounts(backup: BackupSchema): { table: TableName; count: number }[] {
-    return (Object.entries(backup.data) as [TableName, unknown[]][])
-      .filter(([, records]) => Array.isArray(records) && records.length > 0)
-      .map(([table, records]) => ({ table, count: records.length }));
-  }
-
-  async function handleImport(strategy: ConflictStrategy) {
-    if (!importedBackup || !conflicts) return;
-    setImporting(true);
-    setConflictDialogOpen(false);
-    try {
-      const result = await importData(importedBackup, strategy, conflicts);
-      const parts: string[] = [];
-      if (result.inserted > 0) parts.push(`${result.inserted} ${t('backup.inserted')}`);
-      if (result.copied > 0) parts.push(`${result.copied} ${t('backup.copied')}`);
-      if (result.overwritten > 0) parts.push(`${result.overwritten} ${t('backup.overwritten')}`);
-      if (result.skipped > 0) parts.push(`${result.skipped} ${t('backup.skipped')}`);
-      if (result.failed > 0) parts.push(`${result.failed} ${t('backup.failed')}`);
-      toast({ title: t('backup.importComplete'), description: parts.join(', ') || t('backup.noDataImported') });
-      setImportedBackup(null);
-      setConflicts(null);
-      setImportFileName('');
-    } catch (e) {
-      const message = e instanceof Error ? e.message : t('common.unknown');
-      toast({ title: t('backup.importError'), description: message, variant: 'destructive' });
-    } finally {
-      setImporting(false);
-    }
-  }
-
-  function startImport() {
-    if (!conflicts) return;
-    if (conflicts.totalConflicts > 0) {
-      setConflictDialogOpen(true);
-    } else {
-      void handleImport('ignore');
-    }
-  }
-
-  function clearImport() {
-    setImportedBackup(null);
-    setConflicts(null);
-    setImportFileName('');
-  }
-
-  const totalImportRecords = importedBackup
-    ? Object.values(importedBackup.data).reduce((sum, arr) => sum + (arr?.length ?? 0), 0)
-    : 0;
+  const {
+    categories,
+    fileInputRef,
+    selectedCategories,
+    exporting,
+    importedBackup,
+    importFileName,
+    conflicts,
+    conflictDialogOpen,
+    setConflictDialogOpen,
+    importing,
+    allSelected,
+    totalImportRecords,
+    isNative,
+    toggleCategory,
+    toggleAll,
+    handleExport,
+    handleNativeImport,
+    handleFileSelect,
+    handleImport,
+    startImport,
+    clearImport,
+    getRecordCounts,
+  } = useBackup();
 
   return (
     <div className="space-y-6">
@@ -204,7 +85,7 @@ export default function BackupPage() {
           </div>
 
           <div className="grid gap-2 sm:grid-cols-2">
-            {EXPORT_CATEGORIES.map((cat, i) => (
+            {categories.map((cat, i) => (
               <div key={i} className="flex items-center gap-2">
                 <Checkbox id={`cat-${i}`} checked={selectedCategories.has(i)} onCheckedChange={() => toggleCategory(i)} />
                 <Label htmlFor={`cat-${i}`} className="cursor-pointer">{cat.label}</Label>
