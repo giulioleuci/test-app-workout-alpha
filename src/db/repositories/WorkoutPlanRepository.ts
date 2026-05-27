@@ -97,6 +97,10 @@ export class WorkoutPlanRepository extends BaseRepository {
         return db.plannedSessions.get(id);
     }
 
+    static async getAllSessions(): Promise<PlannedSession[]> {
+        return db.plannedSessions.toArray();
+    }
+
     static async getSessionsByWorkout(workoutId: string): Promise<PlannedSession[]> {
         return db.plannedSessions.where('plannedWorkoutId').equals(workoutId).sortBy('orderIndex');
     }

@@ -5,7 +5,6 @@
 import { nanoid } from 'nanoid';
 import Papa from 'papaparse';
 
-import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
@@ -119,7 +118,7 @@ export async function exportAllHistoryCsv(): Promise<{ blob: Blob, filename: str
   // Try to find workout and session names
   const allWorkouts = await WorkoutPlanRepository.getAllWorkouts();
   const workoutMap = new Map(allWorkouts.map(w => [w.id, w.name]));
-  const allPlannedSessions = await db.plannedSessions.toArray();
+  const allPlannedSessions = await WorkoutPlanRepository.getAllSessions();
   const plannedSessionMap = new Map(allPlannedSessions.map(s => [s.id, s.name]));
 
   const rows: (string | number | undefined)[][] = [];
@@ -299,7 +298,7 @@ export async function importHistoryCsv(
 
   const allWorkouts = await WorkoutPlanRepository.getAllWorkouts();
   const workoutMap = new Map(allWorkouts.map(w => [w.name.toLowerCase(), w.id]));
-  const allPlannedSessions = await db.plannedSessions.toArray();
+  const allPlannedSessions = await WorkoutPlanRepository.getAllSessions();
   const plannedSessionMap = new Map(allPlannedSessions.map(s => [`${s.plannedWorkoutId}_${s.name.toLowerCase()}`, s.id]));
 
   const allExercises = await ExerciseRepository.getAll();

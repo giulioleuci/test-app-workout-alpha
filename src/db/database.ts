@@ -14,9 +14,9 @@ import type {
   SessionTemplate, UserProfile, BodyWeightRecord, ExerciseSubstitution,
 } from '@/domain/entities';
 import { generateSequentialRanks } from '@/lib/lexorank';
-import { calculateWeighted1RM } from '@/services/rpePercentageTable';
 
 import { databaseLifecycle } from './core';
+import { backfillSetE1rm, aggregateSessionTotals } from './migrations/v9Backfill';
 
 export class WorkoutTrackerDB extends Dexie {
   exercises!: Table<Exercise, string>;
@@ -170,14 +170,9 @@ export class WorkoutTrackerDB extends Dexie {
 
       // 3. Backfill e1rm in SessionSet
       await tx.table('sessionSets').toCollection().modify(set => {
-        if (!set.e1rm && set.actualLoad != null && set.actualLoad > 0 &&
-          set.actualCount != null && set.actualCount > 0 &&
-          set.actualRPE != null && set.actualRPE >= 6 && set.actualRPE <= 10) {
-          const estimatedRes = calculateWeighted1RM(set.actualLoad, set.actualCount, set.actualRPE);
-          const estimated = estimatedRes ? estimatedRes.media : 0;
-          if (estimated && estimated > 0) {
-            set.e1rm = estimated;
-          }
+        const e1rm = backfillSetE1rm(set);
+        if (e1rm !== undefined) {
+          set.e1rm = e1rm;
         }
       });
 
@@ -190,55 +185,17 @@ export class WorkoutTrackerDB extends Dexie {
       const groupToSession = new Map(groups.map(g => [g.id, g.workoutSessionId]));
       const itemToSnapshot = new Map(items.map(i => [i.id, i.exerciseSnapshot || exerciseMap.get(i.exerciseId)]));
 
-      const sessionData = new Map<string, {
-        totalSets: number; totalLoad: number; totalReps: number; totalDuration: number;
-        primaryMuscles: Set<string>; secondaryMuscles: Set<string>;
-      }>();
-
-      for (const set of sets) {
-        if (!set.isCompleted) continue;
-        const groupId = itemToGroup.get(set.sessionExerciseItemId);
-        if (!groupId) continue;
-        const sessionId = groupToSession.get(groupId);
-        if (!sessionId) continue;
-
-        if (!sessionData.has(sessionId)) {
-          sessionData.set(sessionId, {
-            totalSets: 0, totalLoad: 0, totalReps: 0, totalDuration: 0,
-            primaryMuscles: new Set(), secondaryMuscles: new Set()
-          });
-        }
-        const sd = sessionData.get(sessionId)!;
-
-        sd.totalSets += 1;
-
-        const snap = itemToSnapshot.get(set.sessionExerciseItemId);
-        const counterType = snap ? snap.counterType : 'reps';
-        const actualCount = set.actualCount || 0;
-        const actualLoad = set.actualLoad || 0;
-
-        if (counterType === 'seconds' || counterType === 'minutes' || counterType === 'time') {
-          sd.totalDuration += (counterType === 'minutes') ? actualCount * 60 : actualCount;
-        } else if (counterType === 'reps') {
-          sd.totalReps += actualCount;
-          sd.totalLoad += (actualCount * actualLoad);
-        }
-
-        if (snap) {
-          snap.primaryMuscles.forEach((m: string) => sd.primaryMuscles.add(m));
-          snap.secondaryMuscles.forEach((m: string) => sd.secondaryMuscles.add(m));
-        }
-      }
+      const sessionData = aggregateSessionTotals(sets, itemToGroup, groupToSession, itemToSnapshot);
 
       await tx.table('workoutSessions').toCollection().modify(session => {
         const sd = sessionData.get(session.id);
         if (sd) {
           session.totalSets = sd.totalSets;
-          session.totalLoad = Math.round(sd.totalLoad);
+          session.totalLoad = sd.totalLoad;
           session.totalReps = sd.totalReps;
           session.totalDuration = sd.totalDuration;
-          session.primaryMusclesSnapshot = Array.from(sd.primaryMuscles);
-          session.secondaryMusclesSnapshot = Array.from(sd.secondaryMuscles);
+          session.primaryMusclesSnapshot = sd.primaryMuscles;
+          session.secondaryMusclesSnapshot = sd.secondaryMuscles;
         } else if (session.completedAt && session.totalSets === undefined) {
           session.totalSets = 0;
           session.totalLoad = 0;
