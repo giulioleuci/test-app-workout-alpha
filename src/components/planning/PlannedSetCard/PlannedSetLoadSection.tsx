@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { Stepper } from '@/components/ui/stepper';
 import { Switch } from '@/components/ui/switch';
+import { PERCENTAGE_1RM_MIN, PERCENTAGE_1RM_MAX } from '@/domain/constants';
 import type { PlannedSet } from '@/domain/entities';
 import { INPUT_STEPS } from '@/domain/enums';
 
@@ -60,7 +61,7 @@ export default function PlannedSetLoadSection({
             <Stepper
               value={ps.percentage1RMRange ? Math.round(ps.percentage1RMRange.min * 100) : ''}
               onValueChange={(v) => {
-                if (v >= 40) {
+                if (v >= PERCENTAGE_1RM_MIN) {
                   const currentMax = ps.percentage1RMRange ? Math.round(ps.percentage1RMRange.max * 100) : v;
                   const newMax = v > currentMax ? v : currentMax;
                   onUpdate({ percentage1RMRange: { min: v / 100, max: newMax / 100, basedOnEstimated1RM: ps.percentage1RMRange?.basedOnEstimated1RM ?? true } });
@@ -68,20 +69,20 @@ export default function PlannedSetLoadSection({
                   onUpdate({ percentage1RMRange: undefined });
                 }
               }}
-              step={INPUT_STEPS.count} min={40} max={100} placeholder="—" label={t('common.min')}
+              step={INPUT_STEPS.count} min={PERCENTAGE_1RM_MIN} max={PERCENTAGE_1RM_MAX} placeholder="—" label={t('common.min')}
             />
             <Stepper
               value={ps.percentage1RMRange ? Math.round(ps.percentage1RMRange.max * 100) : ''}
               onValueChange={(v) => {
-                if (v >= 40 && ps.percentage1RMRange) {
+                if (v >= PERCENTAGE_1RM_MIN && ps.percentage1RMRange) {
                   const currentMin = Math.round(ps.percentage1RMRange.min * 100);
                   const newMin = v < currentMin ? v : currentMin;
                   onUpdate({ percentage1RMRange: { ...ps.percentage1RMRange, min: newMin / 100, max: v / 100 } });
-                } else if (!v || v < 40) {
+                } else if (!v || v < PERCENTAGE_1RM_MIN) {
                   onUpdate({ percentage1RMRange: undefined });
                 }
               }}
-              step={INPUT_STEPS.count} min={40} max={100} placeholder="—" label={t('common.max')}
+              step={INPUT_STEPS.count} min={PERCENTAGE_1RM_MIN} max={PERCENTAGE_1RM_MAX} placeholder="—" label={t('common.max')}
             />
           </div>
           {ps.percentage1RMRange && (

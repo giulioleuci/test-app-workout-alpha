@@ -5,6 +5,7 @@ import { UserProfileRepository } from '@/db/repositories/UserProfileRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { WorkoutSession, PlannedWorkout, PlannedSession, SessionExerciseGroup, SessionExerciseItem, SessionSet } from '@/domain/entities';
 import { ExercisePerformanceService } from '@/services/ExercisePerformanceService';
+import { filterCompleted } from '@/services/logic/setStats';
 
 export interface EnrichedHistorySession {
   session: WorkoutSession;
@@ -102,7 +103,7 @@ export async function getHistoryPage(page: number, pageSize: number): Promise<Hi
         for (const item of items) {
           const sets = setsByItem.get(item.id) ?? [];
           setCount += sets.length;
-          completedSets += sets.filter(s => s.isCompleted).length;
+          completedSets += filterCompleted(sets).length;
         }
       }
     }
@@ -312,7 +313,7 @@ export async function getFilteredHistory(filters: HistoryFilters): Promise<Histo
         for (const item of items) {
           const sets = setsByItem.get(item.id) ?? [];
           setCount += sets.length;
-          completedSets += sets.filter(s => s.isCompleted).length;
+          completedSets += filterCompleted(sets).length;
         }
       }
     }

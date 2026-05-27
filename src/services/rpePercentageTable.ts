@@ -54,16 +54,16 @@ export function suggestLoad(
   const multiplier = result.media;
   if (!multiplier || multiplier === 0) return null;
 
-  const loadMedia = Math.round((oneRepMaxMedia / multiplier) * 10) / 10;
+  const loadMedia = roundTo01(oneRepMaxMedia / multiplier);
 
   let loadMin, loadMax;
   if (oneRepMaxMin && oneRepMaxMax) {
-    loadMin = Math.round((oneRepMaxMin / multiplier) * 10) / 10;
-    loadMax = Math.round((oneRepMaxMax / multiplier) * 10) / 10;
+    loadMin = roundTo01(oneRepMaxMin / multiplier);
+    loadMax = roundTo01(oneRepMaxMax / multiplier);
   } else {
     const err = result.errorPercentage;
-    loadMin = Math.round((loadMedia * (1 - err / 100)) * 10) / 10;
-    loadMax = Math.round((loadMedia * (1 + err / 100)) * 10) / 10;
+    loadMin = roundTo01(loadMedia * (1 - err / 100));
+    loadMax = roundTo01(loadMedia * (1 + err / 100));
   }
 
   return { media: loadMedia, min: loadMin, max: loadMax };

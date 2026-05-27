@@ -1,5 +1,6 @@
 // src/services/restTimerResolver.ts
 
+import { DEFAULT_REST_SECONDS } from '@/domain/constants';
 import { SetType, ExerciseGroupType } from '@/domain/enums';
 import { getGroupBehavior } from '@/domain/groupBehavior';
 import type { ClusterSetParams, NumericRange } from '@/domain/value-objects';
@@ -32,7 +33,7 @@ export function resolveRestTimer(
     if (override) {
       const duration = override.restSource === 'interMiniSetRest' && clusterParams
         ? clusterParams.interMiniSetRestSeconds
-        : plannedRestRange?.min ?? 90;
+        : plannedRestRange?.min ?? DEFAULT_REST_SECONDS;
       return { shouldStart: true, durationSeconds: duration };
     }
   }

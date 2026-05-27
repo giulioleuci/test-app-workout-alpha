@@ -21,6 +21,7 @@ import { MuscleGroupMuscles, ComplianceStatus } from '@/domain/enums';
 import dayjs from '@/lib/dayjs';
 import { roundToHalf } from '@/lib/math';
 
+import { totalVolume } from './logic/setStats';
 import { OBJECTIVE_KEYS, scoreAllObjectives } from './objectiveScoring';
 
 interface FlatGroup {
@@ -229,7 +230,7 @@ export function buildSessionHistoryFromFlatData(
 
         const completedSets = sessionSets.filter((s: FlatSet) => s.isCompleted);
         const rpes = completedSets.filter((s: FlatSet) => s.actualRPE !== null).map((s: FlatSet) => s.actualRPE!);
-        const totalVol = completedSets.reduce((sum: number, s: FlatSet) => sum + (s.actualLoad ?? 0) * (s.actualCount ?? 0), 0);
+        const totalVol = totalVolume(completedSets);
 
         return {
             id: session.id,
@@ -253,7 +254,7 @@ export function buildSessionHistory(hydratedSessions: { session: WorkoutSession,
         );
 
         const rpes = completedSets.filter((s: FlatSet) => s.actualRPE !== null).map((s: FlatSet) => s.actualRPE!);
-        const totalVol = completedSets.reduce((sum: number, s: FlatSet) => sum + (s.actualLoad ?? 0) * (s.actualCount ?? 0), 0);
+        const totalVol = totalVolume(completedSets);
 
         return {
             id: hs.session.id,

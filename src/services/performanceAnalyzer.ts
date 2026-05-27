@@ -1,4 +1,5 @@
 import { SessionRepository } from '@/db/repositories/SessionRepository';
+import { filterEffective, totalVolume } from '@/services/logic/setStats';
 import { estimateFromHistoryForExercise, calculateXRM } from '@/services/oneRepMaxEstimator';
 
 export type PerformanceTrendStatus = 'improving' | 'stable' | 'stagnant' | 'deteriorating' | 'insufficient_data';
@@ -120,11 +121,11 @@ export async function analyzeExercisePerformance(
 
     for (const item of items) {
       const sets = setsByItem.get(item.id) ?? [];
-      const completed = sets.filter(s => s.isCompleted && !s.isSkipped);
+      const completed = filterEffective(sets);
 
       totalSets += completed.length;
       totalReps += completed.reduce((acc, s) => acc + (s.actualCount ?? 0), 0);
-      totalLoad += completed.reduce((acc, s) => acc + ((s.actualCount ?? 0) * (s.actualLoad ?? 0)), 0);
+      totalLoad += totalVolume(completed);
     }
 
     if (totalSets > 0) {
@@ -234,11 +235,11 @@ async function getSessionExerciseStats(sessionId: string, exerciseId: string, da
 
   const sets = await SessionRepository.getSetsByItems(itemIds);
 
-  const completedSets = sets.filter(s => s.isCompleted && !s.isSkipped);
+  const completedSets = filterEffective(sets);
 
   const totalSets = completedSets.length;
   const totalReps = completedSets.reduce((acc, s) => acc + (s.actualCount ?? 0), 0);
-  const totalLoad = completedSets.reduce((acc, s) => acc + ((s.actualCount ?? 0) * (s.actualLoad ?? 0)), 0);
+  const totalLoad = totalVolume(completedSets);
 
   return {
     sessionId,

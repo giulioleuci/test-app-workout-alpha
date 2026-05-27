@@ -3,6 +3,7 @@ import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { SessionExerciseItem, SessionSet, WorkoutSession } from '@/domain/entities';
 import dayjs from '@/lib/dayjs';
 import type { PerformanceTrendStatus } from '@/services/ExercisePerformanceService';
+import { filterCompleted } from '@/services/logic/setStats';
 
 export interface HistoryEntry {
   session: WorkoutSession;
@@ -80,7 +81,7 @@ export async function getGroupedHistory(
 
   const itemIds = items.map(i => i.id);
   const allSets = await SessionRepository.getSetsByItems(itemIds);
-  const completedSets = allSets.filter(s => s.isCompleted);
+  const completedSets = filterCompleted(allSets);
 
   const setsBySession = new Map<string, SessionSet[]>();
   for (const s of completedSets) {

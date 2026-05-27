@@ -13,7 +13,7 @@ import { analyzeSetCompliance } from '@/services/complianceAnalyzer';
 import { analyzeFatigueProgression } from '@/services/fatigueAnalyzer';
 import { profileService } from '@/services/profileService';
 import { resolveRestTimer } from '@/services/restTimerResolver';
-import { calculateWeighted1RM } from '@/services/rpePercentageTable';
+import { computeSetEstimates } from '@/services/logic/setStats';
 import { finishSession, discardSession } from '@/services/sessionFinisher';
 import { swapExercise, addExercise, addSuperset, removeExercise, validateSessionCompletion, type UnresolvedSet } from '@/services/sessionMutator';
 import type { WarmupSet } from '@/services/warmupCalculator';
@@ -28,22 +28,8 @@ export class SessionExecutionService {
     const latestWeightRecord = await profileService.getLatestBodyWeight();
     const bodyWeight = latestWeightRecord?.weight;
 
-    const computeExtras = (s: Partial<SessionSet>) => {
-      const extras: Partial<SessionSet> = {};
-      if (s.actualLoad != null && s.actualLoad > 0 &&
-        s.actualCount != null && s.actualCount > 0 &&
-        s.actualRPE != null && s.actualRPE > 0) {
-        const estResult = calculateWeighted1RM(s.actualLoad, s.actualCount, s.actualRPE);
-        const estimated = estResult.media;
-        if (estimated && estimated > 0) {
-          extras.e1rm = estimated;
-          if (bodyWeight && bodyWeight > 0) {
-            extras.relativeIntensity = Math.round((estimated / bodyWeight) * 100) / 100;
-          }
-        }
-      }
-      return extras;
-    };
+    const computeExtras = (s: Partial<SessionSet>): Partial<SessionSet> =>
+      computeSetEstimates(s.actualLoad, s.actualCount, s.actualRPE, bodyWeight);
 
     if (!current) {
       const extras = computeExtras(updates);
@@ -267,19 +253,7 @@ export class SessionExecutionService {
 
         if (!updates) continue;
 
-        const extras: Partial<SessionSet> = {};
-        if (updates.actualLoad != null && updates.actualLoad > 0 &&
-          updates.actualCount != null && updates.actualCount > 0 &&
-          updates.actualRPE != null && updates.actualRPE > 0) {
-          const estResult = calculateWeighted1RM(updates.actualLoad, updates.actualCount, updates.actualRPE);
-          const estimated = estResult.media;
-          if (estimated && estimated > 0) {
-            extras.e1rm = estimated;
-            if (bodyWeight && bodyWeight > 0) {
-              extras.relativeIntensity = Math.round((estimated / bodyWeight) * 100) / 100;
-            }
-          }
-        }
+        const extras = computeSetEstimates(updates.actualLoad, updates.actualCount, updates.actualRPE, bodyWeight);
 
         const completedSet = { ...set, ...updates, ...extras, isCompleted: true, completedAt: dayjs().toDate() } as SessionSet;
 
@@ -375,19 +349,7 @@ export class SessionExecutionService {
         const updates = setsData[set.id];
         if (!updates) continue;
 
-        const extras: Partial<SessionSet> = {};
-        if (updates.actualLoad != null && updates.actualLoad > 0 &&
-          updates.actualCount != null && updates.actualCount > 0 &&
-          updates.actualRPE != null && updates.actualRPE > 0) {
-          const estResult = calculateWeighted1RM(updates.actualLoad, updates.actualCount, updates.actualRPE);
-          const estimated = estResult.media;
-          if (estimated && estimated > 0) {
-            extras.e1rm = estimated;
-            if (bodyWeight && bodyWeight > 0) {
-              extras.relativeIntensity = Math.round((estimated / bodyWeight) * 100) / 100;
-            }
-          }
-        }
+        const extras = computeSetEstimates(updates.actualLoad, updates.actualCount, updates.actualRPE, bodyWeight);
 
         const completedSet = { ...set, ...updates, ...extras, isCompleted: true, completedAt: dayjs().toDate() } as SessionSet;
         await SessionRepository.updateSet(set.id, completedSet);

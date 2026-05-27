@@ -28,6 +28,7 @@ import {
   calculateFrequencyStats,
   type VolumeMetrics,
 } from './analyticsCalculators';
+import { filterCompleted } from './logic/setStats';
 import { estimateAllFromHistory } from './oneRepMaxEstimator';
 
 
@@ -315,7 +316,7 @@ export async function fetchAnalyticsData(
           s.complianceStatus === ComplianceStatus.FullyCompliant ||
           s.complianceStatus === ComplianceStatus.WithinRange)
       ).length;
-      prevCompletedCount += sts.filter(s => s.isCompleted).length;
+      prevCompletedCount += filterCompleted(sts).length;
     }
 
     const prevPercent = prevCompletedCount > 0 ? Math.round((prevCompliant / prevCompletedCount) * 100) : 0;

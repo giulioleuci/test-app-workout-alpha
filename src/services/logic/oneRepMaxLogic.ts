@@ -4,22 +4,31 @@
  * No side effects — safe to call in Vitest without mocks.
  */
 
+// Formula coefficients (kept next to the formulas — domain math).
+const BRZYCKI_NUMERATOR = 36;
+const BRZYCKI_DENOMINATOR_BASE = 37;
+const BRZYCKI_MAX_REPS = 10;
+const EPLEY_COEFFICIENT = 0.0333;
+const OCONNER_COEFFICIENT = 0.025;
+const LOMBARDI_EXPONENT = 0.10;
+const LOMBARDI_MAX_REPS = 6;
+
 export function estimateBrzycki(load: number, reps: number): number | null {
-  if (reps > 10 || reps < 1) return null;
-  return load * 36 / (37 - reps);
+  if (reps > BRZYCKI_MAX_REPS || reps < 1) return null;
+  return load * BRZYCKI_NUMERATOR / (BRZYCKI_DENOMINATOR_BASE - reps);
 }
 
 export function estimateEpley(load: number, reps: number): number {
-  return load * (1 + 0.0333 * reps);
+  return load * (1 + EPLEY_COEFFICIENT * reps);
 }
 
 export function estimateOConner(load: number, reps: number): number {
-  return load * (1 + 0.025 * reps);
+  return load * (1 + OCONNER_COEFFICIENT * reps);
 }
 
 export function estimateLombardi(load: number, reps: number): number | null {
-  if (reps > 6 || reps < 1) return null;
-  return load * Math.pow(reps, 0.10);
+  if (reps > LOMBARDI_MAX_REPS || reps < 1) return null;
+  return load * Math.pow(reps, LOMBARDI_EXPONENT);
 }
 
 export interface WeightedEstimate {

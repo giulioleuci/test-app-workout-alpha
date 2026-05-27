@@ -8,6 +8,7 @@ import type { SessionSet, PlannedSet } from '@/domain/entities';
 import { ToFailureIndicator } from '@/domain/enums';
 import type { FatigueProgressionProfile, SetCountRange } from '@/domain/value-objects';
 import { t } from '@/i18n/t';
+import { filterCompleted } from '@/services/logic/setStats';
 
 // ===== Constants =====
 
@@ -45,7 +46,7 @@ export function adviseOnSetCount(
   const setCountRange = { ...rawRange, max: rawRange.max ?? rawRange.min };
   const profile: FatigueProgressionProfile | undefined = plannedSet?.fatigueProgressionProfile;
 
-  const numCompleted = completedSets.filter(s => s.isCompleted).length;
+  const numCompleted = filterCompleted(completedSets).length;
   const lastCompletedSet = [...completedSets].reverse().find(s => s.isCompleted);
   const currentRPE = !simpleMode ? (lastCompletedSet?.actualRPE ?? null) : null;
 

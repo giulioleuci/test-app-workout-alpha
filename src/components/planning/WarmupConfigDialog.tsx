@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Stepper } from '@/components/ui/stepper';
+import { DEFAULT_REST_SECONDS } from '@/domain/constants';
 import { WarmupSetConfiguration } from '@/domain/entities';
 import { INPUT_STEPS } from '@/domain/enums';
 
@@ -25,7 +26,7 @@ export default function WarmupConfigDialog({ warmupSets, onUpdate }: WarmupConfi
       id: crypto.randomUUID(),
       counter: 5,
       percentOfWorkSet: 50,
-      restSeconds: 90,
+      restSeconds: DEFAULT_REST_SECONDS,
     };
     onUpdate([...sets, newSet]);
   };

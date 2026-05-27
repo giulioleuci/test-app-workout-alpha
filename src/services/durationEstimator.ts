@@ -1,5 +1,6 @@
 import type { HydratedPlannedWorkout } from '@/db/repositories/types';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
+import { DEFAULT_REST_SECONDS } from '@/domain/constants';
 import type { PlannedSet, PlannedExerciseGroup, PlannedWorkout } from '@/domain/entities';
 import { CounterType, ExerciseGroupType, SetType } from '@/domain/enums';
 import type { ClusterSetParams } from '@/domain/value-objects';
@@ -77,7 +78,7 @@ export function estimateGroupDurationFromData(
     totalMax += setsCountMax * exec.maxSeconds;
 
     // Add rest between sets/exercises
-    const restMin = set.restSecondsRange?.min ?? 90;
+    const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
     const restMax = set.restSecondsRange?.max ?? restMin;
 
     if (nextStep) {

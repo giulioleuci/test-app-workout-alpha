@@ -1,6 +1,7 @@
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { SessionSet, SessionExerciseItem } from '@/domain/entities';
+import { filterEffective, setVolume } from '@/services/logic/setStats';
 
 export type PerformanceTrendStatus = 'improving' | 'stable' | 'stagnant' | 'deteriorating' | 'insufficient_data';
 
@@ -106,8 +107,8 @@ export class ExercisePerformanceService {
         previousStatus?: 'improving' | 'stable' | 'stagnant' | 'deteriorating' | 'insufficient_data',
         hasRangeConstraint = false
     ): PerformanceTrendStatus {
-        const currCompleted = currentSets.filter(s => s.isCompleted && !s.isSkipped);
-        const prevCompleted = previousSets.filter(s => s.isCompleted && !s.isSkipped);
+        const currCompleted = filterEffective(currentSets);
+        const prevCompleted = filterEffective(previousSets);
 
         if (currCompleted.length === 0 || prevCompleted.length === 0) {
             return 'insufficient_data';
@@ -120,7 +121,7 @@ export class ExercisePerformanceService {
             let F = 0;
             for (const s of sets) {
                 C += s.actualCount ?? 0;
-                L += (s.actualCount ?? 0) * (s.actualLoad ?? 0);
+                L += setVolume(s);
                 F += s.actualRPE ?? 0;
             }
             return { S, C, L, F };

@@ -18,23 +18,10 @@ export default function TheoreticalPerformanceMatrix({ exerciseId }: Theoretical
 
   const { data: p1RM, isLoading } = usePrioritized1RM(exerciseId);
 
-  const matrixData = useMemo(() => {
-    if (!p1RM?.value) return null;
-
-    const oneRM = p1RM.value;
-    
-    const strength = [1, 3, 5].map(reps => ({
-      reps,
-      load: Math.round((LoadCalculationService.getXRMOptions(oneRM, t).find(o => o.label === `${reps}RM`)?.load ?? 0) * 2) / 2
-    }));
-
-    const hypertrophy = [8, 10, 12].map(reps => ({
-      reps,
-      load: Math.round((LoadCalculationService.getXRMOptions(oneRM, t).find(o => o.label === `${reps}RM`)?.load ?? 0) * 2) / 2
-    }));
-
-    return { strength, hypertrophy };
-  }, [p1RM, t]);
+  const matrixData = useMemo(
+    () => (p1RM?.value ? LoadCalculationService.buildXRMMatrix(p1RM.value) : null),
+    [p1RM],
+  );
 
   if (isLoading) return <div className="py-8 text-center text-muted-foreground">{t('common.loading')}</div>;
   if (!matrixData || !p1RM) return null;
