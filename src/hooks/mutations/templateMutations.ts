@@ -1,27 +1,22 @@
 // src/hooks/mutations/templateMutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
-import { templateKeys, workoutKeys } from '@/hooks/queries/workoutQueries';
+import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import { deleteTemplate, updateTemplate } from '@/services/templateService';
 
 export function useTemplateMutations() {
-  const queryClient = useQueryClient();
-
-  const invalidateTemplates = () => {
-    queryClient.invalidateQueries({ queryKey: templateKeys.all });
-    queryClient.invalidateQueries({ queryKey: workoutKeys.all });
-  };
+  const { invalidateTemplateContext } = useInvalidation();
 
   const deleteTemplateMutation = useMutation({
     mutationFn: (id: string) => deleteTemplate(id),
-    onSuccess: invalidateTemplates,
+    onSuccess: invalidateTemplateContext,
   });
 
   const updateTemplateMutation = useMutation({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: ({ id, name, description, content }: { id: string; name: string; description?: string; content: any }) =>
       updateTemplate(id, { name, description, content }),
-    onSuccess: invalidateTemplates,
+    onSuccess: invalidateTemplateContext,
   });
 
   return {

@@ -2,8 +2,9 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { analyticsKeys } from '@/hooks/queries/analyticsQueries';
 import { dashboardKeys } from '@/hooks/queries/dashboardQueries';
+import { oneRepMaxKeys } from '@/hooks/queries/oneRepMaxQueries';
 import { sessionKeys } from '@/hooks/queries/sessionQueries';
-import { exerciseKeys, workoutKeys, weightRecordKeys } from '@/hooks/queries/workoutQueries';
+import { exerciseKeys, workoutKeys, weightRecordKeys, templateKeys } from '@/hooks/queries/workoutQueries';
 
 export function useInvalidation() {
   const queryClient = useQueryClient();
@@ -56,6 +57,26 @@ export function useInvalidation() {
     ]);
 
   /**
+   * Call after template save or delete.
+   * Refreshes: template list and the workout list (templates feed workout creation).
+   */
+  const invalidateTemplateContext = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: templateKeys.all }),
+      queryClient.invalidateQueries({ queryKey: workoutKeys.all }),
+    ]);
+
+  /**
+   * Call after a 1RM record is saved or deleted.
+   * Refreshes: 1RM data and exercise catalog (best-1RM badges).
+   */
+  const invalidateOneRepMaxContext = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: oneRepMaxKeys.all }),
+      queryClient.invalidateQueries({ queryKey: exerciseKeys.all }),
+    ]);
+
+  /**
    * Call after onboarding — seeds the entire DB, cheapest to wipe all caches.
    */
   const invalidateAll = () => queryClient.invalidateQueries();
@@ -65,6 +86,8 @@ export function useInvalidation() {
     invalidateWorkoutContext,
     invalidateExerciseContext,
     invalidateUserContext,
+    invalidateTemplateContext,
+    invalidateOneRepMaxContext,
     invalidateAll,
   };
 }

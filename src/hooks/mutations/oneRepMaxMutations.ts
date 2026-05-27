@@ -1,27 +1,21 @@
 // src/hooks/mutations/oneRepMaxMutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import type { OneRepMaxRecord } from '@/domain/entities';
-import { exerciseKeys } from '@/hooks/queries/exerciseQueries';
-import { oneRepMaxKeys } from '@/hooks/queries/oneRepMaxQueries';
+import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import { upsertRecord, deleteRecord } from '@/services/oneRepMaxService';
 
 export function useOneRepMaxMutations() {
-  const queryClient = useQueryClient();
-
-  const invalidateOneRepMax = () => {
-    queryClient.invalidateQueries({ queryKey: oneRepMaxKeys.all });
-    queryClient.invalidateQueries({ queryKey: exerciseKeys.all });
-  };
+  const { invalidateOneRepMaxContext } = useInvalidation();
 
   const saveRecordMutation = useMutation({
     mutationFn: (record: OneRepMaxRecord) => upsertRecord(record),
-    onSuccess: invalidateOneRepMax,
+    onSuccess: invalidateOneRepMaxContext,
   });
 
   const deleteRecordMutation = useMutation({
     mutationFn: (id: string) => deleteRecord(id),
-    onSuccess: invalidateOneRepMax,
+    onSuccess: invalidateOneRepMaxContext,
   });
 
   return {
