@@ -226,16 +226,10 @@ async function calculateEstimatedRecords(exerciseId: string) {
 
 async function getSessionExerciseStats(sessionId: string, exerciseId: string, date: Date): Promise<SessionStats> {
   // Get all items for this exercise in this session
-  const groups = await SessionRepository.getGroupsBySession(sessionId);
-  const groupIds = groups.map(g => g.id);
+  const { items, sets } = await SessionRepository.getSessionEntities([sessionId]);
+  const exerciseItemIds = new Set(items.filter(i => i.exerciseId === exerciseId).map(i => i.id));
 
-  const items = await SessionRepository.getItemsByGroups(groupIds);
-  const exerciseItems = items.filter(i => i.exerciseId === exerciseId);
-  const itemIds = exerciseItems.map(i => i.id);
-
-  const sets = await SessionRepository.getSetsByItems(itemIds);
-
-  const completedSets = filterEffective(sets);
+  const completedSets = filterEffective(sets.filter(s => exerciseItemIds.has(s.sessionExerciseItemId)));
 
   const totalSets = completedSets.length;
   const totalReps = completedSets.reduce((acc, s) => acc + (s.actualCount ?? 0), 0);

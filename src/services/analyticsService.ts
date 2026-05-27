@@ -108,11 +108,7 @@ export async function fetchAnalyticsData(
     const chunkSessionsMap = new Map(sessionChunk.map(s => [s.id, s]));
 
     // Batch fetch related entities for this chunk
-    const groups = await SessionRepository.getGroupsBySessionIds(chunkSessionIds);
-    const groupIds = groups.map(g => g.id);
-    const items = await SessionRepository.getItemsByGroups(groupIds);
-    const itemIds = items.map(i => i.id);
-    const chunkSets = await SessionRepository.getSetsByItems(itemIds);
+    const { groups, items, sets: chunkSets } = await SessionRepository.getSessionEntities(chunkSessionIds);
 
     // Load exercises and versions
     const exerciseIds = Array.from(new Set(items.map(i => i.exerciseId)));
@@ -307,9 +303,7 @@ export async function fetchAnalyticsData(
 
     const prevChunks = chunk(prevSessionIds, BATCH_SIZE);
     for (const chunkIds of prevChunks) {
-      const grps = await SessionRepository.getGroupsBySessionIds(chunkIds);
-      const itms = await SessionRepository.getItemsByGroups(grps.map(g => g.id));
-      const sts = await SessionRepository.getSetsByItems(itms.map(i => i.id));
+      const { sets: sts } = await SessionRepository.getSessionEntities(chunkIds);
 
       prevCompliant += sts.filter(s =>
         s.isCompleted && (
@@ -390,11 +384,7 @@ export async function getMuscleVolumeDistribution(
 
   for (const sessionChunk of sessionChunks) {
     const chunkSessionIds = sessionChunk.map(s => s.id);
-    const groups = await SessionRepository.getGroupsBySessionIds(chunkSessionIds);
-    const groupIds = groups.map(g => g.id);
-    const items = await SessionRepository.getItemsByGroups(groupIds);
-    const itemIds = items.map(i => i.id);
-    const chunkSets = await SessionRepository.getSetsByItems(itemIds);
+    const { groups, items, sets: chunkSets } = await SessionRepository.getSessionEntities(chunkSessionIds);
 
     const exerciseIds = Array.from(new Set(items.map(i => i.exerciseId)));
     const versionIds = Array.from(new Set(items.map(i => i.exerciseVersionId).filter((id): id is string => !!id)));
