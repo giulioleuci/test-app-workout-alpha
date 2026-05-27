@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { db } from '@/db/database';
 import { t } from '@/i18n/t';
 import dayjs from '@/lib/dayjs';
+import { formatIsoDate } from '@/lib/formatting';
 
 import { validateRecord } from './backupValidation';
 
@@ -283,7 +284,7 @@ export async function importData(
 export function prepareBackupDownload(backup: BackupSchema, filename?: string): { blob: Blob; filename: string } {
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
-  const suggestedFilename = filename ?? `workout-backup-${dayjs().format('YYYY-MM-DD')}.json`;
+  const suggestedFilename = filename ?? `workout-backup-${formatIsoDate()}.json`;
   return { blob, filename: suggestedFilename };
 }
 

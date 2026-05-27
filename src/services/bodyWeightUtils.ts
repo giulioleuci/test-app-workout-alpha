@@ -16,3 +16,8 @@ export function findClosestWeight(records: BodyWeightRecord[], date: Date): Body
 export function strengthRatio(load: number, bodyWeight: number): string {
   return (load / bodyWeight).toFixed(1) + '\u00d7BW';
 }
+
+/** Strength-to-bodyweight ratio rounded to 2 decimals (e.g. 1.42). */
+export function strengthToWeightRatio(load: number, bodyWeight: number): number {
+  return Math.round((load / bodyWeight) * 100) / 100;
+}

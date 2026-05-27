@@ -6,9 +6,9 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useToast } from '@/hooks/useToast';
-import dayjs from '@/lib/dayjs';
 import { triggerDownload } from '@/lib/download';
 import { extractErrorMessage } from '@/lib/errors';
+import { formatIsoDate } from '@/lib/formatting';
 import { showErrorToast } from '@/lib/toast-helpers';
 import type { CsvConflictStrategy, CsvExerciseRow, CsvExerciseConflict } from '@/services/csvExerciseService';
 import {
@@ -40,7 +40,7 @@ export function ExerciseCsvToolbar({ onImported }: Props) {
     setExporting(true);
     try {
       const csvContent = await exportExercisesCsv();
-      const filename = `esercizi-${dayjs().format('YYYY-MM-DD')}.csv`;
+      const filename = `esercizi-${formatIsoDate()}.csv`;
       
       if (isNative()) {
         await nativeDownloadFile(csvContent, filename, 'text/csv');

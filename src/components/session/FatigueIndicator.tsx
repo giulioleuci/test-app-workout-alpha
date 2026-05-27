@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import type { FatigueAnalysisResult } from '@/domain/analytics-types';
 import { FatigueProgressionStatus } from '@/domain/enums';
+import { formatRPE } from '@/lib/formatting';
 import { cn } from '@/lib/utils';
 
 
@@ -37,10 +38,10 @@ export default function FatigueIndicator({ result }: FatigueIndicatorProps) {
 
       <div className="text-body-sm grid grid-cols-2 gap-x-4 gap-y-0.5 pl-1">
         <span className="text-muted-foreground">{t('planning.rpe')} {t('compliance.expected')}</span>
-        <span className="font-mono">{result.expectedRPE?.toFixed(1) ?? '—'}</span>
+        <span className="font-mono">{result.expectedRPE != null ? formatRPE(result.expectedRPE) : '—'}</span>
 
         <span className="text-muted-foreground">{t('planning.rpe')} {t('compliance.actual')}</span>
-        <span className="font-mono">{result.actualRPE?.toFixed(1) ?? '—'}</span>
+        <span className="font-mono">{result.actualRPE != null ? formatRPE(result.actualRPE) : '—'}</span>
 
         {result.rpeClimbPerSet !== null && (
           <>
@@ -50,7 +51,7 @@ export default function FatigueIndicator({ result }: FatigueIndicatorProps) {
               result.status === FatigueProgressionStatus.TooFast ? "text-destructive" :
               result.status === FatigueProgressionStatus.TooSlow ? "text-warning" : "text-foreground"
             )}>
-              +{result.rpeClimbPerSet.toFixed(1)} ({t('compliance.expected')}: +{result.expectedClimbPerSet.toFixed(1)})
+              +{formatRPE(result.rpeClimbPerSet)} ({t('compliance.expected')}: +{formatRPE(result.expectedClimbPerSet)})
             </span>
           </>
         )}
@@ -62,7 +63,7 @@ export default function FatigueIndicator({ result }: FatigueIndicatorProps) {
               "font-mono",
               Math.abs(result.deviation) <= result.tolerance ? "text-success" : "text-warning"
             )}>
-              {result.deviation > 0 ? '+' : ''}{result.deviation.toFixed(1)}
+              {result.deviation > 0 ? '+' : ''}{formatRPE(result.deviation)}
               <span className="ml-1 text-muted-foreground">(±{result.tolerance})</span>
             </span>
           </>

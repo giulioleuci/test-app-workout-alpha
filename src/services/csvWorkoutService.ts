@@ -45,7 +45,7 @@ import {
   ExerciseGroupType, CounterType, SetType, ToFailureIndicator,
 } from '@/domain/enums';
 import { getClusterConfig } from '@/domain/value-objects';
-import dayjs from '@/lib/dayjs';
+import { formatIsoDate } from '@/lib/formatting';
 import { getRankBetween } from '@/lib/lexorank';
 
 import { generateCsvBlob, type CsvConflictStrategy } from './csvExerciseService';
@@ -321,7 +321,7 @@ export function workoutExportToCsv(data: CsvWorkoutExport): string {
 export async function exportWorkoutCsv(workoutId: string): Promise<{ blob: Blob, filename: string }> {
   const data = await buildWorkoutExportData(workoutId);
   const csv = workoutExportToCsv(data);
-  const filename = `workout-${data.workout.name.replace(/\s+/g, '-').toLowerCase()}-${dayjs().format('YYYY-MM-DD')}.csv`;
+  const filename = `workout-${data.workout.name.replace(/\s+/g, '-').toLowerCase()}-${formatIsoDate()}.csv`;
   return { blob: generateCsvBlob(csv), filename };
 }
 
@@ -342,7 +342,7 @@ export async function exportAllWorkoutsCsv(): Promise<{ blob: Blob, filename: st
     data: allRows
   }, { newline: '\n' });
 
-  const filename = `all-workouts-${dayjs().format('YYYY-MM-DD')}.csv`;
+  const filename = `all-workouts-${formatIsoDate()}.csv`;
   return { blob: generateCsvBlob(csv), filename };
 }
 

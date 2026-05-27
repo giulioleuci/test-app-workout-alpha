@@ -7,6 +7,7 @@ import { OneRepMaxRepository } from '@/db/repositories/OneRepMaxRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { PlannedSet, SessionSet } from '@/domain/entities';
 import { t } from '@/i18n/t';
+import { formatRPE } from '@/lib/formatting';
 
 import { suggestLoad } from './rpePercentageTable';
 
@@ -124,7 +125,7 @@ async function suggestFromPlannedRPE(ctx: LoadSuggestionContext): Promise<LoadSu
     suggestedLoadMin: minRounded,
     suggestedLoadMax: maxRounded,
     confidence: best1RM.confidence,
-    reasoning: `RPE ${adjustedRPE.toFixed(1)} × ${targetReps} rep (1RM: ${best1RM.value} kg, Range: ${minRounded} - ${maxRounded} kg)`,
+    reasoning: `RPE ${formatRPE(adjustedRPE)} × ${targetReps} rep (1RM: ${best1RM.value} kg, Range: ${minRounded} - ${maxRounded} kg)`,
   };
 }
 

@@ -19,6 +19,7 @@ import type { WorkoutSession } from '@/domain/entities';
 import type { Exercise } from '@/domain/entities';
 import { MuscleGroupMuscles, ComplianceStatus } from '@/domain/enums';
 import dayjs from '@/lib/dayjs';
+import { formatChartDate } from '@/lib/formatting';
 import { roundToHalf } from '@/lib/math';
 
 import { totalVolume } from './logic/setStats';
@@ -44,9 +45,7 @@ interface FlatSet {
 
 // ===== Helpers =====
 
-function formatDate(d: Date): string {
-    return dayjs(d).format('DD/MM');
-}
+const formatDate = formatChartDate;
 
 export function calculateComplianceDistribution(relevantSets: RelevantSetItem[]): ComplianceDistribution[] {
     const complianceCounts = countBy(relevantSets, ({ set }) => set.complianceStatus ?? 'unknown');
@@ -205,7 +204,7 @@ export function calculateWeeklyFrequency(
         });
 
         return {
-            weekLabel: weekStart.format('DD/MM'),
+            weekLabel: formatChartDate(weekStart.toDate()),
             weekStart: weekStart.toDate(),
             actual: sessionsInWeek.length,
             target: targetSessionsPerWeek,

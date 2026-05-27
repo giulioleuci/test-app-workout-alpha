@@ -15,7 +15,7 @@ import type {
 import {
   ExerciseGroupType, SetType, ToFailureIndicator,
 } from '@/domain/enums';
-import dayjs from '@/lib/dayjs';
+import { formatIsoDate } from '@/lib/formatting';
 
 import { generateCsvBlob, type CsvConflictStrategy } from './csvExerciseService';
 
@@ -203,7 +203,7 @@ export async function exportAllHistoryCsv(): Promise<{ blob: Blob, filename: str
     data: rows
   }, { newline: '\n' });
 
-  const filename = `history-${dayjs().format('YYYY-MM-DD')}.csv`;
+  const filename = `history-${formatIsoDate()}.csv`;
   return { blob: generateCsvBlob(csv), filename };
 }
 

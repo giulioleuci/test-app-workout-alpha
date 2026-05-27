@@ -8,6 +8,7 @@ import type { SessionSet, PlannedSet } from '@/domain/entities';
 import { ToFailureIndicator } from '@/domain/enums';
 import type { FatigueProgressionProfile, SetCountRange } from '@/domain/value-objects';
 import { t } from '@/i18n/t';
+import { formatRPE } from '@/lib/formatting';
 import { filterCompleted } from '@/services/logic/setStats';
 
 // ===== Constants =====
@@ -115,7 +116,7 @@ export function adviseOnSetCount(
       if (climb > profile.expectedRPEIncrementPerSet + profile.tolerance * 2) {
         return {
           advice: numCompleted >= setCountRange.min ? 'stop' : 'optional',
-          reason: t('setCountAdvice.rpeClimbTooFast', { climb: climb.toFixed(1), expected: profile.expectedRPEIncrementPerSet.toFixed(1) }),
+          reason: t('setCountAdvice.rpeClimbTooFast', { climb: formatRPE(climb), expected: formatRPE(profile.expectedRPEIncrementPerSet) }),
           completedSets: numCompleted,
           minSets: setCountRange.min,
           maxSets: setCountRange.max,

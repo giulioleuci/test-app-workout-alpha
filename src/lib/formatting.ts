@@ -21,6 +21,36 @@ export function formatDate(d: Date, format = 'ddd D MMM YYYY') {
   return dayjs(d).format(format);
 }
 
+/** RPE display: always one decimal place (e.g. 8 → "8.0"). */
+export function formatRPE(v: number): string {
+  return v.toFixed(1);
+}
+
+/** Format a 0–1 fraction as a whole-number percentage string (e.g. 0.85 → "85%"). */
+export function formatPercentage(fraction: number): string {
+  return `${Math.round(fraction * 100)}%`;
+}
+
+/** Short chart-axis date (e.g. "07/03"). */
+export function formatChartDate(d: Date | string): string {
+  return dayjs(d).format('DD/MM');
+}
+
+/** Compact date with 2-digit year (e.g. "07/03/26"). */
+export function formatShortDate(d: Date | string): string {
+  return dayjs(d).format('DD/MM/YY');
+}
+
+/** Date with month name (e.g. "07 Mar 2026"). */
+export function formatDayMonthYear(d: Date | string): string {
+  return dayjs(d).format('DD MMM YYYY');
+}
+
+/** ISO calendar date (e.g. "2026-05-27"), used for filenames and machine-readable output. */
+export function formatIsoDate(d: Date | string = new Date()): string {
+  return dayjs(d).format('YYYY-MM-DD');
+}
+
 export function formatTime(d: Date, format = 'HH:mm') {
   return dayjs(d).format(format);
 }

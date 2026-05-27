@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import dayjs from '@/lib/dayjs';
+import { formatRPE } from '@/lib/formatting';
 import type { LastWorkoutSummary } from '@/services/dashboardService';
 
 interface LastWorkoutSummaryCardProps {
@@ -62,7 +63,7 @@ export default function LastWorkoutSummaryCard({ lastWorkout, simpleMode }: Last
           <div className="flex items-center gap-2">
             <Target className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="text-body-sm text-muted-foreground">{t('dashboard.avgRPE')}:</span>
-            <span className="text-body-sm font-semibold">{lastWorkout.avgRPE.toFixed(1)}</span>
+            <span className="text-body-sm font-semibold">{formatRPE(lastWorkout.avgRPE)}</span>
           </div>
         )}
 

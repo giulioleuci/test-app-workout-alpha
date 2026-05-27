@@ -15,7 +15,7 @@ import {
   useAnalyticsGroups,
   useAnalyticsItems
 } from '@/hooks/queries/analyticsQueries';
-import dayjs from '@/lib/dayjs';
+import { formatShortDate } from '@/lib/formatting';
 import { cn } from '@/lib/utils';
 
 interface AnalyticsFiltersProps {
@@ -98,7 +98,7 @@ export default function AnalyticsFilters({
                   <PopoverTrigger asChild>
                     <Button variant="outline" className={cn("h-10 flex-1 text-body-sm gap-1.5", !fromDate && "text-muted-foreground")}>
                       <CalendarIcon className="h-4 w-4" />
-                      {dayjs(fromDate).format('DD/MM/YY')}
+                      {formatShortDate(fromDate)}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -115,7 +115,7 @@ export default function AnalyticsFilters({
                   <PopoverTrigger asChild>
                     <Button variant="outline" className={cn("h-10 flex-1 text-body-sm gap-1.5", !toDate && "text-muted-foreground")}>
                       <CalendarIcon className="h-4 w-4" />
-                      {dayjs(toDate).format('DD/MM/YY')}
+                      {formatShortDate(toDate)}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
