@@ -1,5 +1,3 @@
-import { useEffect, useState, useMemo } from 'react';
-
 import { BarChart3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,42 +11,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAnalyticsData } from '@/hooks/queries/analyticsQueries';
-import dayjs from '@/lib/dayjs';
+import { useAnalyticsFilters } from '@/hooks/view-models/useAnalyticsFilters';
 
 export default function AnalyticsPage() {
   const { t } = useTranslation();
-  const [dateRange, setDateRange] = useState<string>('1w');
-  const [fromDate, setFromDate] = useState<Date>(() => dayjs().subtract(7, 'day').toDate());
-  const [toDate, setToDate] = useState<Date>(() => dayjs().toDate());
-  const [workoutId, setWorkoutId] = useState<string | undefined>();
-  const [sessionId, setSessionId] = useState<string | undefined>();
-  const [plannedGroupId, setPlannedGroupId] = useState<string | undefined>();
-  const [plannedExerciseItemId, setPlannedExerciseItemId] = useState<string | undefined>();
-  const [selectedExercise, setSelectedExercise] = useState<string>('all');
-
-  useEffect(() => {
-    // Compute from/to based on preset
-    if (dateRange !== 'custom') {
-      const now = dayjs();
-      if (dateRange === 'all') {
-        setFromDate(dayjs(0).toDate());
-        setToDate(now.toDate());
-      } else {
-        const amount = 
-          dateRange === '1w' ? 1 : 
-          dateRange === '4w' ? 4 : 
-          dateRange === '12w' ? 12 : 
-          dateRange === '26w' ? 26 : 
-          dateRange === '52w' ? 52 : 1;
-        setFromDate(now.subtract(amount, 'week').toDate());
-        setToDate(now.toDate());
-      }
-    }
-  }, [dateRange]);
-
-  const filters = useMemo(() => ({
-    fromDate, toDate, workoutId, sessionId, plannedGroupId, plannedExerciseItemId
-  }), [fromDate, toDate, workoutId, sessionId, plannedGroupId, plannedExerciseItemId]);
+  const {
+    filters,
+    dateRange, setDateRange,
+    fromDate, setFromDate,
+    toDate, setToDate,
+    workoutId, setWorkoutId,
+    sessionId, setSessionId,
+    plannedGroupId, setPlannedGroupId,
+    plannedExerciseItemId, setPlannedExerciseItemId,
+    selectedExercise, setSelectedExercise,
+  } = useAnalyticsFilters();
 
   const { data, isLoading } = useAnalyticsData(filters);
 
