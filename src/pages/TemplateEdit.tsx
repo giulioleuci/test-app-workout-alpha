@@ -1,16 +1,16 @@
 import { useEffect, useState, useMemo } from 'react';
 
 import { Plus } from 'lucide-react';
-import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import type { SessionTemplateContent, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet, Exercise } from '@/domain/entities';
+import type { SessionTemplateContent, Exercise } from '@/domain/entities';
 import { useTemplateMutations } from '@/hooks/mutations/templateMutations';
 import { useTemplateDetail } from '@/hooks/queries/workoutQueries';
 import { usePlanEditor } from '@/hooks/usePlanEditor';
 import { useToast } from '@/hooks/useToast';
+import { materializeTemplateContent } from '@/services/templateService';
 
 import TemplateEditPropertiesDialog from './TemplateEdit/components/TemplateEditPropertiesDialog';
 import TemplateGroupCard from './TemplateEdit/components/TemplateGroupCard';
@@ -60,42 +60,10 @@ export default function TemplateEdit() {
       setSimpleMode(sm);
 
       // Materialize content into in-memory entities
-      const materializedGroups: PlannedExerciseGroup[] = [];
-      const materializedItems: Record<string, PlannedExerciseItem[]> = {};
-      const materializedSets: Record<string, PlannedSet[]> = {};
+      const { groups: materializedGroups, items: materializedItems, sets: materializedSets } =
+        materializeTemplateContent(tpl.content);
       const opens: Record<string, boolean> = {};
-
-      for (const g of tpl.content.groups) {
-        const groupId = nanoid();
-        materializedGroups.push({
-          id: groupId,
-          plannedSessionId: '__template__',
-          groupType: g.groupType,
-          restBetweenRoundsSeconds: g.restBetweenRoundsSeconds,
-          orderIndex: g.orderIndex,
-          notes: g.notes,
-        });
-        opens[groupId] = true;
-        materializedItems[groupId] = [];
-
-        for (const item of g.items) {
-          const itemId = nanoid();
-          materializedItems[groupId].push({
-            id: itemId,
-            plannedExerciseGroupId: groupId,
-            exerciseId: item.exerciseId,
-            counterType: item.counterType,
-            modifiers: item.modifiers,
-            orderIndex: item.orderIndex,
-            notes: item.notes,
-          });
-          materializedSets[itemId] = item.sets.map(s => ({
-            ...s,
-            id: nanoid(),
-            plannedExerciseItemId: itemId,
-          }));
-        }
-      }
+      for (const g of materializedGroups) opens[g.id] = true;
 
       setAll(materializedGroups, materializedItems, materializedSets);
       setOpenGroups(opens);
