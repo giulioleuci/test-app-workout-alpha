@@ -1,4 +1,3 @@
-import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { HydratedSessionGroup } from '@/db/repositories/types';
@@ -190,6 +189,7 @@ export async function addSessionExerciseGroup(
   items: SessionExerciseItem[],
   sets: SessionSet[]
 ): Promise<void> {
+  const { db } = await import('@/db/database');
   await db.transaction('rw', [db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets], async () => {
     await db.sessionExerciseGroups.add(group);
     if (items.length > 0) await db.sessionExerciseItems.bulkAdd(items);
@@ -198,6 +198,7 @@ export async function addSessionExerciseGroup(
 }
 
 export async function deleteSessionExerciseItemCascade(itemId: string, groupId: string): Promise<void> {
+  const { db } = await import('@/db/database');
   await db.transaction('rw', [db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets], async () => {
     await db.sessionSets.where('sessionExerciseItemId').equals(itemId).delete();
     await db.sessionExerciseItems.delete(itemId);
