@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import type { SessionSet, Exercise } from '@/domain/entities';
-import { ToFailureIndicator, INPUT_STEPS } from '@/domain/enums';
+import { ToFailureIndicator, SetType, INPUT_STEPS } from '@/domain/enums';
 
 // ===== SetRow: read-only display with edit dialog =====
 export default function SetRow({
@@ -38,6 +38,7 @@ export default function SetRow({
     const [editCount, setEditCount] = useState(s.actualCount?.toString() ?? '');
     const [editLoad, setEditLoad] = useState(s.actualLoad?.toString() ?? '');
     const [editRPE, setEditRPE] = useState(s.actualRPE?.toString() ?? '');
+    const [editSetType, setEditSetType] = useState(s.setType ?? SetType.Working);
     const [editToFailure, setEditToFailure] = useState(s.actualToFailure ?? ToFailureIndicator.None);
     const [editPartials, setEditPartials] = useState(s.partials ?? false);
     const [editForcedReps, setEditForcedReps] = useState(s.forcedReps?.toString() ?? '0');
@@ -47,6 +48,7 @@ export default function SetRow({
 
     const handleSave = () => {
         onUpdate(s.id, {
+            setType: editSetType,
             actualCount: editCount ? Number(editCount) : null,
             actualLoad: editLoad ? Number(editLoad) : null,
             actualRPE: !simpleMode && editRPE ? Number(editRPE) : null,
@@ -59,6 +61,7 @@ export default function SetRow({
     };
 
     const handleOpenEdit = () => {
+        setEditSetType(s.setType ?? SetType.Working);
         setEditCount(s.actualCount?.toString() ?? '');
         setEditLoad(s.actualLoad?.toString() ?? '');
         setEditRPE(s.actualRPE?.toString() ?? '');
@@ -76,6 +79,9 @@ export default function SetRow({
             <div className="text-body-sm flex items-center gap-2 rounded-lg bg-muted/30 px-2.5 py-2">
                 <span className="w-5 shrink-0 font-mono text-muted-foreground">{t('units.S')}{index + 1}</span>
                 <div className="flex flex-1 flex-wrap gap-x-3 gap-y-0.5">
+                    {s.setType && s.setType !== SetType.Working && (
+                        <Badge variant="secondary" className="text-caption">{t(`enums.setType.${s.setType}`)}</Badge>
+                    )}
                     {s.actualCount != null && (
                         <span><span className="text-muted-foreground">{counterLabel}:</span> {s.actualCount}</span>
                     )}
@@ -131,6 +137,19 @@ export default function SetRow({
                         <DialogTitle className="text-sm">{t('units.S')}{index + 1} — {exercise?.name ?? ''}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-3">
+                        <div className="space-y-1">
+                            <Label className="text-body-sm">{t('sessions.setType')}</Label>
+                            <Select value={editSetType} onValueChange={(v) => setEditSetType(v as SetType)}>
+                                <SelectTrigger className="text-body-sm h-9">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Object.values(SetType).map(st => (
+                                        <SelectItem key={st} value={st}>{t(`enums.setType.${st}`)}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <div className="space-y-1">
                             <Label className="text-body-sm">{counterLabel}</Label>
                             <Input type="number" value={editCount} onChange={(e) => setEditCount(e.target.value)} className="h-9" />

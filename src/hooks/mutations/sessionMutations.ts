@@ -1,10 +1,11 @@
 // src/hooks/mutations/sessionMutations.ts
 import { useMutation } from '@tanstack/react-query';
 
-import type { WorkoutSession, SessionSet, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet } from '@/domain/entities';
+import type { WorkoutSession, SessionSet, SessionExerciseGroup, SessionExerciseItem, PlannedExerciseGroup, PlannedExerciseItem, PlannedSet } from '@/domain/entities';
 import { useInvalidation } from '@/hooks/queries/useInvalidation';
 import {
   deleteHistorySession, updateHistorySessionMeta, updateSessionSet, deleteSessionSet, addSessionSet,
+  addSessionExerciseGroup, deleteSessionExerciseItemCascade, updateSessionExerciseItem,
 } from '@/services/historyService';
 import { updateSessionStructure } from '@/services/workoutService';
 
@@ -56,6 +57,24 @@ export function useSessionMutations() {
     onSuccess: invalidateSessionContext,
   });
 
+  const addExerciseGroupMutation = useMutation({
+    mutationFn: ({ group, items, sets }: { group: SessionExerciseGroup; items: SessionExerciseItem[]; sets: SessionSet[] }) =>
+      addSessionExerciseGroup(group, items, sets),
+    onSuccess: invalidateSessionContext,
+  });
+
+  const deleteExerciseItemMutation = useMutation({
+    mutationFn: ({ itemId, groupId }: { itemId: string; groupId: string }) =>
+      deleteSessionExerciseItemCascade(itemId, groupId),
+    onSuccess: invalidateSessionContext,
+  });
+
+  const updateExerciseItemMutation = useMutation({
+    mutationFn: ({ itemId, updates }: { itemId: string; updates: Partial<SessionExerciseItem> }) =>
+      updateSessionExerciseItem(itemId, updates),
+    onSuccess: invalidateSessionContext,
+  });
+
   return {
     saveSession: saveSessionMutation.mutateAsync,
     deleteSession: deleteSessionMutation.mutateAsync,
@@ -63,5 +82,8 @@ export function useSessionMutations() {
     updateSessionSet: updateSessionSetMutation.mutateAsync,
     deleteSessionSet: deleteSessionSetMutation.mutateAsync,
     addSessionSet: addSessionSetMutation.mutateAsync,
+    addExerciseGroup: addExerciseGroupMutation.mutateAsync,
+    deleteExerciseItem: deleteExerciseItemMutation.mutateAsync,
+    updateExerciseItem: updateExerciseItemMutation.mutateAsync,
   };
 }

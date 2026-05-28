@@ -183,7 +183,13 @@
     "addExercise": "Ajouter exercice",
     "selectExercise": "Sélectionner exercice",
     "total": "total",
-    "groups": "groupes"
+    "groups": "groupes",
+    "deleteExercise": "Supprimer l'exercice",
+    "deleteExerciseConfirm": "Cette action supprimera définitivement l'exercice et toutes ses séries.",
+    "changeExercise": "Changer d'exercice",
+    "addExerciseGroup": "Ajouter un groupe d'exercices",
+    "sessionVolume": "Volume de la séance",
+    "setType": "Type de série"
   },
   "exercises": {
     "title": "Bibliothèque d'exercices",

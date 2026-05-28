@@ -1,3 +1,4 @@
+import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { HydratedSessionGroup } from '@/db/repositories/types';
@@ -182,6 +183,33 @@ export async function deleteSessionSet(id: string): Promise<void> {
 export async function addSessionSet(set: SessionSet): Promise<void> {
   await SessionRepository.addSets([set]);
   await ExercisePerformanceService.analyzeItemOnChange(set.sessionExerciseItemId);
+}
+
+export async function addSessionExerciseGroup(
+  group: SessionExerciseGroup,
+  items: SessionExerciseItem[],
+  sets: SessionSet[]
+): Promise<void> {
+  await db.transaction('rw', [db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets], async () => {
+    await db.sessionExerciseGroups.add(group);
+    if (items.length > 0) await db.sessionExerciseItems.bulkAdd(items);
+    if (sets.length > 0) await db.sessionSets.bulkAdd(sets);
+  });
+}
+
+export async function deleteSessionExerciseItemCascade(itemId: string, groupId: string): Promise<void> {
+  await db.transaction('rw', [db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets], async () => {
+    await db.sessionSets.where('sessionExerciseItemId').equals(itemId).delete();
+    await db.sessionExerciseItems.delete(itemId);
+    const remaining = await db.sessionExerciseItems.where('sessionExerciseGroupId').equals(groupId).count();
+    if (remaining === 0) {
+      await db.sessionExerciseGroups.delete(groupId);
+    }
+  });
+}
+
+export async function updateSessionExerciseItem(itemId: string, updates: Partial<SessionExerciseItem>): Promise<void> {
+  await SessionRepository.updateItem(itemId, updates);
 }
 
 // ===== Filtered History =====

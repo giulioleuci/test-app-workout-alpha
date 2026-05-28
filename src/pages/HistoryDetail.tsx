@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { ArrowLeft, Trash2, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Trash2, Calendar, Clock, Plus, BarChart2 } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import VolumeSection from '@/components/analytics/VolumeSection';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -13,16 +14,24 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
-import type { SessionSet } from '@/domain/entities';
-import { SetType, ToFailureIndicator } from '@/domain/enums';
+import type { RelevantSetItem } from '@/domain/analytics-types';
+import type { VolumeAnalytics } from '@/domain/analytics-types';
+import type { SessionSet, SessionExerciseGroup, SessionExerciseItem } from '@/domain/entities';
+import { SetType, ToFailureIndicator, ExerciseGroupType } from '@/domain/enums';
 import { useSessionMutations } from '@/hooks/mutations/sessionMutations';
+import { useEnhancedExerciseCatalog } from '@/hooks/queries/exerciseQueries';
 import { useHistoryDetail } from '@/hooks/queries/sessionHistoryQueries';
 import { useToast } from '@/hooks/useToast';
 import dayjs from '@/lib/dayjs';
 import { formatDate, formatTime, durationMinutes } from '@/lib/formatting';
 import { getRankBetween, getInitialRank } from '@/lib/lexorank';
 import { roundToHalf } from '@/lib/math';
+import {
+  calculateVolumeMetrics,
+  convertVolumeMapToExtended,
+} from '@/services/analyticsCalculators';
 
+import AddExerciseGroupDialog from './HistoryDetail/components/AddExerciseGroupDialog';
 import HistoryItemRow from './HistoryDetail/components/HistoryItemRow';
 import SessionMetaCard from './HistoryDetail/components/SessionMetaCard';
 
@@ -34,6 +43,7 @@ export default function HistoryDetail() {
   const { toast } = useToast();
 
   const { data, isLoading } = useHistoryDetail(id);
+  const { data: exercises = [] } = useEnhancedExerciseCatalog();
   const mutations = useSessionMutations();
 
   const [notes, setNotes] = useState('');
@@ -42,6 +52,7 @@ export default function HistoryDetail() {
   const [startTime, setStartTime] = useState('');
   const [completedAt, setCompletedAt] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState('');
+  const [addGroupOpen, setAddGroupOpen] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -131,6 +142,111 @@ export default function HistoryDetail() {
     navigate('/history');
   };
 
+  const deleteExerciseItem = async (itemId: string, groupId: string) => {
+    if (!id) return;
+    try { await mutations.deleteExerciseItem({ itemId, groupId }); }
+    catch { /* error handled by mutation or toast */ }
+  };
+
+  const updateExerciseItem = async (itemId: string, exerciseId: string) => {
+    if (!id) return;
+    try {
+      await mutations.updateExerciseItem({ itemId, updates: { exerciseId, exerciseVersionId: undefined } });
+    }
+    catch { /* error handled by mutation or toast */ }
+  };
+
+  const addExerciseGroup = async (exerciseIds: string[], groupType: ExerciseGroupType) => {
+    if (!id || !data) return;
+    const lastGroup = data.groups[data.groups.length - 1];
+    const groupOrderIndex = lastGroup
+      ? getRankBetween(lastGroup.group.orderIndex, null)
+      : getInitialRank();
+
+    const group: SessionExerciseGroup = {
+      id: nanoid(),
+      workoutSessionId: id,
+      groupType,
+      orderIndex: groupOrderIndex,
+      isCompleted: true,
+    };
+
+    let prevItemRank = getInitialRank();
+    const items: SessionExerciseItem[] = exerciseIds.map((exerciseId, idx) => {
+      const rank = idx === 0 ? prevItemRank : getRankBetween(prevItemRank, null);
+      prevItemRank = rank;
+      return {
+        id: nanoid(),
+        sessionExerciseGroupId: group.id,
+        exerciseId,
+        orderIndex: rank,
+        isCompleted: true,
+        completedAt: data.session.completedAt,
+      };
+    });
+
+    const sets: SessionSet[] = items.map(item => ({
+      id: nanoid(),
+      sessionExerciseItemId: item.id,
+      setType: SetType.Working,
+      orderIndex: getInitialRank(),
+      actualLoad: null,
+      actualCount: null,
+      actualRPE: null,
+      actualToFailure: ToFailureIndicator.None,
+      expectedRPE: null,
+      isCompleted: true,
+      isSkipped: false,
+      partials: false,
+      forcedReps: 0,
+    }));
+
+    try { await mutations.addExerciseGroup({ group, items, sets }); }
+    catch { /* error handled by mutation or toast */ }
+  };
+
+  // Compute volume analytics from session data
+  const sessionVolume = useMemo((): VolumeAnalytics | null => {
+    if (!data) return null;
+
+    const exerciseMap = new Map<string, import('@/domain/entities').Exercise>();
+    const relevantSets: RelevantSetItem[] = [];
+
+    for (const lg of data.groups) {
+      for (const { item, exercise, sets } of lg.items) {
+        if (exercise) {
+          exerciseMap.set(item.exerciseId, exercise);
+        }
+        for (const set of sets) {
+          if (set.isCompleted) {
+            relevantSets.push({ set, item, session: data.session });
+          }
+        }
+      }
+    }
+
+    if (relevantSets.length === 0) return null;
+
+    const metrics = calculateVolumeMetrics(relevantSets, exerciseMap);
+    const volumeByMuscle = convertVolumeMapToExtended(metrics.muscleVol);
+    const volumeByMuscleGroup = convertVolumeMapToExtended(metrics.muscleGroupVol);
+    const volumeByMovement = convertVolumeMapToExtended(metrics.movementVol);
+    const objectiveDistribution = convertVolumeMapToExtended(metrics.objectiveVol);
+
+    const sortedMuscles = [...volumeByMuscle].sort((a, b) => b.weightedSets - a.weightedSets);
+
+    return {
+      volumeByMuscle,
+      volumeByMuscleGroup,
+      volumeByMovement,
+      objectiveDistribution,
+      totalSets: relevantSets.length,
+      avgSetsPerWeek: relevantSets.length,
+      mostTrainedMuscle: sortedMuscles[0]?.name ?? null,
+      leastTrainedMuscle: sortedMuscles[sortedMuscles.length - 1]?.name ?? null,
+    };
+  }, [data]);
+
   if (isLoading || !data) return <DetailPageSkeleton />;
 
   const { session, groups, simpleMode, workoutName, sessionName, originalExerciseNames } = data;
@@ -192,8 +308,6 @@ export default function HistoryDetail() {
         onSave={saveSessionMeta}
       />
 
-
-
       {/* Exercise groups and sets */}
       {groups.map((lg) => (
         <Card key={lg.group.id}>
@@ -214,14 +328,43 @@ export default function HistoryDetail() {
                 originalExerciseNames={originalExerciseNames}
                 simpleMode={simpleMode}
                 sessionId={id!}
+                exercises={exercises}
+                groupId={lg.group.id}
                 onUpdateSet={updateSet}
                 onDeleteSet={deleteSet}
                 onAddSet={addSet}
+                onDeleteItem={deleteExerciseItem}
+                onUpdateItem={updateExerciseItem}
               />
             ))}
           </CardContent>
         </Card>
       ))}
+
+      {/* Add exercise group button */}
+      <Button variant="outline" className="w-full" onClick={() => setAddGroupOpen(true)}>
+        <Plus className="mr-2 h-4 w-4" />
+        {t('sessions.addExerciseGroup')}
+      </Button>
+
+      {/* Add exercise group dialog */}
+      <AddExerciseGroupDialog
+        open={addGroupOpen}
+        onOpenChange={setAddGroupOpen}
+        exercises={exercises}
+        onConfirm={addExerciseGroup}
+      />
+
+      {/* Volume section */}
+      {sessionVolume && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 pl-1">
+            <BarChart2 className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-base font-semibold">{t('sessions.sessionVolume')}</h2>
+          </div>
+          <VolumeSection volumeData={sessionVolume} />
+        </div>
+      )}
     </div>
   );
 }
