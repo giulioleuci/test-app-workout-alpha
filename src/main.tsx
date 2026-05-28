@@ -34,6 +34,14 @@ applyPalette(paletteId, isDark);
 // Init Capacitor plugins (no-op on web)
 void initCapacitor();
 
+// When a new service worker takes control (after an app update), reload so the
+// fresh index.html + new chunk hashes are used instead of the stale cached ones.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
 // Handle virtual keyboard overlap for mobile/PWA
 if (window.visualViewport) {
   const updateKeyboardOffset = () => {
