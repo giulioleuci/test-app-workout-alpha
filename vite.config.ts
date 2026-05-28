@@ -21,6 +21,13 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         navigateFallbackDenylist: [/^\/~oauth/],
         maximumFileSizeToCacheInBytes: 7 * 1024 * 1024,
+        // Remove caches from previous app versions on activation so stale
+        // chunk hashes can never be served alongside a newer index.html.
+        cleanupOutdatedCaches: true,
+        // Take control of all clients immediately on activation (pairs with
+        // the controllerchange reload handler in main.tsx).
+        clientsClaim: true,
+        skipWaiting: true,
       },
       manifest: {
         name: "Workout Tracker 2",
