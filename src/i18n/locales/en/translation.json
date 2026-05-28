@@ -182,7 +182,13 @@
     "addExercise": "Add exercise",
     "selectExercise": "Select exercise",
     "total": "total",
-    "groups": "groups"
+    "groups": "groups",
+    "deleteExercise": "Delete exercise",
+    "deleteExerciseConfirm": "This will permanently remove the exercise and all its sets.",
+    "changeExercise": "Change exercise",
+    "addExerciseGroup": "Add exercise group",
+    "sessionVolume": "Session volume",
+    "setType": "Set type"
   },
   "exercises": {
     "title": "Exercise Library",

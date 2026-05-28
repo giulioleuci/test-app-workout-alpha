@@ -1,10 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-import { Plus } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import ExercisePicker from '@/components/exercises/ExercisePicker';
 import PerformanceBadge from '@/components/session/PerformanceBadge';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import type { SessionSet, Exercise, SessionExerciseItem } from '@/domain/entities';
 import { usePerformanceTrend } from '@/hooks/queries/sessionQueries';
@@ -18,9 +24,13 @@ interface HistoryItemRowProps {
   originalExerciseNames: Map<string, string>;
   simpleMode: boolean;
   sessionId: string;
+  exercises: Exercise[];
+  groupId: string;
   onUpdateSet: (id: string, updates: Partial<SessionSet>) => void;
   onDeleteSet: (id: string) => void;
   onAddSet: (itemId: string, lastOrderIndex?: string) => void;
+  onDeleteItem: (itemId: string, groupId: string) => void;
+  onUpdateItem: (itemId: string, exerciseId: string) => void;
 }
 
 export default function HistoryItemRow({
@@ -30,11 +40,16 @@ export default function HistoryItemRow({
   originalExerciseNames,
   simpleMode,
   sessionId,
+  exercises,
+  groupId,
   onUpdateSet,
   onDeleteSet,
-  onAddSet
+  onAddSet,
+  onDeleteItem,
+  onUpdateItem,
 }: HistoryItemRowProps) {
   const { t } = useTranslation();
+  const [changeExerciseOpen, setChangeExerciseOpen] = useState(false);
 
   const { data: trend } = usePerformanceTrend(exercise?.id, sessionId);
 
@@ -46,10 +61,15 @@ export default function HistoryItemRow({
 
   const completedCount = useMemo(() => sets.filter(s => s.isCompleted).length, [sets]);
 
+  const handleSelectNewExercise = (exerciseId: string) => {
+    onUpdateItem(item.id, exerciseId);
+    setChangeExerciseOpen(false);
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <div>
+        <div className="min-w-0 flex-1">
           <h4 className="text-sm font-medium">{exercise?.name ?? t('common.unknownExercise')}</h4>
           {item.originalExerciseId && (
             <p className="text-xs text-muted-foreground">
@@ -57,9 +77,39 @@ export default function HistoryItemRow({
             </p>
           )}
         </div>
-        {trend?.status && trend.status !== 'insufficient_data' && (
-          <PerformanceBadge status={trend.status} className="shrink-0" />
-        )}
+        <div className="flex shrink-0 items-center gap-1">
+          {trend?.status && trend.status !== 'insufficient_data' && (
+            <PerformanceBadge status={trend.status} />
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => setChangeExerciseOpen(true)}
+            title={t('sessions.changeExercise')}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-7 w-7" title={t('sessions.deleteExercise')}>
+                <Trash2 className="h-3.5 w-3.5 text-destructive" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t('sessions.deleteExercise')}</AlertDialogTitle>
+                <AlertDialogDescription>{t('sessions.deleteExerciseConfirm')}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
+                <AlertDialogAction onClick={() => onDeleteItem(item.id, groupId)}>
+                  {t('actions.delete')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
       {sets.length === 0 ? (
@@ -92,6 +142,23 @@ export default function HistoryItemRow({
       )}
 
       <Separator />
+
+      {/* Change exercise dialog */}
+      <Dialog open={changeExerciseOpen} onOpenChange={setChangeExerciseOpen}>
+        <DialogContent style={{ height: '80vh', maxWidth: '95vw' }} className="flex flex-col overflow-hidden sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{t('sessions.changeExercise')}</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto">
+            <ExercisePicker
+              exercises={exercises}
+              value={item.exerciseId}
+              onSelect={handleSelectNewExercise}
+              placeholder={t('sessions.selectExercise')}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
