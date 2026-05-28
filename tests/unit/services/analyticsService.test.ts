@@ -114,6 +114,52 @@ describe('analyticsService', () => {
     // Current 0%, Prev 0%. Trend = 0
     expect(data4.compliance.complianceTrend).toBe(0);
   });
+
+  it('handles empty date range with no sessions gracefully', async () => {
+    const _now = dayjs();
+    const from = _now.subtract(7, 'day').toDate();
+    const to = _now.toDate();
+
+    const data = await fetchAnalyticsData(from, to);
+
+    expect(data.frequency.totalSessions).toBe(0);
+    expect(data.compliance.avgCompliance).toBe(0);
+    expect(data.compliance.complianceTrend).toBeNull();
+  });
+
+  it('excludes incomplete sessions from frequency count', async () => {
+    const _now = dayjs();
+    const from = _now.subtract(7, 'day').toDate();
+    const to = _now.toDate();
+
+    // Only add an incomplete session (no completedAt)
+    await db.workoutSessions.add({
+      id: 'incomplete-only',
+      startedAt: _now.subtract(1, 'day').toDate(),
+      plannedWorkoutId: 'pw1',
+    } as any);
+
+    const data = await fetchAnalyticsData(from, to);
+    expect(data.frequency.totalSessions).toBe(0);
+  });
+
+  it('returns null complianceTrend when there is no previous period data', async () => {
+    const _now = dayjs();
+    const from = _now.subtract(7, 'day').toDate();
+    const to = _now.toDate();
+
+    // Add only a current session (no sessions in previous period)
+    await db.workoutSessions.add({
+      id: 'current-only',
+      startedAt: _now.subtract(1, 'day').toDate(),
+      completedAt: _now.subtract(1, 'day').add(1, 'hour').toDate(),
+      plannedWorkoutId: 'pw1',
+    } as any);
+
+    const data = await fetchAnalyticsData(from, to);
+    // No previous period sessions → trend should be null
+    expect(data.compliance.complianceTrend).toBeNull();
+  });
 });
 
 function generateTestRank(index: number) {
