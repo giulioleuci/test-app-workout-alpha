@@ -88,6 +88,7 @@ const WarmupSetConfigurationSchema = z.object({
 const ExerciseSchema = z.object({
   id: z.string().max(MAX_ID_LENGTH),
   name: z.string().max(MAX_NAME_LENGTH),
+  type: z.nativeEnum(ExerciseType),
   primaryMuscles: z.array(z.nativeEnum(Muscle)),
   secondaryMuscles: z.array(z.nativeEnum(Muscle)),
   equipment: z.array(z.nativeEnum(Equipment)),

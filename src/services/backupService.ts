@@ -69,6 +69,7 @@ export const EXPORT_CATEGORIES: ExportCategory[] = [
 // Date fields to serialize/deserialize
 const DATE_FIELDS = new Set([
   'createdAt', 'updatedAt', 'startedAt', 'completedAt', 'recordedAt',
+  'versionTimestamp',
 ]);
 
 const FK_FIELDS: Record<string, TableName> = {
