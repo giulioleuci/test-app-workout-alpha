@@ -9,6 +9,7 @@ describe('Security String Limits', () => {
     const record = {
       id: 'ex-1',
       name: longName,
+      type: 'compound',
       primaryMuscles: ['chest'],
       secondaryMuscles: [],
       equipment: ['barbell'],
@@ -27,6 +28,7 @@ describe('Security String Limits', () => {
     const record = {
       id: 'ex-1',
       name: 'Bench Press',
+      type: 'compound',
       primaryMuscles: ['chest'],
       secondaryMuscles: [],
       equipment: ['barbell'],
@@ -62,6 +64,7 @@ describe('Security String Limits', () => {
     const record = {
       id: longId,
       name: 'Bench Press',
+      type: 'compound',
       primaryMuscles: ['chest'],
       secondaryMuscles: [],
       equipment: ['barbell'],
@@ -80,6 +83,7 @@ describe('Security String Limits', () => {
     const record = {
       id: 'ex-1',
       name: maxName,
+      type: 'compound',
       primaryMuscles: ['chest'],
       secondaryMuscles: [],
       equipment: ['barbell'],

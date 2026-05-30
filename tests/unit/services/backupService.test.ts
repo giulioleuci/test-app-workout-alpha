@@ -20,6 +20,7 @@ describe('backupService', () => {
       {
         id: 'ex-1',
         name: 'Bench Press',
+        type: 'compound',
         primaryMuscles: ['chest'],
         secondaryMuscles: ['triceps'],
         equipment: ['barbell'],
@@ -32,6 +33,7 @@ describe('backupService', () => {
       {
         id: 'ex-2',
         name: 'Squat',
+        type: 'compound',
         primaryMuscles: ['quadriceps'],
         secondaryMuscles: ['glutes'],
         equipment: ['barbell'],
@@ -84,8 +86,8 @@ describe('backupService', () => {
       appName: 'WorkoutTracker2',
       data: {
         exercises: [
-          { id: 'ex-1', name: 'Changed Name', primaryMuscles: ['chest'], secondaryMuscles: [], equipment: ['barbell'], movementPattern: 'horizontalPush', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' },
-          { id: 'ex-new', name: 'New Exercise', primaryMuscles: ['biceps'], secondaryMuscles: [], equipment: ['dumbbell'], movementPattern: 'other', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-02-01T00:00:00.000Z', updatedAt: '2026-02-01T00:00:00.000Z' },
+          { id: 'ex-1', name: 'Changed Name', type: 'compound', primaryMuscles: ['chest'], secondaryMuscles: [], equipment: ['barbell'], movementPattern: 'horizontalPush', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' },
+          { id: 'ex-new', name: 'New Exercise', type: 'isolation', primaryMuscles: ['biceps'], secondaryMuscles: [], equipment: ['dumbbell'], movementPattern: 'other', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-02-01T00:00:00.000Z', updatedAt: '2026-02-01T00:00:00.000Z' },
         ],
       },
     };
@@ -112,7 +114,7 @@ describe('backupService', () => {
       appName: 'WorkoutTracker2',
       data: {
         exercises: [
-          { id: 'ex-1', name: 'Overwritten Name', primaryMuscles: ['chest'], secondaryMuscles: [], equipment: ['barbell'], movementPattern: 'horizontalPush', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-02-14T00:00:00.000Z' },
+          { id: 'ex-1', name: 'Overwritten Name', type: 'compound', primaryMuscles: ['chest'], secondaryMuscles: [], equipment: ['barbell'], movementPattern: 'horizontalPush', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-02-14T00:00:00.000Z' },
         ],
       },
     };
@@ -132,7 +134,7 @@ describe('backupService', () => {
       appName: 'WorkoutTracker2',
       data: {
         exercises: [
-          { id: 'ex-1', name: 'Copied Exercise', primaryMuscles: ['chest'], secondaryMuscles: [], equipment: ['barbell'], movementPattern: 'horizontalPush', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' },
+          { id: 'ex-1', name: 'Copied Exercise', type: 'compound', primaryMuscles: ['chest'], secondaryMuscles: [], equipment: ['barbell'], movementPattern: 'horizontalPush', counterType: 'reps', defaultLoadUnit: 'kg', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z' },
         ],
       },
     };
@@ -229,6 +231,7 @@ describe('backupService', () => {
           {
             id: 'ex-legacy',
             name: 'Legacy Exercise',
+            type: 'compound',
             primaryMuscles: ['chest'],
             secondaryMuscles: [],
             equipment: ['barbell'],

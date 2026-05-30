@@ -9,6 +9,7 @@ describe('backupValidation', () => {
     const record = {
       id: 'ex-1',
       name: 'Bench Press',
+      type: 'compound',
       primaryMuscles: ['chest'],
       secondaryMuscles: ['triceps'],
       equipment: ['barbell'],
