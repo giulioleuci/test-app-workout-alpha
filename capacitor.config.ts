@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.workouttracker.app',
-  appName: 'Workout Tracker 2',
+  appId: 'com.deltaworkout.app',
+  appName: 'Delta Workout',
   webDir: 'dist',
   android: {
     edgeToEdge: true,
