@@ -1,4 +1,4 @@
-package com.workouttracker.app;
+package com.deltaworkout.app;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -567,7 +567,7 @@
       "noFileSelected": "未选择文件"
     },
     "native": {
-      "shareTitle": "训练助手 2 备份",
+      "shareTitle": "Delta Workout 备份",
       "shareText": "训练数据备份",
       "shareDialogTitle": "分享备份"
     }
@@ -887,7 +887,7 @@
     "discardButton": "丢弃更改"
   },
   "onboarding": {
-    "welcome": "欢迎使用训练助手 2！",
+    "welcome": "欢迎使用 Delta Workout！",
     "featuresTitle": "功能介绍：",
     "feature1": "添加新的训练动作",
     "feature2": "创建自定义训练计划",
@@ -917,7 +917,7 @@
     "loading": "准备中..."
   },
   "presentation": {
-    "title": "发现 Workout Tracker 2",
+    "title": "发现 Delta Workout",
     "offline": {
       "title": "100% 离线",
       "description": "您的数据保留在您的设备上。没有云端，没有追踪，极致的隐私和速度。"

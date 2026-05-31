@@ -567,7 +567,7 @@
       "noFileSelected": "Nessun file selezionato"
     },
     "native": {
-      "shareTitle": "Backup Workout Tracker 2",
+      "shareTitle": "Backup Delta Workout",
       "shareText": "Backup dei dati di allenamento",
       "shareDialogTitle": "Condividi backup"
     }
@@ -887,7 +887,7 @@
     "discardButton": "Annulla modifiche"
   },
   "onboarding": {
-    "welcome": "Benvenuto in Workout Tracker 2!",
+    "welcome": "Benvenuto in Delta Workout!",
     "featuresTitle": "Cosa puoi fare con l'app:",
     "feature1": "Aggiungi nuovi esercizi al tuo database",
     "feature2": "Crea i tuoi piani di allenamento personalizzati",
@@ -917,7 +917,7 @@
     "loading": "Preparazione in corso..."
   },
   "presentation": {
-    "title": "Scopri Workout Tracker 2",
+    "title": "Scopri Delta Workout",
     "offline": {
       "title": "100% offline",
       "description": "I tuoi dati restano sul tuo dispositivo. Niente cloud, niente tracciamento, massima privacy e velocità."

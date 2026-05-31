@@ -30,8 +30,8 @@ export default defineConfig(({ mode }) => ({
         skipWaiting: true,
       },
       manifest: {
-        name: "Workout Tracker 2",
-        short_name: "Workout Tracker 2",
+        name: "Delta Workout",
+        short_name: "Delta Workout",
         description: "App di tracking allenamenti con gestione volumi, RPE e autoregolazione",
         theme_color: "#1a1a2e",
         background_color: "#1a1a2e",
