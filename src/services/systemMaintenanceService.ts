@@ -17,6 +17,7 @@ export class SystemMaintenanceService {
       db.workoutSessions, db.sessionExerciseGroups,
       db.sessionExerciseItems, db.sessionSets,
       db.oneRepMaxRecords, db.exercises, db.bodyWeightRecords,
+      db.exerciseVersions,
     ], async () => {
       if (selectedCategories.has('workouts')) {
         await db.plannedSets.clear();
@@ -36,7 +37,7 @@ export class SystemMaintenanceService {
       }
       if (selectedCategories.has('exercises')) {
         await db.exercises.clear();
-        await seedExercises(language);
+        await db.exerciseVersions.clear();
       }
       if (selectedCategories.has('bodyWeight')) {
         await db.bodyWeightRecords.clear();

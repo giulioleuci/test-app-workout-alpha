@@ -3,6 +3,7 @@
  */
 import { useRef, useState } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { useToast } from '@/hooks/useToast';
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function HistoryCsvToolbar({ onImported }: Props) {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -113,6 +115,7 @@ export function HistoryCsvToolbar({ onImported }: Props) {
       if (result.sessionsCopied > 0) parts.push(t('csv.copied', { count: result.sessionsCopied }));
       if (result.sessionsSkipped > 0) parts.push(t('csv.skipped', { count: result.sessionsSkipped }));
       toast({ title: t('csv.importComplete'), description: parts.join(', ') || t('csv.noDataImported') });
+      await queryClient.invalidateQueries();
       onImported?.();
     } catch (err) {
       showErrorToast(toast, t('csv.importError'), extractErrorMessage(err));

@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { useToast } from '@/hooks/useToast';
@@ -14,6 +15,7 @@ import { isNative, nativeDownloadBackup, nativePickAndReadFile } from '@/service
 
 /** View-model hook owning the backup export/import/conflict flow. */
 export function useBackup() {
+  const queryClient = useQueryClient();
   const { t } = useTranslation();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,6 +121,7 @@ export function useBackup() {
       setImportedBackup(null);
       setConflicts(null);
       setImportFileName('');
+      await queryClient.invalidateQueries();
     } catch (e) {
       showErrorToast(toast, t('backup.importError'), extractErrorMessage(e, t('common.unknown')));
     } finally {
