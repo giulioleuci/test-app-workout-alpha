@@ -64,7 +64,7 @@ const HistorySessionCard = memo(function HistorySessionCard({
                     <Trash2 className="mr-2 h-4 w-4" />{t('actions.delete')}
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
                   <AlertDialogHeader>
                     <AlertDialogTitle>{t('sessions.deleteSession')}</AlertDialogTitle>
                     <AlertDialogDescription>{t('sessions.deleteSessionConfirm')}</AlertDialogDescription>

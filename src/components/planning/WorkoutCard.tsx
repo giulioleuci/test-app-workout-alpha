@@ -137,7 +137,7 @@ export const WorkoutCard = memo(function WorkoutCard({
         </CardContent>
 
         <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-          <AlertDialogContent>
+          <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
             <AlertDialogHeader>
               <AlertDialogTitle>{t('common.areYouSure', 'Are you sure?')}</AlertDialogTitle>
               <AlertDialogDescription>

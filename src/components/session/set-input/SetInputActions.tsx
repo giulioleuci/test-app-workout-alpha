@@ -79,7 +79,7 @@ export default function SetInputActions({
                   {notesValue && <span className="h-1 w-1 rounded-full bg-primary" />}
                 </button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
+              <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>{t('activeSession.notes')}</DialogTitle>
                 </DialogHeader>

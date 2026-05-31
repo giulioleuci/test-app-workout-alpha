@@ -169,7 +169,7 @@ export default function BackupPage() {
       </Card>
 
       <AlertDialog open={conflictDialogOpen} onOpenChange={setConflictDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('backup.conflictTitle')}</AlertDialogTitle>
             <AlertDialogDescription>

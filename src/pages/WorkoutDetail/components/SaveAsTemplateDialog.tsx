@@ -25,7 +25,7 @@ export default function SaveAsTemplateDialog({ open, onOpenChange, initialName, 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent style={{ width: '95vw' }} className="max-w-md">
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
         <DialogHeader>
           <DialogTitle>{t('sessions.saveAsTemplate')}</DialogTitle>
           <DialogDescription>{t('sessions.templateName')}</DialogDescription>

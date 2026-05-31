@@ -35,7 +35,7 @@ export function DeleteAccountSection() {
           {t('users.deleteAccount')}
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>{t('users.deleteAccount')}</AlertDialogTitle>
           <AlertDialogDescription>{t('users.deleteAccountConfirm')}</AlertDialogDescription>

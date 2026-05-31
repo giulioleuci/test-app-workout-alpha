@@ -29,7 +29,7 @@ export function CsvConflictDialog({ open, onOpenChange, conflictCount, onChoose 
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>{t('csv.conflictTitle')}</AlertDialogTitle>
           <AlertDialogDescription>

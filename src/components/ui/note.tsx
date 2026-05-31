@@ -42,7 +42,7 @@ export function NoteViewerButton({ content, title, className }: NoteViewerButton
         <StickyNote className="h-3.5 w-3.5" />
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <StickyNote className="h-4 w-4 shrink-0" />

@@ -105,8 +105,7 @@ export default function QuickAddSheet({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        style={{ height: '85vh', maxWidth: '95vw' }} 
-        className="overflow-y-auto sm:h-auto sm:max-w-xl"
+        className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto sm:max-w-xl"
       >
         <DialogHeader className="mb-4">
           <div className="flex items-center gap-2 text-left">

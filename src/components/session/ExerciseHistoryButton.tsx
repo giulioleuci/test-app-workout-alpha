@@ -48,7 +48,7 @@ export default function ExerciseHistoryButton({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center justify-between pr-8">
             <DialogTitle className="text-sm font-semibold">{t('activeSession.exerciseHistory')}</DialogTitle>

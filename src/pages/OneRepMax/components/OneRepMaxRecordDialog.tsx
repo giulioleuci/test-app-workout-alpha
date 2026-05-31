@@ -97,7 +97,7 @@ export default function OneRepMaxRecordDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editingRecord ? t('oneRepMax.editRecord') : t('oneRepMax.addRecord')}</DialogTitle>
         </DialogHeader>

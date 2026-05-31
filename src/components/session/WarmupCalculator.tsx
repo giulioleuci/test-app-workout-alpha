@@ -106,7 +106,7 @@ export default function WarmupCalculator({ workingWeight, exercise, workoutSessi
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md" style={{ maxWidth: '425px' }}>
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
