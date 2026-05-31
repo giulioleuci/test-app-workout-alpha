@@ -1,5 +1,6 @@
 import { Suspense, useMemo } from 'react';
 
+import { motion, AnimatePresence } from 'framer-motion';
 import { Dumbbell, LayoutDashboard, BookOpen, BarChart3, Settings, History, HardDrive, Target, UserCircle, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
@@ -34,6 +35,7 @@ function useCurrentPage(navItems: NavItem[]) {
 
 export function AppLayout() {
   const { t } = useTranslation();
+  const location = useLocation();
   const baseNavItems = useMemo(() => [
     { to: '/', icon: LayoutDashboard, label: t('nav.dashboard') },
     { to: '/workouts', icon: Dumbbell, label: t('nav.workouts') },
@@ -85,13 +87,23 @@ export function AppLayout() {
           {/* Main content */}
           <main className="flex-1 overflow-auto">
             <div className="container max-w-5xl px-4 pb-20 pt-4">
-              <Suspense fallback={
-                <div className="py-8">
-                  <ListPageSkeleton />
-                </div>
-              }>
-                <Outlet />
-              </Suspense>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Suspense fallback={
+                    <div className="py-8">
+                      <ListPageSkeleton />
+                    </div>
+                  }>
+                    <Outlet />
+                  </Suspense>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </main>
 
