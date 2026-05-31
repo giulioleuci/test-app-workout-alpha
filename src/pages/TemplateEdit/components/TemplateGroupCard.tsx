@@ -80,7 +80,7 @@ export default function TemplateGroupCard({
                     <Plus className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent style={{ maxHeight: '80vh', width: '95vw' }} className="max-w-lg overflow-y-auto">
+                <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-lg">
                   <DialogHeader>
                     <DialogTitle>{t('sessions.addExercise')}</DialogTitle>
                   </DialogHeader>

@@ -52,7 +52,7 @@ export default function WarmupConfigDialog({ warmupSets, onUpdate }: WarmupConfi
           <span className="hidden">{t('planning.warmupSets')}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md" style={{ width: '95vw' }}>
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md" >
         <DialogHeader>
           <DialogTitle>{t('planning.configureWarmup')}</DialogTitle>
         </DialogHeader>

@@ -173,7 +173,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
         }
       }
     }}>
-      <DialogContent className="flex max-h-[90vh] max-w-md flex-col overflow-hidden p-0">
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto flex max-h-[90vh] max-w-md flex-col overflow-hidden p-0">
         <DialogHeader className="shrink-0 px-6 pt-6">
           <div className="flex items-center justify-between">
             <LanguageSwitcher showLabel={false} iconOnly={true} />

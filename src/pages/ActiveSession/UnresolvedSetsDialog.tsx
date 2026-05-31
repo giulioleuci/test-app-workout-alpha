@@ -37,7 +37,7 @@ export default function UnresolvedSetsDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>{t('sessionMutator.unresolvedSets')}</AlertDialogTitle>
           <AlertDialogDescription>

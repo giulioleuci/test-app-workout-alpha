@@ -55,7 +55,7 @@ export default function ExerciseList() {
   return (
     <div className="space-y-6 pb-20">
       <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setEditingExercise(null); }}>
-        <DialogContent style={{ maxHeight: '90vh' }} className="max-w-lg overflow-y-auto">
+        <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingExercise ? t('actions.edit') : t('exercises.create')}</DialogTitle>
           </DialogHeader>

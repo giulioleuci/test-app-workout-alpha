@@ -67,7 +67,7 @@ export default function LoadSuggestionDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-lg sm:rounded-lg">
+      <DialogContent className="w-[95vw] sm:w-full max-w-lg sm:rounded-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -92,7 +92,7 @@ export default function LoadSuggestionDialog({
                   <div className="py-8 text-center text-muted-foreground">{t('common.noData')}</div>
                 ) : (
                   <>
-                    <div className="min-h-[340px] space-y-3">
+                    <div className="space-y-3">
                       {paginatedPlan.map((rec) => (
                         <RecommendationCard
                           key={rec.id}
@@ -171,7 +171,7 @@ export default function LoadSuggestionDialog({
                 <div className="py-8 text-center text-muted-foreground">{t('common.noData')}</div>
               ) : (
                 <>
-                  <div className="min-h-[340px] space-y-3">
+                  <div className="space-y-3">
                     {paginatedManual.map((rec, i: number) => (
                       <RecommendationCard
                         key={i}

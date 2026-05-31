@@ -75,7 +75,7 @@ export default function UnsavedChangesBar({
 
       {/* Save confirmation */}
       <AlertDialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('unsavedChanges.saveConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>{t('unsavedChanges.saveConfirmDescription')}</AlertDialogDescription>
@@ -91,7 +91,7 @@ export default function UnsavedChangesBar({
 
       {/* Discard confirmation */}
       <AlertDialog open={discardDialogOpen} onOpenChange={setDiscardDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('unsavedChanges.discardConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>{t('unsavedChanges.discardConfirmDescription')}</AlertDialogDescription>
@@ -107,7 +107,7 @@ export default function UnsavedChangesBar({
 
       {/* Navigation blocked dialog */}
       <AlertDialog open={isNavigationBlocked} onOpenChange={(open) => { if (!open) onCancelNavigation(); }}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('unsavedChanges.navigationTitle')}</AlertDialogTitle>
             <AlertDialogDescription>{t('unsavedChanges.navigationDescription')}</AlertDialogDescription>

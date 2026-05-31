@@ -30,7 +30,7 @@ export function ExerciseInfoButton({ exercise }: Props) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent style={{ maxHeight: '80vh' }} className="max-w-lg overflow-y-auto">
+        <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-lg">
           <DialogHeader>
             <DialogTitle>{exercise.name}</DialogTitle>
           </DialogHeader>

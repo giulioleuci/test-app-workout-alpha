@@ -22,7 +22,7 @@ export default function ItemSettingsDialog({ item, onUpdate }: { item: PlannedEx
                     <Pencil className="h-3.5 w-3.5" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
                 <DialogHeader>
                     <DialogTitle>{t('actions.edit')} {t('common.exercise').toLowerCase()}</DialogTitle>
                 </DialogHeader>

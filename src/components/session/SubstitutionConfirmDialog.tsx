@@ -39,7 +39,7 @@ export default function SubstitutionConfirmDialog({ open, prompts, onComplete, o
 
   return (
     <AlertDialog open={open} onOpenChange={(v) => !v && onCancel()}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>{t('sessionMutator.swapExercise')}</AlertDialogTitle>
           <AlertDialogDescription>

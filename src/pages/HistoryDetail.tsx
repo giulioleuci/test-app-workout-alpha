@@ -268,7 +268,7 @@ export default function HistoryDetail() {
                 <Trash2 className="mr-1 h-4 w-4" />{t('actions.delete')}
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
               <AlertDialogHeader>
                 <AlertDialogTitle>{t('sessions.deleteSession')}</AlertDialogTitle>
                 <AlertDialogDescription>{t('common.irreversibleAction')}</AlertDialogDescription>

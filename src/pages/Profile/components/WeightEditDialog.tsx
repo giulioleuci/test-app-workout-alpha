@@ -60,7 +60,7 @@ export default function WeightEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t('profile.editRecord')}</DialogTitle>
         </DialogHeader>

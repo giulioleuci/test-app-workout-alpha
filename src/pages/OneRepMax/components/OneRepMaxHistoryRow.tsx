@@ -76,7 +76,7 @@ export default function OneRepMaxHistoryRow({
       </div>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('actions.delete')}</AlertDialogTitle>
             <AlertDialogDescription>

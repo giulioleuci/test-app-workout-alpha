@@ -37,7 +37,7 @@ export default function EditWorkoutDialog({ open, onOpenChange, workout, onSave 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-95vw max-w-md">
+      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto w-95vw max-w-md">
         <DialogHeader>
           <DialogTitle>{t('actions.edit')} {t('workouts.title').toLowerCase()}</DialogTitle>
         </DialogHeader>
