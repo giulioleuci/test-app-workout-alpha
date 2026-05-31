@@ -47,7 +47,7 @@ function AppInfoModal() {
             {t('onboarding.welcome')}
           </DialogTitle>
           <DialogDescription className="text-center">
-            Workout Tracker 2
+            Delta Workout
           </DialogDescription>
         </DialogHeader>
 

@@ -1,10 +1,10 @@
-# Workout Tracker 2
+# Delta Workout
 
 [English Version](#workout-tracker-2-english) | [Versione Italiana](#workout-tracker-2-italiano)
 
 ---
 
-# Workout Tracker 2 (English)
+# Delta Workout (English)
 
 A modern, offline-first workout tracking application built with React, Vite, and TypeScript. Designed for serious lifters, it offers detailed session tracking, volume analysis, progress monitoring, and seamless data backup.
 
@@ -127,7 +127,7 @@ npm test
 
 ---
 
-# Workout Tracker 2 (Italiano)
+# Delta Workout (Italiano)
 
 Un'applicazione moderna per il tracciamento degli allenamenti, offline-first, costruita con React, Vite e TypeScript. Progettata per atleti seri, offre un tracciamento dettagliato delle sessioni, analisi del volume, monitoraggio dei progressi e backup dei dati senza interruzioni.
 
