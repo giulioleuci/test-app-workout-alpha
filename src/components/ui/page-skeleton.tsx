@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 /** Generic detail page skeleton: header + cards */
 export function DetailPageSkeleton() {
   return (
-    <div className="animate-fade-in space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Skeleton className="h-10 w-10 rounded-lg" />
@@ -23,7 +23,7 @@ export function DetailPageSkeleton() {
 /** Generic list page skeleton */
 export function ListPageSkeleton({ count = 5 }: { count?: number }) {
   return (
-    <div className="animate-fade-in space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-end">
         <Skeleton className="h-6 w-24 rounded-full" />
       </div>

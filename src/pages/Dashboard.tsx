@@ -1,7 +1,7 @@
 import TrainingCalendar from '@/components/dashboard/TrainingCalendar';
 import PendingSessionDialog from '@/components/session/PendingSessionDialog';
 import SubstitutionConfirmDialog from '@/components/session/SubstitutionConfirmDialog';
-import { DetailPageSkeleton } from '@/components/ui/page-skeleton';
+import { ListPageSkeleton } from '@/components/ui/page-skeleton';
 import {
   useDashboardStats,
   useNextSessionSuggestion,
@@ -45,7 +45,7 @@ export default function Dashboard() {
   const planCount = stats?.planCount ?? 0;
 
   if (isLoading) {
-    return <DetailPageSkeleton />;
+    return <ListPageSkeleton />;
   }
 
   return (
