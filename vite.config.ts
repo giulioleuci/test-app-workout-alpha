@@ -37,15 +37,15 @@ export default defineConfig(({ mode }) => ({
         background_color: "#1a1a2e",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "./",
         icons: [
           {
-            src: "/icon.png",
+            src: "icon.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/icon.png",
+            src: "icon.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",
