@@ -74,10 +74,10 @@ export default function Dashboard() {
             />
           )}
 
-          <TrainingCalendar />
+          <MuscleFreshnessList />
         </div>
 
-        <MuscleFreshnessList />
+        <TrainingCalendar />
       </div>
 
       <ConsistencyHeatmap />

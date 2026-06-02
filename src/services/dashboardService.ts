@@ -30,6 +30,8 @@ export interface LastWorkoutSummary {
   duration: number;
   primaryMuscles: string[];
   secondaryMuscles: string[];
+  primaryMuscleGroups: string[];
+  secondaryMuscleGroups: string[];
   exercises: {
     name: string;
     sets: number;
@@ -203,6 +205,8 @@ export async function getLastWorkoutSummary(): Promise<LastWorkoutSummary | null
     duration,
     primaryMuscles: deduced.primaryMuscles,
     secondaryMuscles: deduced.secondaryMuscles,
+    primaryMuscleGroups: deduced.primaryMuscleGroups,
+    secondaryMuscleGroups: deduced.secondaryMuscleGroups,
     exercises: exerciseDetails,
   };
 }

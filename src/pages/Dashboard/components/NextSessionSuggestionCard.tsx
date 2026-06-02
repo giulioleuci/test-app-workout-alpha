@@ -63,29 +63,12 @@ export default function NextSessionSuggestionCard({
             </div>
           </div>
 
-          { }
-          {suggestion.volume.byMuscleGroup.length > 0 && (
-            <div>
-              <p className="text-caption mb-1 font-medium uppercase tracking-wide text-muted-foreground">{t('dashboard.muscleGroups')}</p>
-              <div className="flex flex-wrap gap-1">
-                { }
-                {suggestion.volume.byMuscleGroup.map((mg: { key: string, label: string }) => (
-                  <Badge key={mg.key} variant="default" className="text-caption">
-                    {mg.label}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          { }
           {suggestion.volume.byMuscle.length > 0 && (
             <div>
               <p className="text-caption mb-1 font-medium uppercase tracking-wide text-muted-foreground">{t('dashboard.musclesInvolved')}</p>
               <div className="flex flex-wrap gap-1">
-                { }
                 {suggestion.volume.byMuscle.map((m: { key: string, label: string }) => (
-                  <Badge key={m.key} variant="outline" className="text-caption">
+                  <Badge key={m.key} variant="default" className="text-caption">
                     {m.label}
                   </Badge>
                 ))}

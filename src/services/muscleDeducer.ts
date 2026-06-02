@@ -6,6 +6,8 @@ import { Muscle, MuscleGroup, MuscleGroupMuscles } from '@/domain/enums';
 export interface DeducedMuscles {
   primaryMuscles: Muscle[];
   secondaryMuscles: Muscle[];
+  primaryMuscleGroups: MuscleGroup[];
+  secondaryMuscleGroups: MuscleGroup[];
   muscleGroups: MuscleGroup[];
 }
 
@@ -14,7 +16,13 @@ export async function deduceSessionMuscles(sessionId: string): Promise<DeducedMu
   const groups = await WorkoutPlanRepository.getGroupsBySession(sessionId);
   const groupIds = groups.map(g => g.id);
 
-  if (groupIds.length === 0) return { primaryMuscles: [], secondaryMuscles: [], muscleGroups: [] };
+  if (groupIds.length === 0) return { 
+    primaryMuscles: [], 
+    secondaryMuscles: [], 
+    primaryMuscleGroups: [], 
+    secondaryMuscleGroups: [], 
+    muscleGroups: [] 
+  };
 
   // This might be slow if we loop.
   // I can use Promise.all.
@@ -23,7 +31,13 @@ export async function deduceSessionMuscles(sessionId: string): Promise<DeducedMu
 
   const exerciseIds = [...new Set(items.map(i => i.exerciseId))];
 
-  if (exerciseIds.length === 0) return { primaryMuscles: [], secondaryMuscles: [], muscleGroups: [] };
+  if (exerciseIds.length === 0) return { 
+    primaryMuscles: [], 
+    secondaryMuscles: [], 
+    primaryMuscleGroups: [], 
+    secondaryMuscleGroups: [], 
+    muscleGroups: [] 
+  };
 
   const exercises = await ExerciseRepository.getByIds(exerciseIds);
 
@@ -44,18 +58,26 @@ export function deduceMusclesFromExercises(exercises: Exercise[]): DeducedMuscle
   // Remove from secondary any that are already primary
   primarySet.forEach(m => secondarySet.delete(m));
 
-  const allMuscles = new Set([...primarySet, ...secondarySet]);
-  const muscleGroups: MuscleGroup[] = [];
+  const primaryMuscleGroups: MuscleGroup[] = [];
+  const secondaryMuscleGroups: MuscleGroup[] = [];
 
   for (const [group, muscles] of Object.entries(MuscleGroupMuscles)) {
-    if (muscles.some(m => allMuscles.has(m))) {
-      muscleGroups.push(group as MuscleGroup);
+    const mg = group as MuscleGroup;
+    const hasPrimary = muscles.some(m => primarySet.has(m));
+    const hasSecondary = muscles.some(m => secondarySet.has(m));
+
+    if (hasPrimary) {
+      primaryMuscleGroups.push(mg);
+    } else if (hasSecondary) {
+      secondaryMuscleGroups.push(mg);
     }
   }
 
   return {
     primaryMuscles: [...primarySet],
     secondaryMuscles: [...secondarySet],
-    muscleGroups,
+    primaryMuscleGroups,
+    secondaryMuscleGroups,
+    muscleGroups: [...primaryMuscleGroups, ...secondaryMuscleGroups],
   };
 }
