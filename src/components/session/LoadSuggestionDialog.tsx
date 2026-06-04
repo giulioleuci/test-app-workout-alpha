@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Sparkles, Copy, Info, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge';
@@ -213,24 +213,38 @@ function RecommendationCard({ recommendation, onApply, isPreferred }: {
   isPreferred: boolean
 }) {
   const { t } = useTranslation();
+  
+  // Extract range from description if present (e.g., "(60.5-64.5 kg)")
+  const rangeMatch = /\(([^)]+)\)$/.exec(recommendation.description);
+  const range = rangeMatch ? rangeMatch[1] : null;
+
   return (
     <div className={cn(
-      "flex items-center justify-between rounded-lg border p-3 transition-colors",
+      "flex items-center justify-between rounded-lg border px-3 py-2 transition-colors",
       isPreferred ? "border-primary/50 bg-primary/5 shadow-sm" : "border-border/50 bg-muted/20"
     )}>
-      <div className="flex flex-col gap-1 overflow-hidden">
-        <div className="flex items-center gap-2">
-          <Badge variant={isPreferred ? "default" : "outline"} className="font-semibold">{recommendation.label}</Badge>
-          <span className="whitespace-nowrap text-base font-bold">{recommendation.load} {t('units.kg')}</span>
-        </div>
-        <div className="text-caption flex items-center gap-1.5 text-muted-foreground">
-          <Info className="h-3 w-3 shrink-0" />
-          <p className="truncate">{recommendation.description}</p>
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <Badge variant={isPreferred ? "default" : "outline"} className="font-semibold text-[10px] px-1.5 h-5 shrink-0 uppercase tracking-wider">
+          {recommendation.label}
+        </Badge>
+        <div className="flex items-baseline gap-1.5 min-w-0">
+          <span className="whitespace-nowrap text-base font-bold">
+            {recommendation.load} <span className="text-[10px] font-normal text-muted-foreground">{t('units.kg')}</span>
+          </span>
+          {range && (
+            <span className="text-[10px] text-muted-foreground truncate font-normal">
+              ({range})
+            </span>
+          )}
         </div>
       </div>
-      <Button size="sm" variant={isPreferred ? "default" : "secondary"} className="h-8 shrink-0 gap-1.5" onClick={() => onApply(recommendation.load)}>
-        <Copy className="h-3.5 w-3.5" />
-        {t('actions.copy')}
+      <Button 
+        size="sm" 
+        variant={isPreferred ? "default" : "secondary"} 
+        className="h-7 shrink-0 px-3 ml-2 rounded-full" 
+        onClick={() => onApply(recommendation.load)}
+      >
+        <span className="text-[10px] font-bold uppercase tracking-wider">{t('actions.use')}</span>
       </Button>
     </div>
   );
