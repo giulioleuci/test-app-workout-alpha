@@ -84,14 +84,14 @@ describe('estimateSetBlockSeconds', () => {
     expect(result.maxSeconds).toBe(240);
   });
 
-  it('uses DEFAULT_REST_SECONDS when restSecondsRange is absent', () => {
+  it('uses 0 rest when restSecondsRange is absent', () => {
     const set = makeSet({
       setCountRange: { min: 2, max: 2 },
       countRange: { min: 5, max: 5, toFailure: ToFailureIndicator.None },
     });
     const result = estimateSetBlockSeconds(set, CounterType.Reps);
-    // exec = 5*4 = 20s; 2 sets = 2*20 + 1*90 = 130
-    expect(result.minSeconds).toBe(130);
+    // exec = 5*4 = 20s; 2 sets = 2*20 + 1*0 = 40
+    expect(result.minSeconds).toBe(40);
   });
 
   it('uses max set count for maxSeconds', () => {
