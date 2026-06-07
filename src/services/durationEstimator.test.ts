@@ -60,12 +60,12 @@ describe('durationEstimator bug hunting', () => {
     ];
 
     const duration = estimateGroupDurationFromData(ExerciseGroupType.Superset, itemsData);
-    // Manual:
-    // Round 1: Curl(40) + 5s + French(40) + 90s
-    // Round 2: Curl(40) + 5s + French(40) + 90s
-    // Round 3: Curl(40) + 5s + French(40)
-    // Total: 3*40 + 3*5 + 3*40 + 2*90 = 120 + 15 + 120 + 180 = 435s
-    expect(duration.minSeconds).toBe(435);
+    // Manual (No transitions, no default rest):
+    // Round 1: Curl(40) + French(40) + 90s
+    // Round 2: Curl(40) + French(40) + 90s
+    // Round 3: Curl(40) + French(40)
+    // Total: 3*40 + 3*40 + 2*90 = 120 + 120 + 180 = 420s
+    expect(duration.minSeconds).toBe(420);
   });
 
   it('should correctly calculate max duration for a standard group with a range of sets', () => {

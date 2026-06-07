@@ -73,15 +73,13 @@ export function estimateGroupDurationFromData(
       const exec = estimateSetExecutionSeconds(set, item.counterType);
       total += isMax ? exec.maxSeconds : exec.minSeconds;
 
-      const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
+      const restMin = set.restSecondsRange?.min ?? 0;
       const restMax = set.restSecondsRange?.max ?? restMin;
       const rest = isMax ? restMax : restMin;
 
       if (nextStep) {
         const isSameRound = step.round !== undefined && nextStep.round !== undefined && step.round === nextStep.round;
-        if (isSameRound) {
-          total += 5; // transition
-        } else {
+        if (!isSameRound) {
           total += rest;
         }
       }
@@ -110,10 +108,6 @@ export function estimateSessionDurationFromData(
 
     min += groupDuration.minSeconds;
     max += groupDuration.maxSeconds;
-    if (i < groups.length - 1) {
-      min += 10;
-      max += 10;
-    }
   }
   return { minSeconds: min, maxSeconds: max };
 }
