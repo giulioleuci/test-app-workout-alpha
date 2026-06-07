@@ -94,4 +94,37 @@ describe('durationEstimator bug hunting', () => {
     expect(duration.minSeconds).toBe(240);
     expect(duration.maxSeconds).toBe(440);
   });
+
+  it('should correctly calculate duration for a cluster group', () => {
+    const clusterSets = [
+      {
+        id: 's1',
+        plannedExerciseItemId: 'i1',
+        setCountRange: { min: 2, max: 2 },
+        countRange: { min: 10, max: 10, toFailure: ToFailureIndicator.None },
+        restSecondsRange: { min: 180, max: 180, isFixed: true },
+        setType: SetType.Working,
+        orderIndex: 'a',
+      }
+    ];
+
+    const itemsData = [
+      {
+        counterType: CounterType.Reps,
+        sets: clusterSets,
+        clusterParams: {
+          miniSetReps: 3,
+          miniSetCount: 4,
+          interMiniSetRestSeconds: 15,
+          totalRepsTarget: 12,
+          miniSetToFailure: false
+        }
+      }
+    ];
+
+    const duration = estimateGroupDurationFromData(ExerciseGroupType.Cluster, itemsData);
+    // oneCluster = 4 * (3*4) + (4-1)*15 = 48 + 45 = 93s
+    // 2 clusters: 2*93 + 1*180 = 186 + 180 = 366s
+    expect(duration.minSeconds).toBe(366);
+  });
 });

@@ -51,7 +51,7 @@ export function estimateGroupDurationFromData(
   const orderMin = computeTraversalOrder(groupType, minConfigs);
   const orderMax = computeTraversalOrder(groupType, maxConfigs);
 
-  const calculateTotal = (order: any[], isMax: boolean) => {
+  const calculateTotal = (order: TraversalStep[], isMax: boolean) => {
     let total = 0;
     for (let i = 0; i < order.length; i++) {
       const step = order[i];
@@ -63,9 +63,15 @@ export function estimateGroupDurationFromData(
 
       const isCluster = item.clusterParams !== undefined;
       if (isCluster) {
-        if (set.setType === SetType.Working && step.innerIndex === 0) {
+        if (step.innerIndex === 0) {
           const d = estimateSetBlockSeconds(set, item.counterType, item.clusterParams);
           total += isMax ? d.maxSeconds : d.minSeconds;
+
+          if (nextStep && (nextStep.itemIndex !== step.itemIndex || nextStep.setIndex !== step.setIndex)) {
+            const restMin = set.restSecondsRange?.min ?? 0;
+            const restMax = set.restSecondsRange?.max ?? restMin;
+            total += isMax ? restMax : restMin;
+          }
         }
         continue;
       }
