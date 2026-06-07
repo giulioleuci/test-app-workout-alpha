@@ -8,8 +8,10 @@ export class SessionNavigator {
   static findNextTarget(loadedGroups: LoadedGroup[]): CurrentTarget | null {
     for (let gi = 0; gi < loadedGroups.length; gi++) {
       const g = loadedGroups[gi];
-      const itemSetCounts = g.items.map(i => i.sets.length);
-      const order = computeTraversalOrder(g.group.groupType, itemSetCounts);
+      const itemConfigs = g.items.map(i => ({
+        blockCounts: i.sets.map(s => 1) // Loaded sets are already individual
+      }));
+      const order = computeTraversalOrder(g.group.groupType, itemConfigs);
 
       for (const step of order) {
         const item = g.items[step.itemIndex];

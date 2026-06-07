@@ -41,61 +41,58 @@ export function estimateGroupDurationFromData(
 ): DurationRange {
   if (items.length === 0) return { minSeconds: 0, maxSeconds: 0 };
 
-  const itemSetCounts = items.map(it => it.sets.length);
-  const order = computeTraversalOrder(groupType, itemSetCounts);
+  const minConfigs = items.map(it => ({
+    blockCounts: it.sets.map(s => s.setCountRange.min)
+  }));
+  const maxConfigs = items.map(it => ({
+    blockCounts: it.sets.map(s => s.setCountRange.max ?? s.setCountRange.min)
+  }));
 
-  let totalMin = 0;
-  let totalMax = 0;
+  const orderMin = computeTraversalOrder(groupType, minConfigs);
+  const orderMax = computeTraversalOrder(groupType, maxConfigs);
 
-  for (let i = 0; i < order.length; i++) {
-    const step = order[i];
-    const nextStep = order[i + 1];
-    const item = items[step.itemIndex];
-    const set = item.sets[step.setIndex];
+  const calculateTotal = (order: any[], isMax: boolean) => {
+    let total = 0;
+    for (let i = 0; i < order.length; i++) {
+      const step = order[i];
+      const nextStep = order[i + 1];
+      const item = items[step.itemIndex];
+      const set = item.sets[step.setIndex];
 
-    if (!set) continue;
+      if (!set) continue;
 
-    // IF it's a cluster, we should be careful not to double count.
-    const isCluster = items[0].clusterParams !== undefined;
-
-    if (isCluster) {
-      // In Cluster, we only count the Working sets as blocks. The MiniSets are internal to the block.
-      if (set.setType === SetType.Working) {
-        const d = estimateSetBlockSeconds(set, item.counterType, item.clusterParams);
-        totalMin += d.minSeconds;
-        totalMax += d.maxSeconds;
+      const isCluster = item.clusterParams !== undefined;
+      if (isCluster) {
+        if (set.setType === SetType.Working && step.innerIndex === 0) {
+          const d = estimateSetBlockSeconds(set, item.counterType, item.clusterParams);
+          total += isMax ? d.maxSeconds : d.minSeconds;
+        }
+        continue;
       }
-      // ClusterMiniSet planned sets are ignored here because they are consumed inside Working set's estimateSetBlockSeconds
-      continue;
-    }
 
-    const exec = estimateSetExecutionSeconds(set, item.counterType);
-    const setsCountMin = set.setCountRange.min;
-    const setsCountMax = set.setCountRange.max ?? setsCountMin;
+      const exec = estimateSetExecutionSeconds(set, item.counterType);
+      total += isMax ? exec.maxSeconds : exec.minSeconds;
 
-    totalMin += setsCountMin * exec.minSeconds;
-    totalMax += setsCountMax * exec.maxSeconds;
+      const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
+      const restMax = set.restSecondsRange?.max ?? restMin;
+      const rest = isMax ? restMax : restMin;
 
-    // Add rest between sets/exercises
-    const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
-    const restMax = set.restSecondsRange?.max ?? restMin;
-
-    if (nextStep) {
-      const isSameRound = step.round !== undefined && nextStep.round !== undefined && step.round === nextStep.round;
-      if (isSameRound) {
-        totalMin += 5; // transition
-        totalMax += 5;
-      } else {
-        totalMin += Math.max(0, setsCountMin - 1) * restMin + restMin;
-        totalMax += Math.max(0, setsCountMax - 1) * restMax + restMax;
+      if (nextStep) {
+        const isSameRound = step.round !== undefined && nextStep.round !== undefined && step.round === nextStep.round;
+        if (isSameRound) {
+          total += 5; // transition
+        } else {
+          total += rest;
+        }
       }
-    } else {
-      totalMin += Math.max(0, setsCountMin - 1) * restMin;
-      totalMax += Math.max(0, setsCountMax - 1) * restMax;
     }
-  }
+    return total;
+  };
 
-  return { minSeconds: totalMin, maxSeconds: totalMax };
+  return {
+    minSeconds: calculateTotal(orderMin, false),
+    maxSeconds: calculateTotal(orderMax, true),
+  };
 }
 
 /** Pure in-memory session duration estimate — no DB access */
