@@ -43,7 +43,7 @@ export function estimateSetBlockSeconds(
         const miniRest = clusterParams.interMiniSetRestSeconds;
         const setsMin = set.setCountRange.min;
         const setsMax = set.setCountRange.max ?? setsMin;
-        const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
+        const restMin = set.restSecondsRange?.min ?? 0;
         const restMax = set.restSecondsRange?.max ?? restMin;
 
         const oneCluster = miniSetCount * miniSetExec + Math.max(0, miniSetCount - 1) * miniRest;
@@ -56,7 +56,7 @@ export function estimateSetBlockSeconds(
     const exec = estimateSetExecutionSeconds(set, counterType);
     const setsMin = set.setCountRange.min;
     const setsMax = set.setCountRange.max ?? setsMin;
-    const restMin = set.restSecondsRange?.min ?? DEFAULT_REST_SECONDS;
+    const restMin = set.restSecondsRange?.min ?? 0;
     const restMax = set.restSecondsRange?.max ?? restMin;
 
     return {

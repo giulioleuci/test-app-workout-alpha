@@ -6,105 +6,106 @@ import { computeTraversalOrder } from '@/services/traversal';
 describe('Traversal Service', () => {
   describe('Sequential Traversal (Standard, Warmup, Cluster)', () => {
     it('should traverse exercises sequentially for Standard group', () => {
-      const itemSetCounts = [2, 3]; // Exercise 0 has 2 sets, Exercise 1 has 3 sets
-      const result = computeTraversalOrder(ExerciseGroupType.Standard, itemSetCounts);
+      const itemConfigs = [
+        { blockCounts: [2] }, // Exercise 0: 1 block of 2 sets
+        { blockCounts: [3] }  // Exercise 1: 1 block of 3 sets
+      ];
+      const result = computeTraversalOrder(ExerciseGroupType.Standard, itemConfigs);
 
       expect(result).toEqual([
-        { itemIndex: 0, setIndex: 0 },
-        { itemIndex: 0, setIndex: 1 },
-        { itemIndex: 1, setIndex: 0 },
-        { itemIndex: 1, setIndex: 1 },
-        { itemIndex: 1, setIndex: 2 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 0 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 1 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 0 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 1 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 2 },
       ]);
     });
 
     it('should traverse exercises sequentially for Warmup group', () => {
-      const itemSetCounts = [1, 1];
-      const result = computeTraversalOrder(ExerciseGroupType.Warmup, itemSetCounts);
+      const itemConfigs = [{ blockCounts: [1] }, { blockCounts: [1] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Warmup, itemConfigs);
 
       expect(result).toEqual([
-        { itemIndex: 0, setIndex: 0 },
-        { itemIndex: 1, setIndex: 0 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 0 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 0 },
       ]);
     });
 
     it('should traverse exercises sequentially for Cluster group', () => {
-      const itemSetCounts = [3];
-      const result = computeTraversalOrder(ExerciseGroupType.Cluster, itemSetCounts);
+      const itemConfigs = [{ blockCounts: [3] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Cluster, itemConfigs);
 
       expect(result).toEqual([
-        { itemIndex: 0, setIndex: 0 },
-        { itemIndex: 0, setIndex: 1 },
-        { itemIndex: 0, setIndex: 2 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 0 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 1 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 2 },
       ]);
     });
   });
 
   describe('Interleaved Traversal (Superset, Circuit, Amrap, Emom)', () => {
     it('should interleave exercises for Superset group', () => {
-      const itemSetCounts = [2, 2];
-      const result = computeTraversalOrder(ExerciseGroupType.Superset, itemSetCounts);
+      const itemConfigs = [{ blockCounts: [2] }, { blockCounts: [2] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Superset, itemConfigs);
 
       expect(result).toEqual([
-        { itemIndex: 0, setIndex: 0, round: 0 },
-        { itemIndex: 1, setIndex: 0, round: 0 },
-        { itemIndex: 0, setIndex: 1, round: 1 },
-        { itemIndex: 1, setIndex: 1, round: 1 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 0, round: 0 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 0, round: 0 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 1, round: 1 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 1, round: 1 },
       ]);
     });
 
     it('should handle different set counts in interleaved traversal', () => {
-      const itemSetCounts = [3, 1, 2];
-      const result = computeTraversalOrder(ExerciseGroupType.Circuit, itemSetCounts);
+      const itemConfigs = [{ blockCounts: [3] }, { blockCounts: [1] }, { blockCounts: [2] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Circuit, itemConfigs);
 
       expect(result).toEqual([
         // Round 0
-        { itemIndex: 0, setIndex: 0, round: 0 },
-        { itemIndex: 1, setIndex: 0, round: 0 },
-        { itemIndex: 2, setIndex: 0, round: 0 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 0, round: 0 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 0, round: 0 },
+        { itemIndex: 2, setIndex: 0, innerIndex: 0, round: 0 },
         // Round 1
-        { itemIndex: 0, setIndex: 1, round: 1 },
-        { itemIndex: 2, setIndex: 1, round: 1 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 1, round: 1 },
+        { itemIndex: 2, setIndex: 0, innerIndex: 1, round: 1 },
         // Round 2
-        { itemIndex: 0, setIndex: 2, round: 2 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 2, round: 2 },
       ]);
     });
 
     it('should fall back to sequential if only one exercise is present even for interleaved types', () => {
-      const itemSetCounts = [3];
-      const result = computeTraversalOrder(ExerciseGroupType.Superset, itemSetCounts);
+      const itemConfigs = [{ blockCounts: [3] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Superset, itemConfigs);
 
-      // The implementation has: if (behavior.exerciseTraversal === 'interleaved' && itemSetCounts.length > 1)
       expect(result).toEqual([
-        { itemIndex: 0, setIndex: 0 },
-        { itemIndex: 0, setIndex: 1 },
-        { itemIndex: 0, setIndex: 2 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 0 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 1 },
+        { itemIndex: 0, setIndex: 0, innerIndex: 2 },
       ]);
     });
   });
 
   describe('Edge Cases', () => {
-    it('should return empty array for empty itemSetCounts', () => {
+    it('should return empty array for empty itemConfigs', () => {
       const result = computeTraversalOrder(ExerciseGroupType.Standard, []);
       expect(result).toEqual([]);
     });
 
     it('should handle zero sets correctly', () => {
-      const result = computeTraversalOrder(ExerciseGroupType.Standard, [0, 2, 0]);
+      const itemConfigs = [{ blockCounts: [0] }, { blockCounts: [2] }, { blockCounts: [0] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Standard, itemConfigs);
       expect(result).toEqual([
-        { itemIndex: 1, setIndex: 0 },
-        { itemIndex: 1, setIndex: 1 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 0 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 1 },
       ]);
     });
 
     it('should handle zero sets in interleaved traversal', () => {
-      const result = computeTraversalOrder(ExerciseGroupType.Superset, [0, 2, 0]);
-      // itemSetCounts.length is 3, so it attempts interleaved.
-      // Round 0: ii=1 has round < 2
-      // Round 1: ii=1 has round < 2
+      const itemConfigs = [{ blockCounts: [0] }, { blockCounts: [2] }, { blockCounts: [0] }];
+      const result = computeTraversalOrder(ExerciseGroupType.Superset, itemConfigs);
       expect(result).toEqual([
-        { itemIndex: 1, setIndex: 0, round: 0 },
-        { itemIndex: 1, setIndex: 1, round: 1 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 0, round: 0 },
+        { itemIndex: 1, setIndex: 0, innerIndex: 1, round: 1 },
       ]);
     });
   });
