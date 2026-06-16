@@ -801,9 +801,6 @@
       "high": "高"
     },
     "appearance": "外观",
-    "darkMode": "深色模式",
-    "colorPalette": "配色方案",
-    "colorPaletteDesc": "为界面选择配色组合。",
     "dangerZone": "危险区域",
     "resetDatabase": "重置数据库",
     "resetDatabaseDesc": "清除所有数据并将应用恢复到包含默认动作的初始状态。",

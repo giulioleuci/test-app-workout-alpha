@@ -798,9 +798,6 @@
       "high": "High"
     },
     "appearance": "Appearance",
-    "darkMode": "Dark mode",
-    "colorPalette": "Color palette",
-    "colorPaletteDesc": "Choose a color combination for the interface.",
     "dangerZone": "Danger zone",
     "resetDatabase": "Reset database",
     "resetDatabaseDesc": "Clears all data and brings app back to initial state with default exercises.",

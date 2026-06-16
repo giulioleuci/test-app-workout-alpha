@@ -18,16 +18,6 @@ vi.mock('@/db/database', () => ({
   },
 }));
 
-vi.mock('@/hooks/useTheme', () => ({
-  useTheme: () => ({ isDark: false, toggleTheme: vi.fn() }),
-}));
-
-vi.mock('@/hooks/useColorPalette', () => ({
-  useColorPalette: () => ({ paletteId: 'default', setPalette: vi.fn() }),
-  applyPalette: vi.fn(),
-  PALETTES: [],
-}));
-
 describe('SettingsPage', () => {
   it('renders without crashing', () => {
     render(

@@ -801,9 +801,6 @@
       "high": "Haute"
     },
     "appearance": "Apparence",
-    "darkMode": "Mode sombre",
-    "colorPalette": "Palette de couleurs",
-    "colorPaletteDesc": "Choisissez une combinaison de couleurs pour l'interface.",
     "dangerZone": "Zone de danger",
     "resetDatabase": "Réinitialiser la base de données",
     "resetDatabaseDesc": "Efface toutes les données et remet l'application à l'état initial.",

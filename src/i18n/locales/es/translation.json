@@ -801,9 +801,6 @@
       "high": "Alta"
     },
     "appearance": "Apariencia",
-    "darkMode": "Modo oscuro",
-    "colorPalette": "Paleta de colores",
-    "colorPaletteDesc": "Elige una combinación de colores para la interfaz.",
     "dangerZone": "Zona de peligro",
     "resetDatabase": "Restablecer base de datos",
     "resetDatabaseDesc": "Borra todos los datos y devuelve la app al estado inicial con ejercicios por defecto.",
