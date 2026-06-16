@@ -85,7 +85,7 @@ export class SystemMaintenanceService {
     // 3. Delete global metadata database
     await globalDb.delete();
 
-    // 4. Clear all localStorage (themes, settings, persisted stores)
+    // 4. Clear all localStorage (settings, persisted stores)
     localStorage.clear();
   }
 

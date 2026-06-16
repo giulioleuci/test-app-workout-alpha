@@ -6,7 +6,7 @@ This document lists all the files necessary to understand and modify the design 
 - `tailwind.config.ts`: Main Tailwind CSS configuration, including theme extensions, colors, spacing, and animations.
 - `postcss.config.js`: PostCSS configuration.
 - `components.json`: Shadcn UI configuration.
-- `src/index.css`: Global CSS, Tailwind layers, and CSS variable definitions (light/dark mode).
+- `src/index.css`: Global CSS, Tailwind layers, and CSS variable definitions (Dark theme only).
 - `src/App.css`: App-specific global styles.
 - `src/lib/utils.ts`: Contains the `cn` utility for conditional Tailwind class merging.
 
@@ -31,7 +31,7 @@ These files define the core design tokens used throughout the app.
 - `src/design-system/utils/colors.ts`: Color manipulation utilities.
 - `src/design-system/utils/spacing.ts`: Spacing utilities.
 - `src/design-system/hooks/useResponsive.ts`: Hook for responsive design logic.
-- `src/design-system/hooks/useTheme.ts`: Hook for theme management.
+- `src/design-system/hooks/useTheme.ts`: Hook for accessing static design system tokens.
 
 ## 5. UI Components (Shadcn & Custom) (`src/components/ui/`)
 These are the building blocks of the UI.
@@ -49,19 +49,13 @@ Define the overall structure and navigation.
 
 ## 7. Backgrounds (`src/components/backgrounds/`)
 - `src/components/backgrounds/PageBackground.tsx`: Global page background component.
-- `src/components/backgrounds/BackgroundVariants.tsx`: Different background styles.
 
-## 8. Theme & Palette Management
-- `src/design-system/palettes.config.ts`: Definition of available color palettes (Default, Grayscale, Green, etc.).
-- `src/hooks/useTheme.ts`: Hook for managing light/dark mode.
-- `src/hooks/useColorPalette.ts`: Hook for switching between different color palettes.
-
-## 9. App Entry & Core
+## 8. App Entry & Core
 - `src/App.tsx`: Main entry point, router configuration, and global providers.
 - `src/main.tsx`: React DOM rendering and global imports.
 - `index.html`: Root HTML file with font imports and metadata.
 
-## 10. Public Assets
+## 9. Public Assets
 - `public/manifest.webmanifest`: PWA manifest (theme colors, icons).
 - `public/favicon.ico`: App favicon.
 - `public/icon.png`: Main app icon.
