@@ -59,8 +59,7 @@ describe('Account Deletion and App Reset', () => {
     // 1. Setup multiple users
     await userService.createUser('User 1');
     await userService.createUser('User 2');
-    localStorage.setItem('app-theme', 'dark');
-    localStorage.setItem('app-color-palette', 'vibrant');
+    localStorage.setItem('some-setting', 'value');
 
     // 2. Perform reset
     await SystemMaintenanceService.resetWholeApplication();
@@ -72,8 +71,7 @@ describe('Account Deletion and App Reset', () => {
     expect(users.length).toBe(0);
 
     // 4. Verify localStorage is empty
-    expect(localStorage.getItem('app-theme')).toBeNull();
-    expect(localStorage.getItem('app-color-palette')).toBeNull();
+    expect(localStorage.getItem('some-setting')).toBeNull();
     
     // 5. Verify appState is cleared
     const state = await globalDb.appState.get('singleton');

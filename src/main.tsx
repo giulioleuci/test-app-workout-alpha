@@ -15,21 +15,11 @@ import { queryClient } from "@/lib/queryClient";
 
 import App from "./App.tsx";
 import { UserGate } from "./components/UserGate";
-import { applyPalette, type PaletteId } from "./hooks/useColorPalette";
 import { initCapacitor } from "./services/capacitorInit";
 
 
 import "./index.css";
 import "./i18n/config";
-
-// Apply stored theme immediately to avoid flash
-const stored = localStorage.getItem('app-theme');
-const isDark = stored ? stored === 'dark' : true;
-document.documentElement.classList.toggle('dark', isDark);
-
-// Apply stored palette immediately
-const paletteId = (localStorage.getItem('app-color-palette') || 'default') as PaletteId;
-applyPalette(paletteId, isDark);
 
 // Init Capacitor plugins (no-op on web)
 void initCapacitor();

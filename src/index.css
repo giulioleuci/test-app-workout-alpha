@@ -7,74 +7,6 @@
 @layer base {
   :root {
     --keyboard-offset: 0px;
-    --background: 0 0% 98%;
-    --foreground: 220 20% 10%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
-
-    --elevated: 0 0% 100%;
-    --elevated-foreground: 220 20% 10%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
-
-    --primary: 220 68% 52%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 15% 93%;
-    --secondary-foreground: 220 20% 20%;
-
-    --muted: 220 15% 95%;
-    --muted-foreground: 220 10% 45%;
-
-    --accent: 172 55% 42%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 220 68% 52%;
-
-    --radius: 0.5rem;
-
-    --success: 150 60% 42%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 65% 55%;
-    --warning-foreground: 0 0% 100%;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Trend Colors - Light */
-    --trend-improving: 142 71% 45%;
-    --trend-improving-foreground: 0 0% 100%;
-
-    --trend-stable: 221 83% 53%;
-    --trend-stable-foreground: 224 76% 48%;
-
-    --trend-stagnant: 35 40% 50%;
-    --trend-stagnant-foreground: 0 0% 100%;
-
-    --trend-deteriorating: 0 84% 60%;
-    --trend-deteriorating-foreground: 0 0% 100%;
-
-    --breakpoint-sm: 640px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 1024px;
-    --breakpoint-xl: 1280px;
-    --breakpoint-2xl: 1400px;
-  }
-
-  .dark {
     --background: 222 25% 8%;
     --foreground: 210 20% 92%;
 
@@ -106,6 +38,8 @@
     --input: 222 18% 18%;
     --ring: 220 65% 60%;
 
+    --radius: 0.5rem;
+
     --success: 150 55% 48%;
     --success-foreground: 0 0% 100%;
     --warning: 38 55% 58%;
@@ -120,7 +54,7 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Trend Colors - Dark */
+    /* Trend Colors */
     --trend-improving: 142 70% 50%;
     --trend-improving-foreground: 144 80% 10%;
 
@@ -132,6 +66,12 @@
 
     --trend-deteriorating: 0 84% 65%;
     --trend-deteriorating-foreground: 0 0% 100%;
+
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1400px;
   }
 }
 

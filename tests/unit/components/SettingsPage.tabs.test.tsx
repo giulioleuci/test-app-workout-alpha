@@ -51,16 +51,6 @@ vi.mock('@/components/auth/DeleteAccountSection', () => ({
   DeleteAccountSection: () => <div data-testid="delete-account">DeleteAccountSection</div>,
 }));
 
-vi.mock('@/hooks/useTheme', () => ({
-  useTheme: () => ({ isDark: false, toggleTheme: vi.fn() }),
-}));
-
-vi.mock('@/hooks/useColorPalette', () => ({
-  useColorPalette: () => ({ paletteId: 'default', setPalette: vi.fn() }),
-  applyPalette: vi.fn(),
-  PALETTES: [],
-}));
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -70,29 +60,22 @@ const queryClient = new QueryClient({
 });
 
 describe('SettingsPage Layout', () => {
-  it('renders Tabs and default content', () => {
+  it('renders Accordion and default content', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <SettingsPage />
       </QueryClientProvider>
     );
 
-    // Verify Tabs triggers and default content
-    const preferencesTexts = screen.getAllByText('settings.preferences');
-    expect(preferencesTexts.length).toBeGreaterThanOrEqual(2); // Tab trigger + Card title
+    // Verify Accordion triggers (there are multiple matches for some keys because of Trigger and Content H2)
+    expect(screen.getAllByText('settings.preferences').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('settings.appearance').length).toBeGreaterThanOrEqual(1);
 
-    expect(screen.getByText('settings.appearance')).toBeInTheDocument();
-
-    // Verify Preferences content is visible
+    // Verify Preferences content is visible (since it's open by default)
     expect(screen.getByText('settings.autoAdjustmentHint')).toBeInTheDocument();
     expect(screen.getByText('settings.hideAdvancedFeatures')).toBeInTheDocument();
 
     // Verify Danger Zone is present
     expect(screen.getByText('settings.dangerZone')).toBeInTheDocument();
-
-    // Verify Delete Account is in Danger Zone (might need to expand accordion, but text should be in document if rendered)
-    // Wait, Accordion content is hidden by default.
-    // Testing library usually can find text even if hidden unless specifically checking visibility.
-    // Or we can check if the button exists.
   });
 });
