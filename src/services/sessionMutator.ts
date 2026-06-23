@@ -7,6 +7,7 @@ import type {
 } from '@/domain/entities';
 import { ExerciseGroupType, SetType, ToFailureIndicator } from '@/domain/enums';
 import { getRankBetween, getInitialRank, generateSequentialRanks } from '@/lib/lexorank';
+import { filterPending } from '@/services/logic/setStats';
 
 /** Number of fallback working sets created when adding/swapping exercises. */
 const DEFAULT_WORKING_SETS = 3;
@@ -58,7 +59,7 @@ export async function swapExercise(
 
   // Partition into kept (completed or skipped) and incomplete
   const keptSets = allSets.filter(s => s.isCompleted || s.isSkipped);
-  const incompleteSets = allSets.filter(s => !s.isCompleted && !s.isSkipped);
+  const incompleteSets = filterPending(allSets);
   const deleteSetIds = incompleteSets.map(s => s.id);
 
   // Determine how many new sets to create

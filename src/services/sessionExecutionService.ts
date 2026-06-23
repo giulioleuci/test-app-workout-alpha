@@ -11,7 +11,7 @@ import dayjs from '@/lib/dayjs';
 import { getRankBetween, getInitialRank } from '@/lib/lexorank';
 import { analyzeSetCompliance } from '@/services/complianceAnalyzer';
 import { analyzeFatigueProgression } from '@/services/fatigueAnalyzer';
-import { computeSetEstimates } from '@/services/logic/setStats';
+import { computeSetEstimates, filterCompleted, filterPending } from '@/services/logic/setStats';
 import { profileService } from '@/services/profileService';
 import { resolveRestTimer } from '@/services/restTimerResolver';
 import { finishSession, discardSession } from '@/services/sessionFinisher';
@@ -75,7 +75,7 @@ export class SessionExecutionService {
       const allSetsForItem = current.item.sets.map((s, i) =>
         i === current.si ? completedSet : s
       );
-      const completedForItem = allSetsForItem.filter(s => s.isCompleted);
+      const completedForItem = filterCompleted(allSetsForItem);
       const completedIndex = completedForItem.length - 1;
 
       const baselineRPE = plannedSet.rpeRange?.min;
@@ -121,8 +121,7 @@ export class SessionExecutionService {
   static async skipRemainingSets(current: CurrentTarget): Promise<void> {
     const { item, si } = current;
     const setsToSkip = item.sets.slice(si);
-    const updates = setsToSkip
-      .filter(s => !s.isCompleted && !s.isSkipped)
+    const updates = filterPending(setsToSkip)
       .map(s => ({ key: s.id, changes: { isSkipped: true } }));
 
     if (updates.length === 0) return;
@@ -277,7 +276,7 @@ export class SessionExecutionService {
           const allSetsForItem = item.sets.map((s, idx) =>
             idx === roundIndex ? completedSet : s
           );
-          const completedForItem = allSetsForItem.filter(s => s.isCompleted);
+          const completedForItem = filterCompleted(allSetsForItem);
           const completedIndex = completedForItem.length - 1;
 
           const baselineRPE = plannedSet.rpeRange?.min;
@@ -367,7 +366,7 @@ export class SessionExecutionService {
           });
 
           const allSetsForItem = item.sets.map((s, idx) => idx === roundIndex ? completedSet : s);
-          const completedForItem = allSetsForItem.filter(s => s.isCompleted);
+          const completedForItem = filterCompleted(allSetsForItem);
           const completedIndex = completedForItem.length - 1;
           const baselineRPE = plannedSet.rpeRange?.min;
           const fatigue = analyzeFatigueProgression(completedForItem, completedIndex, plannedSet.fatigueProgressionProfile, baselineRPE);
@@ -419,8 +418,7 @@ export class SessionExecutionService {
     if (!group) return;
     const setsToSkip = group.items.flatMap(li => li.sets[round] ? [li.sets[round]] : []);
 
-    const updates = setsToSkip
-      .filter(s => !s.isCompleted && !s.isSkipped)
+    const updates = filterPending(setsToSkip)
       .map(s => ({ key: s.id, changes: { isSkipped: true } }));
 
     if (updates.length === 0) return;
@@ -431,7 +429,7 @@ export class SessionExecutionService {
     const round = current.round ?? current.si;
     const group = current.group;
     if (!group) return;
-    const setsToSkip = group.items.flatMap(li => li.sets.slice(round).filter(s => !s.isCompleted && !s.isSkipped));
+    const setsToSkip = group.items.flatMap(li => filterPending(li.sets.slice(round)));
 
     const updates = setsToSkip.map(s => ({ key: s.id, changes: { isSkipped: true } }));
 

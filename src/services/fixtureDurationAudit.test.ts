@@ -1,10 +1,10 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { loadFixtures } from '@/db/fixtures';
-import { db } from '@/db/database';
+
 import { databaseLifecycle } from '@/db/core';
+import { db } from '@/db/database';
+import { loadFixtures } from '@/db/fixtures';
 import { estimateWorkoutDuration, estimateSessionDuration } from '@/services/durationEstimator';
-import { PlannedWorkoutStatus } from '@/domain/enums';
 
 describe('Fixture Duration Audit', () => {
   beforeEach(async () => {

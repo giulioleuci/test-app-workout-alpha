@@ -29,6 +29,12 @@ export class ExerciseRepository extends BaseRepository {
     return db.exerciseVersions.get(versionId);
   }
 
+  static async getVersionsByIds(versionIds: string[]): Promise<ExerciseVersion[]> {
+    if (versionIds.length === 0) return [];
+    const versions = await db.exerciseVersions.bulkGet(versionIds);
+    return versions.filter((v): v is ExerciseVersion => !!v);
+  }
+
   static async getByIds(ids: string[]): Promise<Exercise[]> {
     const exercises = await db.exercises.bulkGet(ids);
     return exercises.filter((e): e is Exercise => !!e);

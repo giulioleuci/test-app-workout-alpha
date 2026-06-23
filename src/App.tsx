@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import { AppLayout } from "@/components/layout/AppLayout";
-import { DetailPageSkeleton, ListPageSkeleton } from '@/components/ui/page-skeleton';
+import { ListPageSkeleton } from '@/components/ui/page-skeleton';
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";

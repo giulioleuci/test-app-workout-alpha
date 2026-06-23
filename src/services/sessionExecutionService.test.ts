@@ -5,9 +5,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { db } from '@/db/database';
 import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { CurrentTarget, LoadedGroup } from '@/domain/activeSessionTypes';
-import type { SessionSet, SessionExerciseItem, SessionExerciseGroup, PlannedSet } from '@/domain/entities';
+import type { SessionSet, SessionExerciseItem, SessionExerciseGroup } from '@/domain/entities';
 import { SetType, ToFailureIndicator, ExerciseGroupType } from '@/domain/enums';
-import dayjs from '@/lib/dayjs';
 import { profileService } from '@/services/profileService';
 import { SessionExecutionService } from '@/services/sessionExecutionService';
 
@@ -149,7 +148,7 @@ describe('SessionExecutionService', () => {
 
     describe('addSet', () => {
         it('should add a new set to the item', async () => {
-            const s1 = await createSet({ sessionExerciseItemId: 'item1', orderIndex: generateTestRank(0) });
+            await createSet({ sessionExerciseItemId: 'item1', orderIndex: generateTestRank(0) });
 
             await SessionExecutionService.addSet('item1');
 
@@ -176,7 +175,7 @@ describe('SessionExecutionService', () => {
         it('should uncomplete the last completed set', async () => {
             const s1 = await createSet({ id: 's1', orderIndex: generateTestRank(0), isCompleted: true });
             const s2 = await createSet({ id: 's2', orderIndex: generateTestRank(1), isCompleted: true });
-            const s3 = await createSet({ id: 's3', orderIndex: generateTestRank(2), isCompleted: false });
+            await createSet({ id: 's3', orderIndex: generateTestRank(2), isCompleted: false });
 
             await SessionExecutionService.uncompleteLastSet('item1');
 

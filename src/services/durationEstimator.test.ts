@@ -1,7 +1,9 @@
 
 import { describe, it, expect } from 'vitest';
-import { estimateGroupDurationFromData } from './durationEstimator';
+
 import { ExerciseGroupType, CounterType, SetType, ToFailureIndicator } from '@/domain/enums';
+
+import { estimateGroupDurationFromData } from './durationEstimator';
 
 describe('durationEstimator bug hunting', () => {
   it('should correctly calculate duration for a standard group with 3 sets', () => {

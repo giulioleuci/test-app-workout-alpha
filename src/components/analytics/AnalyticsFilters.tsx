@@ -81,7 +81,7 @@ export default function AnalyticsFilters({
             <Filter className="h-4 w-4" />
             {t('common.filter', { defaultValue: 'Filter' })}
             {activeCount > 0 && (
-              <Badge variant="default" className="ml-0.5 h-5 min-w-5 px-1.5 text-[10px]">
+              <Badge variant="default" className="ml-0.5 h-5 min-w-5 px-1.5" style={{ fontSize: '10px' }}>
                 {activeCount}
               </Badge>
             )}

@@ -557,16 +557,13 @@ export async function importWorkoutsCsv(
         updatedAt: now,
       });
 
-      let groupOrderIndex = 0;
       let lastGroupRank: string | null = null;
       let currentGroupType: string | null = null;
       let currentGroupId: string | null = null;
-      let itemOrderInGroup = 0;
       let lastItemRank: string | null = null;
 
       let currentItemId: string | null = null;
       let currentItemExercise: string | null = null;
-      let currentItemSetOrder = 0;
       let lastSetRank: string | null = null;
       let pendingClusterParams: {
         miniSetCount: number;
@@ -586,16 +583,13 @@ export async function importWorkoutsCsv(
           (rowGroupType !== 'standard' && rowGroupType !== currentGroupType);
 
         if (needsNewGroup) {
-          groupOrderIndex++;
           const groupRank = getRankBetween(lastGroupRank, null);
           lastGroupRank = groupRank;
           currentGroupId = nanoid();
           currentGroupType = rowGroupType;
-          itemOrderInGroup = 0;
           lastItemRank = null;
           currentItemId = null;
           currentItemExercise = null;
-          currentItemSetOrder = 0;
           lastSetRank = null;
           pendingClusterParams = null;
 
@@ -622,12 +616,10 @@ export async function importWorkoutsCsv(
             pendingClusterParams = null;
           }
 
-          itemOrderInGroup++;
           const itemRank = getRankBetween(lastItemRank, null);
           lastItemRank = itemRank;
           currentItemId = nanoid();
           currentItemExercise = row.exercise.toLowerCase();
-          currentItemSetOrder = 0;
           lastSetRank = null;
           pendingClusterParams = null;
 
@@ -691,7 +683,6 @@ export async function importWorkoutsCsv(
 
         if (countMinVal === undefined && countMaxVal === undefined) continue;
 
-        currentItemSetOrder++;
         const setRank = getRankBetween(lastSetRank, null);
         lastSetRank = setRank;
 

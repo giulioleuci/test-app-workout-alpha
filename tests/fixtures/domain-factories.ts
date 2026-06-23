@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid';
 
-import { Exercise, SessionExerciseGroup, SessionExerciseItem, SessionSet, WorkoutSession, ExerciseType } from '@/domain/entities';
-import { RPE } from '@/domain/RPE';
+import { Exercise, SessionExerciseGroup, SessionExerciseItem, SessionSet, WorkoutSession } from '@/domain/entities';
 
 export const createMockExercise = (overrides?: Partial<Exercise>): Exercise => ({
   id: nanoid(),

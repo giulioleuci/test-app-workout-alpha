@@ -72,7 +72,7 @@ export default function ConsistencyHeatmap() {
             ))}
           </div>
         </TooltipProvider>
-        <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground">
+        <div className="mt-2 flex items-center justify-end gap-1.5 text-muted-foreground" style={{ fontSize: '10px' }}>
           <span>{t('analytics.less')}</span>
           <div className="h-2 w-2 rounded-sm bg-muted/30" />
           <div className="h-2 w-2 rounded-sm bg-primary/40" />

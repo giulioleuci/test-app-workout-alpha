@@ -9,7 +9,7 @@ export class SessionNavigator {
     for (let gi = 0; gi < loadedGroups.length; gi++) {
       const g = loadedGroups[gi];
       const itemConfigs = g.items.map(i => ({
-        blockCounts: i.sets.map(s => 1) // Loaded sets are already individual
+        blockCounts: i.sets.map(_ => 1) // Loaded sets are already individual
       }));
       const order = computeTraversalOrder(g.group.groupType, itemConfigs);
 

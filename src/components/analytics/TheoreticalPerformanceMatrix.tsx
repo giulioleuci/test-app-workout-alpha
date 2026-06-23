@@ -37,7 +37,7 @@ export default function TheoreticalPerformanceMatrix({ exerciseId }: Theoretical
             {t('analytics.theoreticalPerformance')}
           </CardTitle>
           <Badge variant="outline" className="text-caption font-normal">
-            1RM: {p1RM.value} {t('units.kg')} ({methodLabel})
+            {t('oneRepMax.value')}{':'} {p1RM.value} {t('units.kg')} ({methodLabel})
           </Badge>
         </div>
       </CardHeader>
@@ -48,8 +48,8 @@ export default function TheoreticalPerformanceMatrix({ exerciseId }: Theoretical
             <Table>
               <TableHeader>
                 <TableRow className="h-8 hover:bg-transparent">
-                  <TableHead className="text-caption h-8 px-2">Rep</TableHead>
-                  <TableHead className="text-caption h-8 px-2 text-right">Target</TableHead>
+                  <TableHead className="text-caption h-8 px-2">{t('compliance.rep')}</TableHead>
+                  <TableHead className="text-caption h-8 px-2 text-right">{t('compliance.load')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -67,8 +67,8 @@ export default function TheoreticalPerformanceMatrix({ exerciseId }: Theoretical
             <Table>
               <TableHeader>
                 <TableRow className="h-8 hover:bg-transparent">
-                  <TableHead className="text-caption h-8 px-2">Rep</TableHead>
-                  <TableHead className="text-caption h-8 px-2 text-right">Target</TableHead>
+                  <TableHead className="text-caption h-8 px-2">{t('compliance.rep')}</TableHead>
+                  <TableHead className="text-caption h-8 px-2 text-right">{t('compliance.load')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

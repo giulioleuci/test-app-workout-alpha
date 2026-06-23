@@ -81,7 +81,10 @@ export default function RestTimer() {
 
   if (isActive) {
     return (
-      <div className="fixed bottom-[calc(3.25rem+env(safe-area-inset-bottom))] left-0 right-0 z-overlay border-t border-warning/30 bg-warning/15 px-4 py-2 text-warning backdrop-blur-sm md:bottom-0 md:left-64">
+      <div 
+        className="fixed left-0 right-0 z-overlay border-t border-warning/30 bg-warning/15 px-4 py-2 text-warning backdrop-blur-sm md:bottom-0 md:left-64"
+        style={{ bottom: 'calc(3.25rem + env(safe-area-inset-bottom))' }}
+      >
         <div className="mx-auto flex max-w-sm items-center gap-3">
           <span className={`font-mono text-lg font-semibold tabular-nums ${isOvertime ? 'text-destructive' : ''} ${isPaused ? 'opacity-50' : ''}`}>
             {isOvertime ? `+${formatTime(overtime)}` : formatTime(remaining)}

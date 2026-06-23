@@ -197,7 +197,7 @@ const ExerciseGroupCard = memo(function ExerciseGroupCard({
 
             {/* Exercise Picker Dialog */}
             <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
-                <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
+                <DialogContent className="max-w-md overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
                     <DialogHeader>
                         <DialogTitle>{t('sessions.selectExercise')}</DialogTitle>
                     </DialogHeader>

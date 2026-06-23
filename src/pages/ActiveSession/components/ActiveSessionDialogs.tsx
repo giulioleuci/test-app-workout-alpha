@@ -91,7 +91,7 @@ export default function ActiveSessionDialogs({
       />
 
       <AlertDialog open={alertConfig.open} onOpenChange={(open) => setAlertConfig((prev) => ({ ...prev, open }))}>
-        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+        <AlertDialogContent className="overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
           <AlertDialogHeader>
             <AlertDialogTitle>{alertConfig.title}</AlertDialogTitle>
             <AlertDialogDescription>{alertConfig.description}</AlertDialogDescription>

@@ -212,7 +212,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                     {t('onboarding.back')}
                   </Button>
                   <Button 
-                    className="h-14 flex-[2] text-lg font-bold shadow-lg"
+                    className="h-14 text-lg font-bold shadow-lg"
+                    style={{ flex: 2 }}
                     onClick={handleNextPresentation}
                   >
                     {presentationStep === presentationScreens.length - 1 ? t('onboarding.start') : t('onboarding.next')}

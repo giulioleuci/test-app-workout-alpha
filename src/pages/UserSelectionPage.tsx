@@ -38,7 +38,10 @@ function AppInfoModal() {
           <Info className="h-5 w-5 text-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
+      <DialogContent 
+        className="max-w-md overflow-y-auto sm:w-full"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <Dumbbell className="h-6 w-6 text-primary" />
@@ -47,7 +50,7 @@ function AppInfoModal() {
             {t('onboarding.welcome')}
           </DialogTitle>
           <DialogDescription className="text-center">
-            Delta Workout
+            {t('common.appName', 'Delta Workout')}
           </DialogDescription>
         </DialogHeader>
 
@@ -64,7 +67,7 @@ function AppInfoModal() {
             <p className="text-body-sm leading-relaxed text-muted-foreground">
               {t('users.appOfflineInfo')}
             </p>
-            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-primary/70">
+            <div className="mt-3 flex items-center gap-2 font-bold uppercase tracking-wider text-primary/70" style={{ fontSize: '10px' }}>
               <CloudOff className="h-3.5 w-3.5" />
               <span>{t('users.noServersBadge')}</span>
             </div>
@@ -120,7 +123,7 @@ export default function UserSelectionPage({
               <Dumbbell className="h-5 w-5 text-primary" />
             </div>
             <CardTitle className="text-h4 font-bold">{t('users.welcome')}</CardTitle>
-            <CardDescription className="text-[10px] font-medium uppercase tracking-widest">
+            <CardDescription className="font-medium uppercase tracking-widest" style={{ fontSize: '10px' }}>
               {t('users.selectUser')}
             </CardDescription>
           </CardHeader>

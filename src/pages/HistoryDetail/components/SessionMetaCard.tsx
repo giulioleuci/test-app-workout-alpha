@@ -89,7 +89,7 @@ export default function SessionMetaCard({
             </Card>
 
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
+                <DialogContent className="max-w-md overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
                     <DialogHeader>
                         <DialogTitle className="text-sm">{t('sessions.info')}</DialogTitle>
                     </DialogHeader>

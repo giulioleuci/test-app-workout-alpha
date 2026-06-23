@@ -9,6 +9,7 @@ import { useSessionHandlers } from '@/hooks/activeSession/useSessionHandlers';
 import { useSessionLoader } from '@/hooks/activeSession/useSessionLoader';
 import { isGroupCompleted, isItemCompleted, rendersAsGroupUnit } from '@/hooks/activeSession/utils';
 import { useUserRegulation } from '@/hooks/queries/dashboardQueries';
+import { filterCompleted } from '@/services/logic/setStats';
 import { nativeDeviceService } from '@/services/nativeDeviceService';
 import { SessionNavigator } from '@/services/sessionNavigator';
 import { adviseOnSetCount } from '@/services/setCountAdvisor';
@@ -53,7 +54,7 @@ export function useActiveSessionViewModel() {
 
   const setCountAdvice = useMemo(() => {
     if (!current?.item) return null;
-    const completed = current.item.sets.filter(s => s.isCompleted);
+    const completed = filterCompleted(current.item.sets);
     const ps = current.set.plannedSetId ? current.item.plannedSets[current.set.plannedSetId] : undefined;
     return adviseOnSetCount(
       completed,

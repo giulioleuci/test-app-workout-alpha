@@ -86,7 +86,10 @@ export default function VolumeAnalysisDialog({ workoutId, open, onOpenChange }: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-h-85vh w-95vw max-w-lg overflow-y-auto p-4 sm:p-6">
+      <DialogContent 
+        className="max-w-lg overflow-y-auto p-4 sm:w-full sm:p-6"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader>
           <DialogTitle className="text-body">{t('analytics.volumeAnalysisTitle')}{' — '}{analysis?.workoutName}</DialogTitle>
         </DialogHeader>

@@ -51,7 +51,7 @@ export default function PlannedSetHeader({ ps, exerciseId, onUpdate, onRemove }:
               <MessageSquare className="h-3.5 w-3.5" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
+          <DialogContent className="max-w-md overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
             <DialogHeader>
               <DialogTitle>{t('planning.notesPlaceholder', 'Notes')}</DialogTitle>
             </DialogHeader>

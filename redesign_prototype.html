@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout Tracker 2 — Google Pixel 7a Redesign Prototype</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Variables matching the Volcanic Dark Theme tokens */
+    :root {
+      --bg-volcanic-deep: #07080a;
+      --bg-volcanic-card: #0b0d11;
+      --bg-volcanic-elevated: #12151b;
+      --bg-volcanic-popover: #171c24;
+      
+      --accent-athletic: #10b981; /* Athletic Green */
+      --accent-athletic-hover: #059669;
+      --accent-athletic-soft: rgba(16, 185, 129, 0.1);
+      --accent-pulse: rgba(16, 185, 129, 0.4);
+      
+      --text-primary: #eff1f5;
+      --text-secondary: #9ba2b1;
+      --text-muted: #656c7a;
+      
+      --border-glass-soft: rgba(255, 255, 255, 0.06);
+      --border-glass-medium: rgba(255, 255, 255, 0.12);
+      
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-destructive: #ef4444;
+      
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-display: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: #0b0d12;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+      overflow-x: hidden;
+    }
+
+    /* Left Pane: Presentation & Design Tokens */
+    .presentation-panel {
+      width: 40%;
+      min-width: 420px;
+      background: linear-gradient(135deg, #090a0d 0%, #11141a 100%);
+      border-right: 1px solid var(--border-glass-soft);
+      padding: 40px;
+      overflow-y: auto;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .badge-pill {
+      background: var(--accent-athletic-soft);
+      color: var(--accent-athletic);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      align-self: flex-start;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    h1.panel-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    p.panel-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .token-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .token-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      border-bottom: 1px solid var(--border-glass-soft);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-cols: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .color-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .color-info h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .color-info p {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .typo-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      padding-bottom: 12px;
+    }
+
+    .typo-row:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+
+    .typo-label {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--accent-athletic);
+    }
+
+    .typo-preview {
+      color: #fff;
+    }
+
+    .interactive-panel {
+      background: var(--accent-athletic-soft);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .interactive-panel h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .btn-action-trigger {
+      background: var(--accent-athletic);
+      color: #000;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-action-trigger:hover {
+      background: var(--accent-athletic-hover);
+      transform: translateY(-2px);
+    }
+
+    /* Right Pane: Device Showcase Container */
+    .device-container {
+      width: 60%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 60% 40%, rgba(16, 185, 129, 0.08) 0%, rgba(7, 8, 10, 0) 70%), #07080a;
+      position: relative;
+    }
+
+    /* Pixel 7a hardware frame */
+    .pixel-frame {
+      width: 388px;
+      height: 828px;
+      background: #1e2025;
+      border-radius: 40px;
+      padding: 14px; /* Bezel size */
+      box-shadow: 
+        0px 25px 50px -12px rgba(0, 0, 0, 0.8),
+        0px 0px 0px 4px #2a2c32,
+        0px 0px 0px 1px #0c0d0f;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Pixel Speaker & Camera Notch */
+    .pixel-camera {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: #000;
+      border-radius: 50%;
+      z-index: 100;
+      box-shadow: inset 0 0 3px rgba(255,255,255,0.2);
+    }
+
+    /* Simulated Android Status Bar */
+    .android-status-bar {
+      height: 24px;
+      background: var(--bg-volcanic-deep);
+      width: 100%;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      z-index: 90;
+      position: relative;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-icon {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    /* Main Phone Viewport (Pixel 7a 360 x 800 Aspect) */
+    .phone-viewport {
+      width: 360px;
+      height: 800px;
+      background: var(--bg-volcanic-deep);
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Bottom Gesture Navigation Bar (Android) */
+    .android-nav-bar {
+      height: 16px;
+      background: var(--bg-volcanic-deep);
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 90;
+      padding-bottom: 4px;
+    }
+
+    .android-gesture-pill {
+      width: 72px;
+      height: 4px;
+      background-color: var(--text-muted);
+      border-radius: 2px;
+    }
+
+    /* Main App Header */
+    .app-header {
+      height: 44px;
+      background: var(--bg-volcanic-deep);
+      border-bottom: 1px solid var(--border-glass-soft);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--accent-athletic);
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 var(--accent-pulse); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Bottom Navigation Bar */
+    .app-bottom-nav {
+      height: 60px;
+      background: var(--bg-volcanic-card);
+      border-top: 1px solid var(--border-glass-soft);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 10px;
+      z-index: 10;
+      position: relative;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 60px;
+      height: 100%;
+      position: relative;
+    }
+
+    .nav-item.active {
+      color: var(--accent-athletic);
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      margin-bottom: 3px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .nav-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-accent-dot {
+      position: absolute;
+      top: 8px;
+      right: 16px;
+      width: 6px;
+      height: 6px;
+      background: var(--accent-athletic);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-athletic);
+    }
+
+    /* Screens Content Area */
+    .screen-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .screen-content.active {
+      display: flex;
+    }
+
+    /* Premium Glassmorphic Cards */
+    .premium-card {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .premium-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+    }
+
+    .card-hero {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(11, 13, 17, 0.5) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-subtitle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-athletic);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .card-meta {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta-icon {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+    }
+
+    .btn-primary {
+      background: var(--accent-athletic);
+      color: #07080a;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    /* Muscle Freshness Grid */
+    .muscle-freshness-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .muscle-freshness-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .muscle-chip {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .freshness-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .freshness-fresh { background: var(--color-success); box-shadow: 0 0 6px var(--color-success); }
+    .freshness-recovering { background: var(--color-warning); box-shadow: 0 0 6px var(--color-warning); }
+    .freshness-fatigued { background: var(--color-destructive); box-shadow: 0 0 6px var(--color-destructive); }
+
+    .muscle-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Calendar Strip */
+    .calendar-strip {
+      display: grid;
+      grid-template-cols: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .calendar-day {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 12px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .calendar-day.active {
+      background: var(--accent-athletic-soft);
+      border-color: var(--accent-athletic);
+    }
+
+    .day-name {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .calendar-day.active .day-name {
+      color: var(--accent-athletic);
+      font-weight: 700;
+    }
+
+    .day-number {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .day-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .day-dot.completed {
+      background: var(--accent-athletic);
+    }
+
+    /* Quick Stats Grid */
+    .quick-stats-grid {
+      display: grid;
+      grid-template-cols: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Rest Timer sub-header */
+    .rest-timer-banner {
+      background: var(--bg-volcanic-elevated);
+      border-bottom: 1px solid var(--border-glass-medium);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+    }
+
+    .timer-text-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timer-icon {
+      width: 14px;
+      height: 14px;
+      stroke: var(--accent-athletic);
+      stroke-width: 2;
+      animation: spinSlow 4s linear infinite;
+    }
+
+    @keyframes spinSlow {
+      100% { transform: rotate(360deg); }
+    }
+
+    .timer-countdown {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-athletic);
+    }
+
+    .timer-context {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .btn-timer-plus {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass-soft);
+      color: var(--text-primary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Active Session - Exercise card and sets */
+    .active-exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-glass-soft);
+    }
+
+    .exercise-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .exercise-subtitle {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .sets-table {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .set-row {
+      display: grid;
+      grid-template-cols: 32px 1fr 1fr 48px;
+      align-items: center;
+      padding: 6px 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .set-row.completed {
+      background: rgba(16, 185, 129, 0.04);
+      border-color: rgba(16, 185, 129, 0.1);
+    }
+
+    .set-row.active {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-glass-medium);
+    }
+
+    .set-number {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .set-row.completed .set-number {
+      color: var(--accent-athletic);
+    }
+
+    .set-val {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .set-row.completed .set-val {
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+
+    .set-checkmark {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 2px solid var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      justify-self: end;
+    }
+
+    .set-row.completed .set-checkmark {
+      border-color: var(--accent-athletic);
+      background: var(--accent-athletic);
+    }
+
+    .checkmark-svg {
+      width: 14px;
+      height: 14px;
+      stroke: #07080a;
+      stroke-width: 3;
+      fill: none;
+      display: none;
+    }
+
+    .set-row.completed .checkmark-svg {
+      display: block;
+    }
+
+    /* Logging input area */
+    .logging-input-pad {
+      background: var(--bg-volcanic-elevated);
+      border: 1px solid var(--border-glass-medium);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-pad-row {
+      display: grid;
+      grid-template-cols: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input-pill-box {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 12px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pad-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pad-main-value {
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pad-increments {
+      display: grid;
+      grid-template-cols: repeat(4, 1fr);
+      gap: 4px;
+      width: 100%;
+    }
+
+    .inc-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 4px 0;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.1s ease;
+    }
+
+    .inc-btn:active {
+      background: var(--accent-athletic);
+      color: #000;
+    }
+
+    .btn-log-set {
+      background: var(--accent-athletic);
+      color: #07080a;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-log-set:active {
+      transform: scale(0.98);
+    }
+
+    /* Accordion row for completed exercises */
+    .accordion-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .summary-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chevron-icon {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Exercises Screen Layout */
+    .search-container {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--bg-volcanic-deep);
+      padding: 4px 0;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 40px;
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 12px;
+      padding: 0 16px 0 36px;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-athletic);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+    }
+
+    .search-icon-fixed {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .filter-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .filter-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-chip {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-chip.active {
+      background: var(--accent-athletic-soft);
+      border-color: var(--accent-athletic);
+      color: var(--accent-athletic);
+    }
+
+    .list-letter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .letter-header {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-athletic);
+      padding-left: 4px;
+      text-transform: uppercase;
+    }
+
+    .exercise-list-item {
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .item-tags {
+      display: flex;
+      gap: 6px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .arrow-right-icon {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Settings Screen Layout */
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-volcanic-card);
+      border: 1px solid var(--border-glass-soft);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .settings-header {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      margin-left: 6px;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-glass-soft);
+      cursor: pointer;
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+
+    .settings-label-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .settings-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .settings-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .danger-zone-group {
+      border-color: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.02);
+    }
+
+    .danger-label {
+      color: var(--color-destructive);
+    }
+
+    /* Custom Bottom Sheet / Drawer Modal Simulation */
+    .sheet-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .sheet-content {
+      width: 100%;
+      background: var(--bg-volcanic-elevated);
+      border-top: 1px solid var(--border-glass-medium);
+      border-radius: 24px 24px 0 0;
+      padding: 16px 16px 24px 16px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      align-self: center;
+      margin-bottom: 4px;
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sheet-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast-notification {
+      position: absolute;
+      bottom: 80px;
+      left: 16px;
+      right: 16px;
+      background: rgba(18, 21, 27, 0.9);
+      border: 1px solid var(--accent-athletic);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      transform: translateY(150px);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 110;
+    }
+
+    .toast-icon {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent-athletic);
+      stroke-width: 3;
+      fill: none;
+    }
+
+    .toast-message {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Pane: Presentation and Inspector -->
+  <div class="presentation-panel">
+    <div class="badge-pill">Pixel 7a Redesign</div>
+    <h1 class="panel-title">Workout Tracker 2</h1>
+    <p class="panel-desc">
+      A high-fidelity visual redesign proposal optimized for vertical portrait scanning, extreme contrast on OLED displays, and one-handed reachability in dynamic gym environments.
+    </p>
+
+    <!-- Token Inspector: Colors -->
+    <div class="token-section">
+      <h3 class="token-title">
+        <svg class="status-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Volcanic Color System
+      </h3>
+      <div class="color-grid">
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: var(--bg-volcanic-deep)"></div>
+          <div class="color-info">
+            <h4>Volcanic Deep</h4>
+            <p>#07080a</p>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: var(--bg-volcanic-card)"></div>
+          <div class="color-info">
+            <h4>Volcanic Card</h4>
+            <p>#0b0d11</p>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: var(--bg-volcanic-elevated)"></div>
+          <div class="color-info">
+            <h4>Elevated Sheet</h4>
+            <p>#12151b</p>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: var(--accent-athletic)"></div>
+          <div class="color-info">
+            <h4>Athletic Green</h4>
+            <p>#10b981</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Token Inspector: Typography -->
+    <div class="token-section">
+      <h3 class="token-title">
+        <svg class="status-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+        Typography scale
+      </h3>
+      <div class="typo-row">
+        <div class="typo-label">text-display (32px Outfit Bold)</div>
+        <div class="typo-preview" style="font-family: var(--font-display); font-size: 1.8rem; font-weight:700;">01:42</div>
+      </div>
+      <div class="typo-row">
+        <div class="typo-label">text-h1 (24px Outfit Bold)</div>
+        <div class="typo-preview" style="font-family: var(--font-display); font-size: 1.3rem; font-weight:700;">Lower Body A</div>
+      </div>
+      <div class="typo-row">
+        <div class="typo-label">text-body-bold (14px Inter Medium)</div>
+        <div class="typo-preview" style="font-size: 0.85rem; font-weight:500;">Barbell Squat</div>
+      </div>
+    </div>
+
+    <!-- Interactive triggers -->
+    <div class="interactive-panel">
+      <h3>Tactile Demonstrations</h3>
+      <p class="panel-desc" style="font-size: 0.8rem;">Click actions here to trigger dynamic states inside the simulated Pixel 7a screen.</p>
+      <button class="btn-action-trigger" onclick="triggerWarmupSheet()">
+        <svg style="width:16px; height:16px;" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+        Show Warmup Calculator
+      </button>
+      <button class="btn-action-trigger" style="background:#ef4444; color:#fff; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);" onclick="triggerToast()">
+        <svg style="width:16px; height:16px;" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"/></svg>
+        Simulate Set Log Success
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Pane: Device Showcase -->
+  <div class="device-container">
+    
+    <!-- Google Pixel 7a hardware frame -->
+    <div class="pixel-frame">
+      <div class="pixel-camera"></div>
+      
+      <!-- Simulated Android Status Bar -->
+      <div class="android-status-bar">
+        <div class="status-left">12:59</div>
+        <div class="status-right">
+          <!-- Wifi -->
+          <svg class="status-icon" viewBox="0 0 24 24"><path d="M12 21l-12-14.3c.3-.3 4.8-4.7 12-4.7s11.7 4.4 12 4.7l-12 14.3z"/></svg>
+          <!-- Cell -->
+          <svg class="status-icon" viewBox="0 0 24 24"><path d="M2 22h20v-20z"/></svg>
+          <!-- Battery -->
+          <svg class="status-icon" viewBox="0 0 24 24"><path d="M17 5H16V3c0-.6-.4-1-1-1H9c-.6 0-1 .4-1 1V5H7c-.6 0-1 .4-1 1V21c0 .6.4 1 1 1H17c.6 0 1-.4 1-1V6c0-.6-.4-1-1-1z"/></svg>
+        </div>
+      </div>
+
+      <!-- Main Phone Viewport (Pixel 7a 360 x 800) -->
+      <div class="phone-viewport" id="viewport">
+        
+        <!-- App Header -->
+        <div class="app-header">
+          <div class="header-title" id="header-title">Today</div>
+          <div class="header-badge" id="header-badge">
+            <span style="display:inline-block; width:6px; height:6px; background:var(--accent-athletic); border-radius:50%"></span>
+            Active: 18m
+          </div>
+        </div>
+
+        <!-- Timer sub-header (Shown on Active Session only) -->
+        <div class="rest-timer-banner" id="timer-banner" style="display:none;">
+          <div class="timer-text-container">
+            <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="timer-countdown">01:42</span>
+            <span class="timer-context">Resting for Barbell Squat</span>
+          </div>
+          <button class="btn-timer-plus" onclick="addTime()">+30s</button>
+        </div>
+
+        <!-- ==================== SCREEN 1: TODAY / DASHBOARD ==================== -->
+        <div class="screen-content active" id="screen-today">
+          <!-- Suggestion Hero Card -->
+          <div class="premium-card card-hero">
+            <div class="card-title-row">
+              <span class="card-subtitle">Next suggestion</span>
+              <span style="font-size: 0.65rem; color: var(--accent-athletic); font-weight:700;">Ready</span>
+            </div>
+            <h2 class="card-title">Lower Body A (Hypertrophy)</h2>
+            <div class="card-meta">
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>45 min</span>
+              </div>
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <span>Legs, Core</span>
+              </div>
+            </div>
+            <button class="btn-primary" style="margin-top:4px;" onclick="goToActiveSession()">
+              <svg style="width:16px; height:16px;" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Start Session
+            </button>
+          </div>
+
+          <!-- Muscle Freshness scrolling row -->
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div class="pad-label" style="padding-left:4px;">Muscle status</div>
+            <div class="muscle-freshness-scroll">
+              <div class="muscle-chip">
+                <div class="freshness-indicator freshness-fresh"></div>
+                <span class="muscle-name">Quadriceps</span>
+              </div>
+              <div class="muscle-chip">
+                <div class="freshness-indicator freshness-recovering"></div>
+                <span class="muscle-name">Hamstrings</span>
+              </div>
+              <div class="muscle-chip">
+                <div class="freshness-indicator freshness-fatigued"></div>
+                <span class="muscle-name">Core</span>
+              </div>
+              <div class="muscle-chip">
+                <div class="freshness-indicator freshness-fresh"></div>
+                <span class="muscle-name">Calves</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calendar week strip -->
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div class="pad-label" style="padding-left:4px;">This Week</div>
+            <div class="calendar-strip">
+              <div class="calendar-day">
+                <span class="day-name">Mon</span>
+                <span class="day-number">15</span>
+                <div class="day-dot completed"></div>
+              </div>
+              <div class="calendar-day">
+                <span class="day-name">Tue</span>
+                <span class="day-number">16</span>
+                <div class="day-dot completed"></div>
+              </div>
+              <div class="calendar-day active">
+                <span class="day-name">Wed</span>
+                <span class="day-number">17</span>
+                <div class="day-dot"></div>
+              </div>
+              <div class="calendar-day">
+                <span class="day-name">Thu</span>
+                <span class="day-number">18</span>
+                <div class="day-dot"></div>
+              </div>
+              <div class="calendar-day">
+                <span class="day-name">Fri</span>
+                <span class="day-number">19</span>
+                <div class="day-dot"></div>
+              </div>
+              <div class="calendar-day">
+                <span class="day-name">Sat</span>
+                <span class="day-number">20</span>
+                <div class="day-dot"></div>
+              </div>
+              <div class="calendar-day">
+                <span class="day-name">Sun</span>
+                <span class="day-number">21</span>
+                <div class="day-dot"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Grid -->
+          <div class="quick-stats-grid">
+            <div class="stat-box">
+              <span class="stat-value">34</span>
+              <span class="stat-label">Exercises</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-value">5</span>
+              <span class="stat-label">Plans</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-value">108</span>
+              <span class="stat-label">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== SCREEN 2: ACTIVE SESSION ==================== -->
+        <div class="screen-content" id="screen-train">
+          <!-- Active Exercise block -->
+          <div class="premium-card">
+            <div class="active-exercise-header">
+              <div class="item-info">
+                <span class="exercise-title">Barbell Squat</span>
+                <span class="exercise-subtitle">Primary Quad Focus</span>
+              </div>
+              <span class="card-subtitle" style="font-size:0.65rem;">Warmup strategy</span>
+            </div>
+
+            <!-- Sets list -->
+            <div class="sets-table">
+              <div class="set-row completed">
+                <span class="set-number">1</span>
+                <span class="set-val">100 kg</span>
+                <span class="set-val">6 reps</span>
+                <div class="set-checkmark" onclick="toggleSet(this)">
+                  <svg class="checkmark-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+              <div class="set-row completed">
+                <span class="set-number">2</span>
+                <span class="set-val">100 kg</span>
+                <span class="set-val">6 reps</span>
+                <div class="set-checkmark" onclick="toggleSet(this)">
+                  <svg class="checkmark-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+              <div class="set-row active" id="active-set-row">
+                <span class="set-number" style="color:var(--accent-athletic)">3</span>
+                <span class="set-val" id="row-weight-val" style="font-weight:700;">100 kg</span>
+                <span class="set-val" id="row-reps-val" style="font-weight:700;">5 reps</span>
+                <div class="set-checkmark" onclick="toggleSet(this)">
+                  <svg class="checkmark-svg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tactile Logging Pad (Replaces Soft Keyboard) -->
+          <div class="logging-input-pad">
+            <div class="input-pad-row">
+              <!-- Weight Drum Roller -->
+              <div class="input-pill-box">
+                <span class="pad-label">Weight</span>
+                <span class="pad-main-value" id="weight-display">100 kg</span>
+                <div class="pad-increments">
+                  <button class="inc-btn" onclick="adjustValue('weight', -5)">-5</button>
+                  <button class="inc-btn" onclick="adjustValue('weight', -2.5)">-2.5</button>
+                  <button class="inc-btn" onclick="adjustValue('weight', 2.5)">+2.5</button>
+                  <button class="inc-btn" onclick="adjustValue('weight', 5)">+5</button>
+                </div>
+              </div>
+              <!-- Reps Drum Roller -->
+              <div class="input-pill-box">
+                <span class="pad-label">Reps</span>
+                <span class="pad-main-value" id="reps-display">5</span>
+                <div class="pad-increments" style="grid-template-cols: repeat(2, 1fr);">
+                  <button class="inc-btn" onclick="adjustValue('reps', -1)">-1</button>
+                  <button class="inc-btn" onclick="adjustValue('reps', 1)">+1</button>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-log-set" onclick="logActiveSet()">
+              <svg style="width:18px; height:18px;" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"/></svg>
+              Log Active Set
+            </button>
+          </div>
+
+          <!-- Completed Exercises Summary Accordion -->
+          <div class="premium-card" style="padding: 12px 16px;">
+            <div class="accordion-summary">
+              <span class="summary-text">
+                <svg style="width:16px; height:16px; stroke:var(--accent-athletic)" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                Warmup: Barbell Squat (3 sets) completed
+              </span>
+              <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== SCREEN 3: EXERCISES LIBRARY ==================== -->
+        <div class="screen-content" id="screen-exercises">
+          <!-- Search field -->
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <svg class="search-icon-fixed" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="search-input" placeholder="Search exercise library...">
+            </div>
+          </div>
+
+          <!-- Filter chips horizontal row -->
+          <div class="filter-scroll">
+            <div class="filter-chip active">All Muscles</div>
+            <div class="filter-chip">Quadriceps</div>
+            <div class="filter-chip">Chest</div>
+            <div class="filter-chip">Back</div>
+            <div class="filter-chip">Shoulders</div>
+          </div>
+
+          <!-- Exercises list grouped alphabetically -->
+          <div class="list-letter-group">
+            <div class="letter-header">B</div>
+            <div class="exercise-list-item">
+              <div class="item-info">
+                <span class="item-title">Barbell Bench Press</span>
+                <div class="item-tags">
+                  <span>Chest</span> &middot; <span>Barbell</span>
+                </div>
+              </div>
+              <svg class="arrow-right-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="exercise-list-item" onclick="goToActiveSession()">
+              <div class="item-info">
+                <span class="item-title">Barbell Squat</span>
+                <div class="item-tags">
+                  <span>Quadriceps</span> &middot; <span>Barbell</span>
+                </div>
+              </div>
+              <svg class="arrow-right-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <div class="list-letter-group">
+            <div class="letter-header">D</div>
+            <div class="exercise-list-item">
+              <div class="item-info">
+                <span class="item-title">Dumbbell Romanian Deadlift</span>
+                <div class="item-tags">
+                  <span>Hamstrings</span> &middot; <span>Dumbbell</span>
+                </div>
+              </div>
+              <svg class="arrow-right-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== SCREEN 4: SETTINGS ==================== -->
+        <div class="screen-content" id="screen-settings">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span class="settings-header">Preferences</span>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div class="settings-label-box">
+                  <span class="settings-label">Training Units</span>
+                  <span class="settings-desc">Metric (kg)</span>
+                </div>
+                <svg class="arrow-right-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label-box">
+                  <span class="settings-label">Rest Timer Interval</span>
+                  <span class="settings-desc">02:00 minutes</span>
+                </div>
+                <svg class="arrow-right-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <span class="settings-header danger-label">Danger Zone</span>
+            <div class="settings-group danger-zone-group">
+              <div class="settings-row" onclick="triggerToast('Warning: Account data deletion requested.')">
+                <div class="settings-label-box">
+                  <span class="settings-label danger-label">Wipe Local Database</span>
+                  <span class="settings-desc" style="color:rgba(239, 68, 68, 0.6)">Permanently clear Dexie IndexedDB cache</span>
+                </div>
+                <svg class="arrow-right-icon" style="stroke:var(--color-destructive)" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== DYNAMIC BOTTOM SHEET / DRAWER ==================== -->
+        <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()">
+          <div class="sheet-content" id="sheet-content" onclick="event.stopPropagation()">
+            <div class="sheet-drag-handle"></div>
+            <div class="sheet-header">
+              <span class="sheet-title" id="sheet-title">Warmup Calculator</span>
+              <svg onclick="closeSheet()" style="width:20px; height:20px; cursor:pointer; stroke:var(--text-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:10px;" id="sheet-body-content">
+              <!-- Warmup steps dynamic mock content -->
+              <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-glass-soft); padding-bottom:8px;">
+                <span class="set-number">W1 (40%)</span>
+                <span class="set-val" style="font-weight:700;">40 kg &times; 10</span>
+                <span class="card-subtitle" style="font-size:0.65rem; color:var(--text-muted);">Empty bar warmup</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-glass-soft); padding-bottom:8px;">
+                <span class="set-number">W2 (60%)</span>
+                <span class="set-val" style="font-weight:700;">60 kg &times; 5</span>
+                <span class="card-subtitle" style="font-size:0.65rem; color:var(--text-muted);">Dynamic prep</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span class="set-number">W3 (80%)</span>
+                <span class="set-val" style="font-weight:700;">80 kg &times; 3</span>
+                <span class="card-subtitle" style="font-size:0.65rem; color:var(--text-muted);">Final feel set</span>
+              </div>
+            </div>
+
+            <button class="btn-primary" style="width:100%;" onclick="closeSheet()">Apply Warmup Sets</button>
+          </div>
+        </div>
+
+        <!-- ==================== TOAST ALERT ==================== -->
+        <div class="toast-notification" id="toast-alert">
+          <svg class="toast-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="toast-message" id="toast-msg">Set 3 logged successfully!</span>
+        </div>
+
+        <!-- App Bottom Navigation -->
+        <div class="app-bottom-nav">
+          <div class="nav-item active" onclick="switchTab('today', this)">
+            <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span class="nav-label">Today</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('train', this)">
+            <div class="nav-accent-dot"></div>
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v8H2z"/></svg>
+            <span class="nav-label">Train</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('exercises', this)">
+            <svg class="nav-icon" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <span class="nav-label">Exercises</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('settings', this)">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span class="nav-label">Settings</span>
+          </div>
+        </div>
+
+        <!-- Android gestural indicator pill -->
+        <div class="android-nav-bar">
+          <div class="android-gesture-pill"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab State Management
+    function switchTab(tabId, element) {
+      // Hide all screen contents
+      document.querySelectorAll('.screen-content').forEach(screen => {
+        screen.classList.remove('active');
+      });
+
+      // Remove active class from nav items
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // Show selected screen & set nav active
+      document.getElementById('screen-' + tabId).classList.add('active');
+      element.classList.add('active');
+
+      // Customize App Header Contextually
+      const headerTitle = document.getElementById('header-title');
+      const headerBadge = document.getElementById('header-badge');
+      const timerBanner = document.getElementById('timer-banner');
+
+      if (tabId === 'today') {
+        headerTitle.innerText = "Today";
+        headerBadge.style.display = "flex";
+        timerBanner.style.display = "none";
+      } else if (tabId === 'train') {
+        headerTitle.innerText = "Active Session";
+        headerBadge.style.display = "none";
+        timerBanner.style.display = "flex";
+      } else if (tabId === 'exercises') {
+        headerTitle.innerText = "Exercises";
+        headerBadge.style.display = "none";
+        timerBanner.style.display = "none";
+      } else if (tabId === 'settings') {
+        headerTitle.innerText = "Settings";
+        headerBadge.style.display = "none";
+        timerBanner.style.display = "none";
+      }
+    }
+
+    // Direct routing helpers
+    function goToActiveSession() {
+      const trainNav = document.querySelectorAll('.nav-item')[1];
+      switchTab('train', trainNav);
+    }
+
+    // Interactive Logging Values
+    let currentWeight = 100.0;
+    let currentReps = 5;
+
+    function adjustValue(type, amount) {
+      if (type === 'weight') {
+        currentWeight += amount;
+        if (currentWeight < 0) currentWeight = 0;
+        document.getElementById('weight-display').innerText = currentWeight.toFixed(1) + ' kg';
+        document.getElementById('row-weight-val').innerText = currentWeight.toFixed(1) + ' kg';
+      } else if (type === 'reps') {
+        currentReps += amount;
+        if (currentReps < 0) currentReps = 0;
+        document.getElementById('reps-display').innerText = currentReps;
+        document.getElementById('row-reps-val').innerText = currentReps + ' reps';
+      }
+    }
+
+    // Toggle Set Checkmark
+    function toggleSet(element) {
+      const parentRow = element.parentElement;
+      parentRow.classList.toggle('completed');
+      if (parentRow.classList.contains('completed')) {
+        triggerToast("Set completed!");
+      }
+    }
+
+    // Log Active Set and Slide row state
+    function logActiveSet() {
+      const activeRow = document.getElementById('active-set-row');
+      activeRow.classList.add('completed');
+      triggerToast("Set 3 logged successfully at " + currentWeight.toFixed(1) + " kg!");
+    }
+
+    // Bottom Sheet display triggers
+    function triggerWarmupSheet() {
+      const sheet = document.getElementById('sheet-overlay');
+      sheet.style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById('sheet-content').style.transform = 'translateY(0)';
+      }, 10);
+    }
+
+    function closeSheet() {
+      const content = document.getElementById('sheet-content');
+      content.style.transform = 'translateY(100%)';
+      setTimeout(() => {
+        document.getElementById('sheet-overlay').style.display = 'none';
+      }, 300);
+    }
+
+    // Toast Alert system
+    let toastTimeout;
+    function triggerToast(message) {
+      const toast = document.getElementById('toast-alert');
+      const toastMsg = document.getElementById('toast-msg');
+      
+      if (message) {
+        toastMsg.innerText = message;
+      } else {
+        toastMsg.innerText = "Set logged successfully!";
+      }
+
+      toast.style.transform = 'translateY(0)';
+      
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.style.transform = 'translateY(150px)';
+      }, 2500);
+    }
+
+    // Add timer offset simulation
+    function addTime() {
+      triggerToast("Added +30 seconds to active rest period.");
+    }
+  </script>
+</body>
+</html>

@@ -117,12 +117,8 @@ export async function fetchAnalyticsData(
     const exercises = await ExerciseRepository.getByIds(exerciseIds);
     const exerciseBaseMap = new Map(exercises.map(e => [e.id, e]));
 
-    // Fetch versions
-    const { db } = await import('@/db/database');
-    const versions = await db.exerciseVersions.bulkGet(versionIds);
-    const versionMap = new Map(
-      versions.filter(v => !!v).map(v => [v.id, v])
-    );
+    const versions = await ExerciseRepository.getVersionsByIds(versionIds);
+    const versionMap = new Map(versions.map(v => [v.id, v]));
 
     const exerciseMap = new Map<string, Exercise>();
 
@@ -392,11 +388,8 @@ export async function getMuscleVolumeDistribution(
     const exercises = await ExerciseRepository.getByIds(exerciseIds);
     const exerciseBaseMap = new Map(exercises.map(e => [e.id, e]));
 
-    const { db } = await import('@/db/database');
-    const versions = await db.exerciseVersions.bulkGet(versionIds);
-    const versionMap = new Map(
-      versions.filter(v => !!v).map(v => [v.id, v])
-    );
+    const versions = await ExerciseRepository.getVersionsByIds(versionIds);
+    const versionMap = new Map(versions.map(v => [v.id, v]));
 
     const exerciseMap = new Map<string, Exercise>();
 
@@ -486,4 +479,3 @@ export async function getMuscleVolumeDistribution(
     volumeTonnage: vol.volumeTonnage,
   }));
 }
-

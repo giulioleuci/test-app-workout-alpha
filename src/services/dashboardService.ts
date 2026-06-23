@@ -94,20 +94,18 @@ export async function getMuscleFreshness(): Promise<MuscleFreshness[]> {
 
     // Fallback: if snapshot is missing, try to derive it from session items
     if (muscles.length === 0) {
-      const groups = await SessionRepository.getGroupsBySession(s.id);
-      const items = await SessionRepository.getItemsByGroups(groups.map(g => g.id));
+      const { items } = await SessionRepository.getSessionEntities([s.id]);
       const musclesSet = new Set<string>();
 
       const exerciseIds = items.map(i => i.exerciseId);
       const versionIds = items.map(i => i.exerciseVersionId).filter((id): id is string => !!id);
 
-      const [exercises, { db }] = await Promise.all([
+      const [exercises, versions] = await Promise.all([
         ExerciseRepository.getByIds(exerciseIds),
-        import('@/db/database')
+        ExerciseRepository.getVersionsByIds(versionIds),
       ]);
-      const versions = await db.exerciseVersions.bulkGet(versionIds);
 
-      const versionMap = new Map(versions.filter(v => !!v).map(v => [v.id, v]));
+      const versionMap = new Map(versions.map(v => [v.id, v]));
       const exerciseMap = new Map(exercises.map(e => [e.id, e]));
 
       for (const item of items) {
@@ -160,11 +158,7 @@ export async function getLastWorkoutSummary(): Promise<LastWorkoutSummary | null
   const plannedSession = last.plannedSessionId ? await WorkoutPlanRepository.getSession(last.plannedSessionId) : null;
   const plannedWorkout = last.plannedWorkoutId ? await WorkoutPlanRepository.getWorkout(last.plannedWorkoutId) : null;
 
-  const sessionGroups = await SessionRepository.getGroupsBySession(last.id);
-  const sessionGroupIds = sessionGroups.map(g => g.id);
-  const sessionItems = await SessionRepository.getItemsByGroups(sessionGroupIds);
-  const sessionItemIds = sessionItems.map(i => i.id);
-  const allSets = await SessionRepository.getSetsByItems(sessionItemIds);
+  const { items: sessionItems, sets: allSets } = await SessionRepository.getSessionEntities([last.id]);
 
   const exerciseIds = Array.from(new Set(sessionItems.map(i => i.exerciseId)));
   const allExercises = await ExerciseRepository.getByIds(exerciseIds);

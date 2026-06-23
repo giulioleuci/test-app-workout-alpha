@@ -22,7 +22,7 @@ import dayjs from '@/lib/dayjs';
 import { formatChartDate } from '@/lib/formatting';
 import { roundToHalf } from '@/lib/math';
 
-import { totalVolume } from './logic/setStats';
+import { filterCompleted, totalVolume } from './logic/setStats';
 import { OBJECTIVE_KEYS, scoreAllObjectives } from './objectiveScoring';
 
 interface FlatGroup {
@@ -96,7 +96,6 @@ export function calculateLoadProgression(
     const byExercise = groupBy(setsWithLoad, r => r.item.exerciseId);
 
     _map(byExercise, (exerciseSets, exerciseId) => {
-        const itemInArray = exerciseSets[0]?.item;
         const exercise = exerciseMap.get(exerciseId);
         // Group exercise sets by date
         const byDate = groupBy(exerciseSets, r => formatDate(r.session.startedAt));
@@ -239,7 +238,7 @@ export function buildSessionHistoryFromFlatData(
         const sessionItems = flatMap(sessionGroups, (g: FlatGroup) => itemsByGroup[g.id] || []);
         const sessionSets = flatMap(sessionItems, (i: FlatItem) => setsByItem[i.id] || []);
 
-        const completedSets = sessionSets.filter((s: FlatSet) => s.isCompleted);
+        const completedSets = filterCompleted(sessionSets);
         const rpes = completedSets.filter((s: FlatSet) => s.actualRPE !== null).map((s: FlatSet) => s.actualRPE!);
         const totalVol = totalVolume(completedSets);
 
@@ -258,7 +257,7 @@ export function buildSessionHistoryFromFlatData(
 export function buildSessionHistory(hydratedSessions: { session: WorkoutSession, groups: { items: { sets: FlatSet[] }[] }[] }[]): SessionSummary[] {
     return hydratedSessions.map(hs => {
         const completedSets = flatMap(hs.groups, g =>
-            flatMap(g.items, item => item.sets.filter((s: FlatSet) => s.isCompleted))
+            flatMap(g.items, item => filterCompleted(item.sets))
         );
         const allSets = flatMap(hs.groups, g =>
             flatMap(g.items, item => item.sets)

@@ -1,6 +1,6 @@
-import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
 import { OneRepMaxRepository } from '@/db/repositories/OneRepMaxRepository';
+import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { UserProfileRepository } from '@/db/repositories/UserProfileRepository';
 import type { Exercise, OneRepMaxRecord, BodyWeightRecord } from '@/domain/entities';
 import dayjs from '@/lib/dayjs';
@@ -101,25 +101,15 @@ export class OneRepMaxService {
     }
     
     // 3: Calculated (e1rm)
-    const items = await db.sessionExerciseItems
-      .where('exerciseId').equals(exerciseId)
-      .toArray();
-    const itemIds = items.map(i => i.id);
-    
-    if (itemIds.length > 0) {
-        const setsWithE1RM = await db.sessionSets
-            .where('sessionExerciseItemId').anyOf(itemIds)
-            .filter(s => s.isCompleted && (s.e1rm ?? 0) > 0)
-            .toArray();
-            
-        if (setsWithE1RM.length > 0) {
-            const bestE1RM = setsWithE1RM.sort((a, b) => (b.e1rm ?? 0) - (a.e1rm ?? 0))[0];
-            return {
-                value: bestE1RM.e1rm!,
-                method: 'calculated',
-                recordedAt: bestE1RM.completedAt || new Date()
-            };
-        }
+    const setsWithE1RM = await SessionRepository.getCompletedE1RMSetsForExercise(exerciseId);
+
+    if (setsWithE1RM.length > 0) {
+      const bestE1RM = setsWithE1RM.sort((a, b) => (b.e1rm ?? 0) - (a.e1rm ?? 0))[0];
+      return {
+        value: bestE1RM.e1rm!,
+        method: 'calculated',
+        recordedAt: bestE1RM.completedAt || new Date()
+      };
     }
 
     return null;

@@ -55,7 +55,7 @@ export default function ExerciseList() {
   return (
     <div className="space-y-6 pb-20">
       <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setEditingExercise(null); }}>
-        <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-lg">
+        <DialogContent className="max-h-[90vh] w-[95vw] max-w-lg overflow-y-auto sm:w-full">
           <DialogHeader>
             <DialogTitle>{editingExercise ? t('actions.edit') : t('exercises.create')}</DialogTitle>
           </DialogHeader>
@@ -150,7 +150,8 @@ export default function ExerciseList() {
       {/* FAB */}
       <Button
         size="lg"
-        className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] right-4 z-30 h-14 w-14 rounded-full shadow-lg md:bottom-8 md:right-8 md:h-12 md:w-auto md:px-5"
+        className="fixed right-4 z-30 h-14 w-14 rounded-full shadow-lg md:bottom-8 md:right-8 md:h-12 md:w-auto md:px-5"
+        style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
         onClick={() => { setEditingExercise(null); setDialogOpen(true); }}
       >
         <Plus className="h-5 w-5 md:mr-2" />

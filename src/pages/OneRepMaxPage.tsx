@@ -90,7 +90,8 @@ export default function OneRepMaxPage() {
         onSave={handleSave}
       />
 
-      <Button size="lg" className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] right-4 z-30 h-14 w-14 rounded-full shadow-lg md:bottom-8 md:right-8 md:h-12 md:w-auto md:px-5"
+      <Button size="lg" className="fixed right-4 z-30 h-14 w-14 rounded-full shadow-lg md:bottom-8 md:right-8 md:h-12 md:w-auto md:px-5"
+        style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
         onClick={() => openAdd()}>
         <Plus className="h-5 w-5 md:mr-2" />
         <span className="hidden md:inline">{t('oneRepMax.addRecord')}</span>

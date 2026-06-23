@@ -10,10 +10,9 @@ import { LoadedGroup, LoadedItem } from '@/domain/activeSessionTypes';
 import { ExerciseGroupType, SetType, Equipment } from '@/domain/enums';
 import * as sessionQueries from '@/hooks/queries/sessionQueries';
 import ActiveSessionPage from '@/pages/ActiveSession';
-import { sessionLoaderService } from '@/services/sessionLoaderService';
 import { useActiveSessionStore } from '@/stores/activeSessionStore';
 
-import { createMockSession, createMockExerciseGroup, createMockExerciseItem, createMockSessionSet, createMockExercise } from '../../fixtures/domain-factories';
+import { createMockSession, createMockExerciseItem, createMockSessionSet, createMockExercise } from '../../fixtures/domain-factories';
 import { renderWithProviders } from '../../utils/test-utils';
 
 // Mock services

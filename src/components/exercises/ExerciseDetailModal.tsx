@@ -22,14 +22,17 @@ export function ExerciseDetailModal({ exercise, open, onOpenChange }: ExerciseDe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent 
+        className="max-w-lg overflow-y-auto sm:w-full"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader>
           <DialogTitle>{exercise.name}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-1">
           {/* Type & Movement Pattern */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {t('exercises.infoModal.type')}

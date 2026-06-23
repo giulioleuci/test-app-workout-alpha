@@ -113,7 +113,10 @@ export default function IntensityCalculator({ exerciseId, initialReps = 8, onApp
             <Calculator className="h-3.5 w-3.5" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-lg sm:max-w-md">
+        <DialogContent 
+          className="max-w-lg overflow-y-auto sm:w-full sm:max-w-md"
+          style={{ maxHeight: '90vh', width: '95vw' }}
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Calculator className="h-5 w-5 text-primary" />

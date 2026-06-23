@@ -42,7 +42,7 @@ export function PinEntryDialog({ user, open, onSuccess, onCancel }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onCancel(); }}>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+      <DialogContent className="overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
         <DialogHeader>
           <DialogTitle>
             <div className="flex items-center gap-3">

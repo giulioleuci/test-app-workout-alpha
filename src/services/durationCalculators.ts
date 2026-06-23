@@ -1,4 +1,3 @@
-import { DEFAULT_REST_SECONDS } from '@/domain/constants';
 import type { PlannedSet } from '@/domain/entities';
 import { CounterType } from '@/domain/enums';
 import type { ClusterSetParams, DurationRange } from '@/domain/value-objects';

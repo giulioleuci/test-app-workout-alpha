@@ -40,7 +40,8 @@ export default function SwapExerciseSheet({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto sm:max-w-xl"
+        className="overflow-y-auto sm:w-full sm:max-w-xl"
+        style={{ maxHeight: '90vh', width: '95vw' }}
       >
         <DialogHeader className="mb-4">
           <DialogTitle>{t('sessionMutator.swapExercise')}</DialogTitle>

@@ -118,7 +118,7 @@ export default function SetRow({
                             <Trash2 className="h-3 w-3 text-destructive" />
                         </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+                    <AlertDialogContent className="max-h-[90vh] w-[95vw] overflow-y-auto sm:w-full">
                         <AlertDialogHeader>
                             <AlertDialogTitle>{t('sessions.deleteSet')}</AlertDialogTitle>
                             <AlertDialogDescription>{t('sessions.deleteSetConfirm')}</AlertDialogDescription>
@@ -132,7 +132,7 @@ export default function SetRow({
             </div>
 
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-sm">
+                <DialogContent className="max-w-sm overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
                     <DialogHeader>
                         <DialogTitle className="text-sm">{t('units.S')}{index + 1} — {exercise?.name ?? ''}</DialogTitle>
                     </DialogHeader>

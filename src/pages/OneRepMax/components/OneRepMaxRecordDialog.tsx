@@ -11,7 +11,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import type { OneRepMaxRecord, Exercise } from '@/domain/entities';
@@ -97,7 +96,10 @@ export default function OneRepMaxRecordDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-h-[85vh] overflow-y-auto">
+      <DialogContent 
+        className="overflow-y-auto sm:w-full"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader>
           <DialogTitle>{editingRecord ? t('oneRepMax.editRecord') : t('oneRepMax.addRecord')}</DialogTitle>
         </DialogHeader>
@@ -158,7 +160,7 @@ export default function OneRepMaxRecordDialog({
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <Label className="text-body-sm">RPE</Label>
+                  <Label className="text-body-sm">{'RPE'}</Label>
                   <span className="text-body-sm font-semibold">{formRpe === 10 ? '10 (Max)' : formRpe}</span>
                 </div>
                 <Slider
@@ -188,9 +190,9 @@ export default function OneRepMaxRecordDialog({
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1 pt-2 text-sm">
-                        <span className="text-muted-foreground">O&apos;Conner:</span>
+                        <span className="text-muted-foreground">{"O'Conner:"}</span>
                         <span className="font-medium">{indirectPreview.oconner ?? '-'} {formUnit}</span>
-                        <span className="text-muted-foreground">Lombardi:</span>
+                        <span className="text-muted-foreground">{"Lombardi:"}</span>
                         <span className="font-medium">{indirectPreview.lombardi ?? '-'} {formUnit}</span>
                         <span className="text-muted-foreground">{t('oneRepMax.formulaBrzycki')}:</span>
                         <span className="font-medium">{indirectPreview.brzycki ?? '-'} {formUnit}</span>
@@ -198,7 +200,7 @@ export default function OneRepMaxRecordDialog({
                         <span className="font-medium">{indirectPreview.epley ?? '-'} {formUnit}</span>
                         {indirectPreview.percentage && (
                           <>
-                            <span className="text-muted-foreground">Percentage:</span>
+                            <span className="text-muted-foreground">{'Percentage:'}</span>
                             <span className="font-medium">{indirectPreview.percentage} {formUnit}</span>
                           </>
                         )}

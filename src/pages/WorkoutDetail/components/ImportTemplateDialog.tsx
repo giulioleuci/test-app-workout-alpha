@@ -19,7 +19,7 @@ export default function ImportTemplateDialog({ open, onOpenChange, templates, on
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
+      <DialogContent className="max-h-[90vh] w-[95vw] max-w-md overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle>{t('sessions.importTemplate')}</DialogTitle>
           <DialogDescription>{t('sessions.selectTemplate')}</DialogDescription>

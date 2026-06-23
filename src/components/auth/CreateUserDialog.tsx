@@ -173,7 +173,10 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
         }
       }
     }}>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto flex max-h-[90vh] max-w-md flex-col overflow-hidden p-0">
+      <DialogContent 
+        className="flex max-w-md flex-col overflow-hidden overflow-y-auto p-0 sm:w-full"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader className="shrink-0 px-6 pt-6">
           <div className="flex items-center justify-between">
             <LanguageSwitcher showLabel={false} iconOnly={true} />
@@ -200,7 +203,10 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <p 
+                  className="mb-1 font-black uppercase tracking-widest text-muted-foreground"
+                  style={{ fontSize: '10px' }}
+                >
                   {t('common.preview')}
                 </p>
                 <h3 className="truncate text-xl font-black leading-tight">
@@ -280,7 +286,8 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                                 type="button" 
                                 variant="link" 
                                 size="sm" 
-                                className="h-6 px-0 text-[10px] font-bold uppercase" 
+                                className="h-6 px-0 font-bold uppercase" 
+                                style={{ fontSize: '10px' }}
                                 onClick={() => setIsNameSynced(true)}
                               >
                                 {t('users.syncProfileName')}
@@ -375,7 +382,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                           style={{ backgroundColor: color }}
                           onClick={() => field.onChange(color)}
                         >
-                          {field.value === color && <Check className="h-5 w-5 stroke-[3px] text-white" />}
+                          {field.value === color && <Check className="h-5 w-5 text-white" style={{ strokeWidth: '3px' }} />}
                         </button>
                       ))}
                     </div>
@@ -399,7 +406,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                         <FormLabel className="text-sm font-bold">
                           {t('onboarding.seedExercises')}
                         </FormLabel>
-                        <p className="text-[12px] leading-tight text-muted-foreground">
+                        <p className="leading-tight text-muted-foreground" style={{ fontSize: '12px' }}>
                           {t('users.seedDataDescription')}
                         </p>
                       </div>
@@ -427,7 +434,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                       exit={{ opacity: 0, height: 0 }}
                       className="space-y-4 pt-2"
                     >
-                      <p className="text-[13px] font-medium leading-snug text-muted-foreground">
+                      <p className="font-medium leading-snug text-muted-foreground" style={{ fontSize: '13px' }}>
                         {t('onboarding.selectLibraryPlans')}
                       </p>
 
@@ -456,7 +463,7 @@ export function CreateUserDialog({ open, onOpenChange, onUserCreated }: Props) {
                             </span>
                             {form.watch(plan.id) && (
                               <div className="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary">
-                                <Check className="h-2.5 w-2.5 stroke-[4px] text-white" />
+                                <Check className="h-2.5 w-2.5 text-white" style={{ strokeWidth: '4px' }} />
                               </div>
                             )}
                           </button>

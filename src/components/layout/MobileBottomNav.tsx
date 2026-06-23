@@ -44,7 +44,7 @@ export default function MobileBottomNav({ bottomNavItems, moreItems }: MobileBot
               activeClassName="text-primary font-semibold"
             >
               <item.icon className="h-4.5 w-4.5" style={{ height: '1.125rem', width: '1.125rem' }} />
-              <span className="text-[11px] leading-none">{item.label}</span>
+              <span className="leading-none" style={{ fontSize: '11px' }}>{item.label}</span>
             </NavLink>
           ))}
           <button
@@ -56,7 +56,7 @@ export default function MobileBottomNav({ bottomNavItems, moreItems }: MobileBot
             )}
           >
             <MoreHorizontal className="h-4.5 w-4.5" style={{ height: '1.125rem', width: '1.125rem' }} />
-            <span className="text-[10px] leading-none">{t('nav.more')}</span>
+            <span className="leading-none" style={{ fontSize: '10px' }}>{t('nav.more')}</span>
           </button>
         </div>
       </nav>

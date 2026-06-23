@@ -325,6 +325,12 @@ export class SessionRepository extends BaseRepository {
         return query.toArray();
     }
 
+    static async getCompletedItemsSince(sinceDate: Date): Promise<SessionExerciseItem[]> {
+        return db.sessionExerciseItems
+            .filter(i => !!i.completedAt && i.completedAt >= sinceDate)
+            .toArray();
+    }
+
     /**
      * Efficiently find the latest session items for a batch of exercises.
      * Uses the exerciseId+completedAt index to quickly find candidates.
@@ -368,6 +374,17 @@ export class SessionRepository extends BaseRepository {
 
     static async getSetsByItems(itemIds: string[]): Promise<SessionSet[]> {
         return db.sessionSets.where('sessionExerciseItemId').anyOf(itemIds).sortBy('orderIndex');
+    }
+
+    static async getCompletedE1RMSetsForExercise(exerciseId: string): Promise<SessionSet[]> {
+        const items = await this.getItemsByExercise(exerciseId);
+        const itemIds = items.map(i => i.id);
+        if (itemIds.length === 0) return [];
+
+        return db.sessionSets
+            .where('sessionExerciseItemId').anyOf(itemIds)
+            .filter(s => s.isCompleted && (s.e1rm ?? 0) > 0)
+            .toArray();
     }
 
     static async getCompletedSetsByItem(itemId: string): Promise<SessionSet[]> {
@@ -654,6 +671,20 @@ export class SessionRepository extends BaseRepository {
         });
     }
 
+    static async addGroupWithItemsAndSets(
+        group: SessionExerciseGroup,
+        items: SessionExerciseItem[],
+        sets: SessionSet[]
+    ): Promise<void> {
+        await db.transaction('rw', [
+            db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets
+        ], async () => {
+            await db.sessionExerciseGroups.add(group);
+            if (items.length > 0) await db.sessionExerciseItems.bulkAdd(items);
+            if (sets.length > 0) await db.sessionSets.bulkAdd(sets);
+        });
+    }
+
     static async removeExercise(itemId: string): Promise<void> {
         await db.transaction('rw', [
             db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets
@@ -673,6 +704,23 @@ export class SessionRepository extends BaseRepository {
                 if (!group) return;
 
                 await db.sessionExerciseGroups.delete(group.id);
+            }
+        });
+    }
+
+    static async deleteItemCascade(itemId: string, groupId: string): Promise<void> {
+        await db.transaction('rw', [
+            db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets
+        ], async () => {
+            await db.sessionSets.where('sessionExerciseItemId').equals(itemId).delete();
+            await db.sessionExerciseItems.delete(itemId);
+
+            const remaining = await db.sessionExerciseItems
+                .where('sessionExerciseGroupId').equals(groupId)
+                .count();
+
+            if (remaining === 0) {
+                await db.sessionExerciseGroups.delete(groupId);
             }
         });
     }

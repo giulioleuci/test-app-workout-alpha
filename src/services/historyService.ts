@@ -44,21 +44,12 @@ export async function getHistoryPage(page: number, pageSize: number): Promise<Hi
   const incompleteSessions = pagedSessions.filter(ws => !ws.completedAt || ws.totalSets === undefined);
   const incompleteWorkoutSessionIds = incompleteSessions.map(ws => ws.id);
 
-  const [workouts, plannedSessions, allGroups] = await Promise.all([
+  const [workouts, plannedSessions, incompleteEntities] = await Promise.all([
     Promise.all(workoutIds.map(id => WorkoutPlanRepository.getWorkout(id))),
     Promise.all(sessionIds.map(id => WorkoutPlanRepository.getSession(id))),
-    incompleteWorkoutSessionIds.length > 0 ? SessionRepository.getGroupsBySessionIds(incompleteWorkoutSessionIds) : Promise.resolve([])
+    SessionRepository.getSessionEntities(incompleteWorkoutSessionIds),
   ]);
-
-  const groupIds = allGroups.map(g => g.id);
-  const allItems = groupIds.length > 0
-    ? await SessionRepository.getItemsByGroups(groupIds)
-    : [];
-
-  const itemIds = allItems.map(i => i.id);
-  const allSets = itemIds.length > 0
-    ? await SessionRepository.getSetsByItems(itemIds)
-    : [];
+  const { groups: allGroups, items: allItems, sets: allSets } = incompleteEntities;
 
   const validWorkouts = workouts.filter((w): w is PlannedWorkout => !!w);
   const workoutMap = new Map(validWorkouts.map(w => [w.id, w] as const));
@@ -189,24 +180,11 @@ export async function addSessionExerciseGroup(
   items: SessionExerciseItem[],
   sets: SessionSet[]
 ): Promise<void> {
-  const { db } = await import('@/db/database');
-  await db.transaction('rw', [db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets], async () => {
-    await db.sessionExerciseGroups.add(group);
-    if (items.length > 0) await db.sessionExerciseItems.bulkAdd(items);
-    if (sets.length > 0) await db.sessionSets.bulkAdd(sets);
-  });
+  await SessionRepository.addGroupWithItemsAndSets(group, items, sets);
 }
 
 export async function deleteSessionExerciseItemCascade(itemId: string, groupId: string): Promise<void> {
-  const { db } = await import('@/db/database');
-  await db.transaction('rw', [db.sessionExerciseGroups, db.sessionExerciseItems, db.sessionSets], async () => {
-    await db.sessionSets.where('sessionExerciseItemId').equals(itemId).delete();
-    await db.sessionExerciseItems.delete(itemId);
-    const remaining = await db.sessionExerciseItems.where('sessionExerciseGroupId').equals(groupId).count();
-    if (remaining === 0) {
-      await db.sessionExerciseGroups.delete(groupId);
-    }
-  });
+  await SessionRepository.deleteItemCascade(itemId, groupId);
 }
 
 export async function updateSessionExerciseItem(itemId: string, updates: Partial<SessionExerciseItem>): Promise<void> {
@@ -288,16 +266,12 @@ export async function getFilteredHistory(filters: HistoryFilters): Promise<Histo
   const incompleteSessions = pagedSessions.filter(ws => !ws.completedAt || ws.totalSets === undefined);
   const incompleteIds = incompleteSessions.map(ws => ws.id);
 
-  const [workouts, plannedSessions, allGroups] = await Promise.all([
+  const [workouts, plannedSessions, incompleteEntities] = await Promise.all([
     Promise.all(pwIds.map(id => WorkoutPlanRepository.getWorkout(id))),
     Promise.all(psIds.map(id => WorkoutPlanRepository.getSession(id))),
-    incompleteIds.length > 0 ? SessionRepository.getGroupsBySessionIds(incompleteIds) : Promise.resolve([]),
+    SessionRepository.getSessionEntities(incompleteIds),
   ]);
-
-  const groupIds = (allGroups || []).map(g => g.id);
-  const allItems = groupIds.length > 0 ? await SessionRepository.getItemsByGroups(groupIds) : [];
-  const itemIds = allItems.map(i => i.id);
-  const allSets = itemIds.length > 0 ? await SessionRepository.getSetsByItems(itemIds) : [];
+  const { groups: allGroups, items: allItems, sets: allSets } = incompleteEntities;
 
   const validWorkouts = workouts.filter((w): w is PlannedWorkout => !!w);
   const workoutMap = new Map(validWorkouts.map(w => [w.id, w] as const));

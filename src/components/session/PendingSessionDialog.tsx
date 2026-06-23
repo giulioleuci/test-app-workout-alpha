@@ -70,7 +70,7 @@ export default function PendingSessionDialog({ open, pendingSession, onResolved,
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onCancel(); }}>
-      <DialogContent className="w-[95vw] sm:w-full max-w-sm max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-sm overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
         <DialogHeader>
           <DialogTitle>{t('pendingSession.title')}</DialogTitle>
           <DialogDescription>
@@ -115,7 +115,7 @@ export default function PendingSessionDialog({ open, pendingSession, onResolved,
           </div>
         </div>
 
-        <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row">
           <Button variant="destructive" size="default" className="w-full sm:flex-1" onClick={handleDiscard} disabled={saving}>
             <Trash2 className="mr-1 h-3.5 w-3.5" />
             {t('actions.discard')}

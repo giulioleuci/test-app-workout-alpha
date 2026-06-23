@@ -67,7 +67,10 @@ export default function LoadSuggestionDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-[95vw] sm:w-full max-w-lg sm:rounded-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent 
+        className="max-w-lg overflow-y-auto sm:w-full sm:rounded-lg"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -132,9 +135,9 @@ export default function LoadSuggestionDialog({
                       <SelectValue placeholder={t('common.filterMethod')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="rpe">RPE</SelectItem>
-                      <SelectItem value="percentage">% 1RM</SelectItem>
-                      <SelectItem value="xrm">XRM</SelectItem>
+                      <SelectItem value="rpe">{t('planning.rpe')}</SelectItem>
+                      <SelectItem value="percentage">{t('planning.percentage1RM')}</SelectItem>
+                      <SelectItem value="xrm">{t('loadSuggestion.methodXRM')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -223,16 +226,20 @@ function RecommendationCard({ recommendation, onApply, isPreferred }: {
       "flex items-center justify-between rounded-lg border px-3 py-2 transition-colors",
       isPreferred ? "border-primary/50 bg-primary/5 shadow-sm" : "border-border/50 bg-muted/20"
     )}>
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        <Badge variant={isPreferred ? "default" : "outline"} className="font-semibold text-[10px] px-1.5 h-5 shrink-0 uppercase tracking-wider">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <Badge 
+          variant={isPreferred ? "default" : "outline"} 
+          className="h-5 shrink-0 px-1.5 font-semibold uppercase tracking-wider"
+          style={{ fontSize: '10px' }}
+        >
           {recommendation.label}
         </Badge>
-        <div className="flex items-baseline gap-1.5 min-w-0">
+        <div className="flex min-w-0 items-baseline gap-1.5">
           <span className="whitespace-nowrap text-base font-bold">
-            {recommendation.load} <span className="text-[10px] font-normal text-muted-foreground">{t('units.kg')}</span>
+            {recommendation.load} <span className="font-normal text-muted-foreground" style={{ fontSize: '10px' }}>{t('units.kg')}</span>
           </span>
           {range && (
-            <span className="text-[10px] text-muted-foreground truncate font-normal">
+            <span className="truncate font-normal text-muted-foreground" style={{ fontSize: '10px' }}>
               ({range})
             </span>
           )}
@@ -241,10 +248,10 @@ function RecommendationCard({ recommendation, onApply, isPreferred }: {
       <Button 
         size="sm" 
         variant={isPreferred ? "default" : "secondary"} 
-        className="h-7 shrink-0 px-3 ml-2 rounded-full" 
+        className="ml-2 h-7 shrink-0 rounded-full px-3" 
         onClick={() => onApply(recommendation.load)}
       >
-        <span className="text-[10px] font-bold uppercase tracking-wider">{t('actions.use')}</span>
+        <span className="font-bold uppercase tracking-wider" style={{ fontSize: '10px' }}>{t('actions.use')}</span>
       </Button>
     </div>
   );

@@ -96,7 +96,7 @@ export default function HistoryItemRow({
                 <Trash2 className="h-3.5 w-3.5 text-destructive" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+            <AlertDialogContent className="max-h-[90vh] w-[95vw] overflow-y-auto sm:w-full">
               <AlertDialogHeader>
                 <AlertDialogTitle>{t('sessions.deleteExercise')}</AlertDialogTitle>
                 <AlertDialogDescription>{t('sessions.deleteExerciseConfirm')}</AlertDialogDescription>
@@ -145,7 +145,7 @@ export default function HistoryItemRow({
 
       {/* Change exercise dialog */}
       <Dialog open={changeExerciseOpen} onOpenChange={setChangeExerciseOpen}>
-        <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto flex flex-col sm:max-w-lg">
+        <DialogContent className="flex flex-col overflow-y-auto sm:w-full sm:max-w-lg" style={{ maxHeight: '90vh', width: '95vw' }}>
           <DialogHeader>
             <DialogTitle>{t('sessions.changeExercise')}</DialogTitle>
           </DialogHeader>

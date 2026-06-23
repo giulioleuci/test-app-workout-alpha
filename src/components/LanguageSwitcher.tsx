@@ -1,7 +1,6 @@
 import { Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/hooks/useLanguage';
 import { cn } from '@/lib/utils';
@@ -37,11 +36,11 @@ export function LanguageSwitcher({ className, showLabel = true, iconOnly = false
             </SelectTrigger>
           )}
           <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="it">Italiano</SelectItem>
-            <SelectItem value="es">Español</SelectItem>
-            <SelectItem value="fr">Français</SelectItem>
-            <SelectItem value="zh">中文</SelectItem>
+            <SelectItem value="en">{'English'}</SelectItem>
+            <SelectItem value="it">{'Italiano'}</SelectItem>
+            <SelectItem value="es">{'Español'}</SelectItem>
+            <SelectItem value="fr">{'Français'}</SelectItem>
+            <SelectItem value="zh">{'中文'}</SelectItem>
           </SelectContent>
         </Select>
       </div>

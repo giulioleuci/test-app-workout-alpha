@@ -21,6 +21,7 @@ vi.mock('@/db/repositories/ExerciseRepository');
 describe('historyService', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({ groups: [], items: [], sets: [] });
   });
 
   describe('getHistoryPage', () => {
@@ -41,9 +42,11 @@ describe('historyService', () => {
       vi.mocked(WorkoutPlanRepository.getWorkout).mockResolvedValue({ id: 'pw1', name: 'Workout 1' } as any);
       vi.mocked(WorkoutPlanRepository.getSession).mockResolvedValue({ id: 'ps1', name: 'Session 1' } as any);
 
-      vi.mocked(SessionRepository.getGroupsBySessionIds).mockResolvedValue([{ id: 'g1', workoutSessionId: 's1' }] as any);
-      vi.mocked(SessionRepository.getItemsByGroups).mockResolvedValue([{ id: 'i1', sessionExerciseGroupId: 'g1' }] as any);
-      vi.mocked(SessionRepository.getSetsByItems).mockResolvedValue([{ sessionExerciseItemId: 'i1', isCompleted: true }, { sessionExerciseItemId: 'i1', isCompleted: false }] as any);
+      vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({
+        groups: [{ id: 'g1', workoutSessionId: 's1' }],
+        items: [{ id: 'i1', sessionExerciseGroupId: 'g1' }],
+        sets: [{ sessionExerciseItemId: 'i1', isCompleted: true }, { sessionExerciseItemId: 'i1', isCompleted: false }],
+      } as any);
 
       const result = await getHistoryPage(1, 10);
 
@@ -159,7 +162,7 @@ describe('historyService', () => {
         // or fail during enrichment.
         vi.mocked(WorkoutPlanRepository.getWorkout).mockResolvedValue({ id: 'w1', name: 'Workout 1' } as any);
         vi.mocked(WorkoutPlanRepository.getSession).mockResolvedValue({ id: 'ps1', name: 'Session 1' } as any);
-        vi.mocked(SessionRepository.getGroupsBySessionIds).mockResolvedValue([] as any);
+        vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({ groups: [], items: [], sets: [] } as any);
 
         // We use exerciseId as the primary filter to ensure workoutId is treated as a secondary filter
         const result = await getFilteredHistory({

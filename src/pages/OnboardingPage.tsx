@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { INPUT_STEPS } from '@/domain/enums';
 import { useOnboardingMutations } from '@/hooks/mutations/onboardingMutations';
+import { cn } from '@/lib/utils';
 
 interface Props {
   onComplete: () => void;
@@ -34,7 +35,10 @@ function AppInfoModal() {
           <Info className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto max-w-md">
+      <DialogContent 
+        className="max-w-md overflow-y-auto sm:w-full"
+        style={{ maxHeight: '90vh', width: '95vw' }}
+      >
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <Dumbbell className="h-6 w-6 text-primary" />
@@ -43,7 +47,7 @@ function AppInfoModal() {
             {t('onboarding.welcome')}
           </DialogTitle>
           <DialogDescription className="text-center">
-            Delta Workout
+            {t('common.appName', 'Delta Workout')}
           </DialogDescription>
         </DialogHeader>
 
@@ -60,7 +64,7 @@ function AppInfoModal() {
             <p className="text-body-sm leading-relaxed text-muted-foreground">
               {t('onboarding.appOfflineInfo')}
             </p>
-            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-primary/70">
+            <div className="mt-3 flex items-center gap-2 font-bold uppercase tracking-wider text-primary/70" style={{ fontSize: '10px' }}>
               <CloudOff className="h-3.5 w-3.5" />
               <span>{t('users.noServersBadge')}</span>
             </div>
@@ -166,7 +170,7 @@ export default function OnboardingPage({ onComplete }: Props) {
             <Dumbbell className="h-5 w-5 text-primary" />
           </div>
           <CardTitle className="text-h4 font-black">{t('onboarding.welcome')}</CardTitle>
-          <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+          <CardDescription className="font-bold uppercase tracking-widest" style={{ fontSize: '10px' }}>
             {step === 1 ? t('onboarding.step1Subtitle') : t('onboarding.step2Subtitle')}
           </CardDescription>
         </CardHeader>
@@ -203,7 +207,7 @@ export default function OnboardingPage({ onComplete }: Props) {
 
               <div className="space-y-2 pb-2">
                 <Label htmlFor="weight" className="text-xs font-bold uppercase tracking-wider">
-                  {t('profile.weightKg')} <span className="text-[10px] font-normal lowercase text-muted-foreground">({t('onboarding.weightOptional')})</span>
+                  {t('profile.weightKg')} <span className="font-normal lowercase text-muted-foreground" style={{ fontSize: '10px' }}>({t('onboarding.weightOptional')})</span>
                 </Label>
                 <Input
                   id="weight"
@@ -251,7 +255,11 @@ export default function OnboardingPage({ onComplete }: Props) {
                       disabled={!seedOptions.exercises}
                       onCheckedChange={(c) => handlePlanToggle('fullBody', !!c)}
                     />
-                    <Label htmlFor="seed-fullbody" className={`cursor-pointer text-[13px] leading-tight ${!seedOptions.exercises ? 'text-muted-foreground' : ''}`}>
+                    <Label 
+                      htmlFor="seed-fullbody" 
+                      className={cn("cursor-pointer leading-tight", !seedOptions.exercises ? 'text-muted-foreground' : '')}
+                      style={{ fontSize: '13px' }}
+                    >
                       {t('onboarding.seedFullBody')}
                     </Label>
                   </div>
@@ -263,7 +271,11 @@ export default function OnboardingPage({ onComplete }: Props) {
                       disabled={!seedOptions.exercises}
                       onCheckedChange={(c) => handlePlanToggle('ppl', !!c)}
                     />
-                    <Label htmlFor="seed-ppl" className={`cursor-pointer text-[13px] leading-tight ${!seedOptions.exercises ? 'text-muted-foreground' : ''}`}>
+                    <Label 
+                      htmlFor="seed-ppl" 
+                      className={cn("cursor-pointer leading-tight", !seedOptions.exercises ? 'text-muted-foreground' : '')}
+                      style={{ fontSize: '13px' }}
+                    >
                       {t('onboarding.seedPPL')}
                     </Label>
                   </div>
@@ -275,7 +287,11 @@ export default function OnboardingPage({ onComplete }: Props) {
                       disabled={!seedOptions.exercises}
                       onCheckedChange={(c) => handlePlanToggle('upperLower', !!c)}
                     />
-                    <Label htmlFor="seed-upperlower" className={`cursor-pointer text-[13px] leading-tight ${!seedOptions.exercises ? 'text-muted-foreground' : ''}`}>
+                    <Label 
+                      htmlFor="seed-upperlower" 
+                      className={cn("cursor-pointer leading-tight", !seedOptions.exercises ? 'text-muted-foreground' : '')}
+                      style={{ fontSize: '13px' }}
+                    >
                       {t('onboarding.seedUpperLower')}
                     </Label>
                   </div>
@@ -287,7 +303,11 @@ export default function OnboardingPage({ onComplete }: Props) {
                       disabled={!seedOptions.exercises}
                       onCheckedChange={(c) => handlePlanToggle('powerlifting', !!c)}
                     />
-                    <Label htmlFor="seed-powerlifting" className={`cursor-pointer text-[13px] leading-tight ${!seedOptions.exercises ? 'text-muted-foreground' : ''}`}>
+                    <Label 
+                      htmlFor="seed-powerlifting" 
+                      className={cn("cursor-pointer leading-tight", !seedOptions.exercises ? 'text-muted-foreground' : '')}
+                      style={{ fontSize: '13px' }}
+                    >
                       {t('onboarding.seedPowerlifting')}
                     </Label>
                   </div>
@@ -299,7 +319,11 @@ export default function OnboardingPage({ onComplete }: Props) {
                       disabled={!seedOptions.exercises}
                       onCheckedChange={(c) => handlePlanToggle('calisthenics', !!c)}
                     />
-                    <Label htmlFor="seed-calisthenics" className={`cursor-pointer text-[13px] leading-tight ${!seedOptions.exercises ? 'text-muted-foreground' : ''}`}>
+                    <Label 
+                      htmlFor="seed-calisthenics" 
+                      className={cn("cursor-pointer leading-tight", !seedOptions.exercises ? 'text-muted-foreground' : '')}
+                      style={{ fontSize: '13px' }}
+                    >
                       {t('onboarding.seedCalisthenics')}
                     </Label>
                   </div>

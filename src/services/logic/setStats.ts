@@ -2,14 +2,20 @@
  * Shared, pure set-statistics helpers.
  * No db access, no formatting, no i18n.
  */
-import type { SessionSet } from '@/domain/entities';
 import { calculateWeighted1RM } from '@/services/rpePercentageTable';
 
-export const isCompletedSet = (s: SessionSet) => s.isCompleted;
-export const isEffectiveSet = (s: SessionSet) => s.isCompleted && !s.isSkipped;
+interface CompletionState {
+  isCompleted: boolean;
+  isSkipped?: boolean;
+}
 
-export const filterCompleted = (sets: SessionSet[]) => sets.filter(isCompletedSet);
-export const filterEffective = (sets: SessionSet[]) => sets.filter(isEffectiveSet);
+export const isCompletedSet = <T extends CompletionState>(s: T) => s.isCompleted;
+export const isEffectiveSet = <T extends CompletionState>(s: T) => s.isCompleted && !s.isSkipped;
+export const isPendingSet = <T extends CompletionState>(s: T) => !s.isCompleted && !s.isSkipped;
+
+export const filterCompleted = <T extends CompletionState>(sets: T[]) => sets.filter(isCompletedSet);
+export const filterEffective = <T extends CompletionState>(sets: T[]) => sets.filter(isEffectiveSet);
+export const filterPending = <T extends CompletionState>(sets: T[]) => sets.filter(isPendingSet);
 
 /** Minimal shape required to compute volume — works for SessionSet and flattened set rows. */
 interface VolumeContribution {

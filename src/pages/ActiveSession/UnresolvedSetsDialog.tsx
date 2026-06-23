@@ -37,7 +37,7 @@ export default function UnresolvedSetsDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+      <AlertDialogContent className="overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
         <AlertDialogHeader>
           <AlertDialogTitle>{t('sessionMutator.unresolvedSets')}</AlertDialogTitle>
           <AlertDialogDescription>
@@ -45,7 +45,7 @@ export default function UnresolvedSetsDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div style={{ maxHeight: '40vh' }} className="space-y-3 overflow-y-auto py-2">
+        <div className="space-y-3 overflow-y-auto py-2" style={{ maxHeight: '40vh' }}>
           {Object.entries(grouped).map(([name, sets]) => (
             <div key={name} className="space-y-1">
               <p className="text-sm font-medium">{name}</p>

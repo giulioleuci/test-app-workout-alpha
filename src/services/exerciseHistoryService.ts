@@ -2,7 +2,6 @@ import { SessionRepository } from '@/db/repositories/SessionRepository';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
 import type { SessionExerciseItem, SessionSet, WorkoutSession } from '@/domain/entities';
 import dayjs from '@/lib/dayjs';
-import type { PerformanceTrendStatus } from '@/services/exercisePerformanceService';
 import { filterCompleted } from '@/services/logic/setStats';
 
 export interface HistoryEntry {

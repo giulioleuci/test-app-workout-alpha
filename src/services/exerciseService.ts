@@ -1,5 +1,5 @@
-import { db } from '@/db/database';
 import { ExerciseRepository } from '@/db/repositories/ExerciseRepository';
+import { SessionRepository } from '@/db/repositories/SessionRepository';
 import type { ExerciseFilters } from '@/db/repositories/types';
 import type { Exercise } from '@/domain/entities';
 
@@ -64,9 +64,7 @@ export async function getEnhancedExerciseCatalog(options?: ExerciseCatalogOption
   const sinceDate = new Date();
   sinceDate.setDate(sinceDate.getDate() - usageSinceDays);
 
-  const recentItems = await db.sessionExerciseItems
-    .filter(i => !!i.completedAt && i.completedAt >= sinceDate)
-    .toArray();
+  const recentItems = await SessionRepository.getCompletedItemsSince(sinceDate);
 
   const usageMap = new Map<string, { count: number; lastDate: Date | null }>();
   for (const item of recentItems) {

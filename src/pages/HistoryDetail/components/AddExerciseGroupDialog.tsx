@@ -88,7 +88,8 @@ export default function AddExerciseGroupDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto flex flex-col sm:h-auto sm:max-w-xl"
+        className="flex flex-col overflow-y-auto sm:h-auto sm:w-full sm:max-w-xl"
+        style={{ maxHeight: '90vh', width: '95vw' }}
       >
         <DialogHeader className="shrink-0">
           <div className="flex items-center gap-2 text-left">

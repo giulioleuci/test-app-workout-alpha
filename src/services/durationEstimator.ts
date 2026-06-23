@@ -1,13 +1,12 @@
 import type { HydratedPlannedWorkout } from '@/db/repositories/types';
 import { WorkoutPlanRepository } from '@/db/repositories/WorkoutPlanRepository';
-import { DEFAULT_REST_SECONDS } from '@/domain/constants';
 import type { PlannedSet, PlannedExerciseGroup, PlannedWorkout } from '@/domain/entities';
-import { CounterType, ExerciseGroupType, SetType } from '@/domain/enums';
+import { CounterType, ExerciseGroupType } from '@/domain/enums';
 import type { ClusterSetParams } from '@/domain/value-objects';
 import { getClusterConfig } from '@/domain/value-objects';
 
 import { estimateSetBlockSeconds, estimateSetExecutionSeconds, type DurationRange } from './durationCalculators';
-import { computeTraversalOrder } from './traversal';
+import { computeTraversalOrder, type TraversalStep } from './traversal';
 
 export type { DurationRange };
 
@@ -25,7 +24,8 @@ export function estimateItemDurationFromData(
   counterType: CounterType,
   clusterParams?: ClusterSetParams,
 ): DurationRange {
-  let min = 0, max = 0;
+  let min = 0;
+  let max = 0;
   for (const s of sets) {
     const d = estimateSetBlockSeconds(s, counterType, clusterParams);
     min += d.minSeconds;
@@ -104,9 +104,9 @@ export function estimateSessionDurationFromData(
   groups: PlannedExerciseGroup[],
   itemsByGroup: Record<string, { counterType: CounterType; sets: PlannedSet[]; clusterParams?: ClusterSetParams }[]>,
 ): DurationRange {
-  let min = 0, max = 0;
-  for (let i = 0; i < groups.length; i++) {
-    const group = groups[i];
+  let min = 0;
+  let max = 0;
+  for (const group of groups) {
     const groupItems = itemsByGroup[group.id] || [];
 
     // Use the unified estimation logic

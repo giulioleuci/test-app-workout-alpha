@@ -9,7 +9,7 @@ import { ToFailureIndicator } from '@/domain/enums';
 import type { FatigueProgressionProfile, SetCountRange } from '@/domain/value-objects';
 import { t } from '@/i18n/t';
 import { formatRPE } from '@/lib/formatting';
-import { filterCompleted } from '@/services/logic/setStats';
+import { filterCompleted, isCompletedSet } from '@/services/logic/setStats';
 
 // ===== Constants =====
 
@@ -48,7 +48,7 @@ export function adviseOnSetCount(
   const profile: FatigueProgressionProfile | undefined = plannedSet?.fatigueProgressionProfile;
 
   const numCompleted = filterCompleted(completedSets).length;
-  const lastCompletedSet = [...completedSets].reverse().find(s => s.isCompleted);
+  const lastCompletedSet = [...completedSets].reverse().find(isCompletedSet);
   const currentRPE = !simpleMode ? (lastCompletedSet?.actualRPE ?? null) : null;
 
   // RPE ceiling based on sensitivity
@@ -105,7 +105,7 @@ export function adviseOnSetCount(
   // Check fatigue progression trend
   if (!simpleMode && profile && currentRPE !== null && numCompleted >= 2) {
     const rpeValues = completedSets
-      .filter(s => s.isCompleted && s.actualRPE !== null)
+      .filter(s => isCompletedSet(s) && s.actualRPE !== null)
       .map(s => s.actualRPE!);
 
     if (rpeValues.length >= 2) {

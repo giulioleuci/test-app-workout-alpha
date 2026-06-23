@@ -88,7 +88,7 @@ const ExerciseCard = memo(function ExerciseCard({ exercise, onEdit }: ExerciseCa
       />
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent className="w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+        <AlertDialogContent className="overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('common.areYouSure', 'Are you sure?')}</AlertDialogTitle>
             <AlertDialogDescription>

@@ -18,6 +18,7 @@ vi.mock('@/i18n/t', () => ({
 describe('dashboardService', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({ groups: [], items: [], sets: [] });
   });
 
   describe('getLastWorkoutSummary', () => {
@@ -32,9 +33,11 @@ describe('dashboardService', () => {
       vi.mocked(SessionRepository.getLatestCompletedSession).mockResolvedValue(session as any);
       vi.mocked(WorkoutPlanRepository.getSession).mockResolvedValue({ name: 'Plan Session' } as any);
       vi.mocked(WorkoutPlanRepository.getWorkout).mockResolvedValue({ name: 'Plan Workout' } as any);
-      vi.mocked(SessionRepository.getGroupsBySession).mockResolvedValue([{ id: 'g1' }] as any);
-      vi.mocked(SessionRepository.getItemsByGroups).mockResolvedValue([{ id: 'i1', exerciseId: 'e1' }] as any);
-      vi.mocked(SessionRepository.getSetsByItems).mockResolvedValue([{ sessionExerciseItemId: 'i1', isCompleted: true, actualLoad: 100, actualCount: 5 }] as any);
+      vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({
+        groups: [{ id: 'g1', workoutSessionId: 's1' }],
+        items: [{ id: 'i1', sessionExerciseGroupId: 'g1', exerciseId: 'e1' }],
+        sets: [{ sessionExerciseItemId: 'i1', isCompleted: true, actualLoad: 100, actualCount: 5 }],
+      } as any);
       vi.mocked(ExerciseRepository.getByIds).mockResolvedValue([{ id: 'e1', name: 'Exercise 1' }] as any);
 
       const result = await getLastWorkoutSummary();
@@ -96,9 +99,7 @@ describe('dashboardService', () => {
     it('handles session without plannedSessionId (shows free session fallback name)', async () => {
       const session = { id: 's1', startedAt: new Date(), completedAt: new Date() };
       vi.mocked(SessionRepository.getLatestCompletedSession).mockResolvedValue(session as any);
-      vi.mocked(SessionRepository.getGroupsBySession).mockResolvedValue([]);
-      vi.mocked(SessionRepository.getItemsByGroups).mockResolvedValue([]);
-      vi.mocked(SessionRepository.getSetsByItems).mockResolvedValue([]);
+      vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({ groups: [], items: [], sets: [] } as any);
       vi.mocked(ExerciseRepository.getByIds).mockResolvedValue([]);
 
       const result = await getLastWorkoutSummary();
@@ -112,16 +113,18 @@ describe('dashboardService', () => {
       vi.mocked(SessionRepository.getLatestCompletedSession).mockResolvedValue(session as any);
       vi.mocked(WorkoutPlanRepository.getSession).mockResolvedValue(undefined);
       vi.mocked(WorkoutPlanRepository.getWorkout).mockResolvedValue(undefined);
-      vi.mocked(SessionRepository.getGroupsBySession).mockResolvedValue([{ id: 'g1' }] as any);
-      vi.mocked(SessionRepository.getItemsByGroups).mockResolvedValue([
-        { id: 'i1', exerciseId: 'e1' },
-        { id: 'i2', exerciseId: 'e2' },
-      ] as any);
-      vi.mocked(SessionRepository.getSetsByItems).mockResolvedValue([
-        { sessionExerciseItemId: 'i1', isCompleted: true, actualLoad: 100, actualCount: 5 },
-        { sessionExerciseItemId: 'i2', isCompleted: true, actualLoad: 50, actualCount: 10 },
-        { sessionExerciseItemId: 'i2', isCompleted: false, actualLoad: 50, actualCount: 10 },
-      ] as any);
+      vi.mocked(SessionRepository.getSessionEntities).mockResolvedValue({
+        groups: [{ id: 'g1', workoutSessionId: 's1' }],
+        items: [
+          { id: 'i1', sessionExerciseGroupId: 'g1', exerciseId: 'e1' },
+          { id: 'i2', sessionExerciseGroupId: 'g1', exerciseId: 'e2' },
+        ],
+        sets: [
+          { sessionExerciseItemId: 'i1', isCompleted: true, actualLoad: 100, actualCount: 5 },
+          { sessionExerciseItemId: 'i2', isCompleted: true, actualLoad: 50, actualCount: 10 },
+          { sessionExerciseItemId: 'i2', isCompleted: false, actualLoad: 50, actualCount: 10 },
+        ],
+      } as any);
       vi.mocked(ExerciseRepository.getByIds).mockResolvedValue([
         { id: 'e1', name: 'Squat' },
         { id: 'e2', name: 'Bench' },
