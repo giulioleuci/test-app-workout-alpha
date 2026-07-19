@@ -1,0 +1,3 @@
+import type { SystemPort } from '@/application/system';
+import { databaseLifecycle } from '@/db/core';
+export const systemGateway: SystemPort = { initialize: () => databaseLifecycle.initialize(), mountUser: id => databaseLifecycle.mountUser(id), unmountUser: () => { databaseLifecycle.unmountUser(); return Promise.resolve(); }, getUserId: () => databaseLifecycle.getUserId(), isUserMounted: () => databaseLifecycle.isUserMounted(), getLastActiveUserId: () => databaseLifecycle.getLastActiveUserId(), updateGlobalAppState: update => databaseLifecycle.updateGlobalAppState(update), getGlobalAppState: () => databaseLifecycle.getGlobalAppState(), deleteUserDatabase: id => databaseLifecycle.deleteDatabase(id) };

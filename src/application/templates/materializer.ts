@@ -1,0 +1,6 @@
+import { nanoid } from 'nanoid';
+
+import type { PlannedExerciseGroup, PlannedExerciseItem, PlannedSet, SessionTemplateContent } from '@/domain/entities';
+export interface MaterializedTemplate { groups: PlannedExerciseGroup[]; items: Record<string, PlannedExerciseItem[]>; sets: Record<string, PlannedSet[]>; }
+const placeholder = '__template__';
+export function materializeTemplateContent(content: SessionTemplateContent): MaterializedTemplate { const groups: PlannedExerciseGroup[] = []; const items: Record<string, PlannedExerciseItem[]> = {}; const sets: Record<string, PlannedSet[]> = {}; for (const group of content.groups) { const groupId = nanoid(); groups.push({ id: groupId, plannedSessionId: placeholder, groupType: group.groupType, restBetweenRoundsSeconds: group.restBetweenRoundsSeconds, orderIndex: group.orderIndex, notes: group.notes }); items[groupId] = []; for (const item of group.items) { const itemId = nanoid(); items[groupId].push({ id: itemId, plannedExerciseGroupId: groupId, exerciseId: item.exerciseId, counterType: item.counterType, modifiers: item.modifiers, orderIndex: item.orderIndex, notes: item.notes }); sets[itemId] = item.sets.map(set => ({ ...set, id: nanoid(), plannedExerciseItemId: itemId })); } } return { groups, items, sets }; }

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Delta Workout</string>
+    <string name="title_activity_main">Delta Workout</string>
+    <string name="package_name">com.deltaworkout.app</string>
+    <string name="custom_url_scheme">com.deltaworkout.app</string>
+</resources>

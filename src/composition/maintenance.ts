@@ -1,0 +1,1 @@
+import { MaintenanceUseCases } from '@/application/maintenance'; import { maintenanceGateway } from '@/infrastructure/system/maintenanceGateway'; export const maintenanceCommands = new MaintenanceUseCases(maintenanceGateway);

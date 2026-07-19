@@ -1,0 +1,2 @@
+import { SessionRotationUseCases } from '@/application/sessionRotation'; import { durationCommands } from '@/composition/duration'; import { volumeCommands } from '@/composition/volumes'; import { t } from '@/i18n/t';
+ import { sessionRotationGateway } from '@/infrastructure/planning/sessionRotationGateway';export const sessionRotationCommands = new SessionRotationUseCases(sessionRotationGateway, volumeCommands, durationCommands, t);

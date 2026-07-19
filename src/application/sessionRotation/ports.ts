@@ -1,0 +1,5 @@
+import type { Exercise, PlannedExerciseGroup, PlannedExerciseItem, PlannedSession, PlannedSet, PlannedWorkout, WorkoutSession } from '@/domain/entities';
+import type { SessionVolumeAnalysis } from '@/services/volumeAnalyzer';
+export interface SessionRotationPort { getActiveWorkouts(): Promise<PlannedWorkout[]>; getSessionsByWorkout(id: string): Promise<PlannedSession[]>; getLatestCompletedSessionByWorkout(id: string): Promise<WorkoutSession | undefined>; getGroups(id: string): Promise<PlannedExerciseGroup[]>; getItems(ids: string[]): Promise<PlannedExerciseItem[]>; getExercises(ids: string[]): Promise<Exercise[]>; getSets(ids: string[]): Promise<PlannedSet[]>; }
+export interface RotationVolumePort { analyzeSessionVolume(id: string, name: string, muscle: (key: string) => string, group: (key: string) => string, pattern: (key: string) => string, unit?: undefined, detailed?: boolean): Promise<SessionVolumeAnalysis>; }
+export interface RotationDurationPort { estimateSessionDuration(id: string): Promise<{ minSeconds: number; maxSeconds: number }>; }

@@ -1,0 +1,108 @@
+import { memo, useState } from 'react';
+
+import { MoreVertical, Pencil } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import type { Exercise } from '@/domain/entities';
+import { useExerciseMutations } from '@/hooks/mutations/exerciseMutations';
+
+import { ExerciseDetailModal } from './ExerciseDetailModal';
+
+interface ExerciseCardProps {
+  exercise: Exercise;
+  onEdit: (exercise: Exercise) => void;
+}
+
+const ExerciseCard = memo(function ExerciseCard({ exercise, onEdit }: ExerciseCardProps) {
+  const { t } = useTranslation();
+  const mutations = useExerciseMutations();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+
+  const handleDelete = async () => {
+    await mutations.deleteExercise(exercise.id);
+  };
+
+  return (
+    <>
+      <Card
+        className="cursor-pointer transition-colors hover:border-primary/30"
+        onClick={() => setShowDetailModal(true)}
+      >
+        <div className="space-y-2 p-4">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="min-w-0 truncate text-sm font-semibold">{exercise.name}</h3>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="-mr-2 -mt-2 h-9 w-9 shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover">
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(exercise); }}>
+                  <Pencil className="mr-2 h-4 w-4" />{t('actions.edit')}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(true); }}
+                >
+                  <MoreVertical className="mr-2 h-4 w-4" />{t('actions.archiveOrDelete')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {exercise.primaryMuscles.map((m) => (
+              <Badge key={m} variant="secondary" className="text-caption sm:text-body-sm">
+                {t(`enums.muscle.${m}`)}
+              </Badge>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {(Array.isArray(exercise.equipment) ? exercise.equipment : [exercise.equipment]).map((eq) => (
+              <Badge key={eq} variant="outline" className="text-caption sm:text-body-sm">
+                {t(`enums.equipment.${eq}`)}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      <ExerciseDetailModal
+        exercise={exercise}
+        open={showDetailModal}
+        onOpenChange={setShowDetailModal}
+      />
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="overflow-y-auto sm:w-full" style={{ maxHeight: '90vh', width: '95vw' }}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('common.areYouSure', 'Are you sure?')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('exercises.archiveWarning', 'Information will be kept in history if previously used, otherwise it will be permanently deleted.')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>{t('actions.confirm')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+});
+
+export default ExerciseCard;

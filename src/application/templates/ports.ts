@@ -1,0 +1,2 @@
+import type { Exercise, SessionTemplate } from '@/domain/entities';
+export interface TemplatePort { getAll(): Promise<SessionTemplate[]>; getById(id: string): Promise<SessionTemplate | undefined>; add(template: SessionTemplate): Promise<void>; update(id: string, updates: Partial<SessionTemplate>): Promise<number>; delete(id: string): Promise<void>; getExercises(): Promise<Exercise[]>; getRegulationProfile(): Promise<{ simpleMode?: boolean } | undefined>; }
